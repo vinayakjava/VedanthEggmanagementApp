@@ -1,0 +1,62 @@
+# Egg Business Manager — detekt overrides on top of the default rule set (buildUponDefaultConfig).
+# New findings fail the build (Constitution quality gates).
+
+build:
+  maxIssues: 0
+
+complexity:
+  LongParameterList:
+    # Composables legitimately take many parameters (modifier, callbacks, state).
+    functionThreshold: 8
+    constructorThreshold: 10
+    ignoreDefaultParameters: true
+    ignoreAnnotated: ['Composable']
+  LongMethod:
+    ignoreAnnotated: ['Composable']
+    # End-to-end UI tests read best as one scenario.
+    excludes: ['**/androidTest/**']
+  TooManyFunctions:
+    ignoreAnnotatedFunctions: ['Preview']
+    ignorePrivate: true
+    # Room DAOs and repository ports are naturally a list of queries/operations.
+    thresholdInInterfaces: 15
+    # Form ViewModels expose one setter per input field by design.
+    ignoreAnnotated: ['HiltViewModel']
+
+naming:
+  FunctionNaming:
+    # Composable functions are PascalCase by convention.
+    ignoreAnnotated: ['Composable']
+  TopLevelPropertyNaming:
+    # UPPER_SNAKE constants, plus PascalCase for Compose colour/shape values.
+    constantPattern: '[A-Z][_A-Z0-9]*|[A-Z][A-Za-z0-9]*'
+  MatchingDeclarationName:
+    active: false
+
+style:
+  MagicNumber:
+    # Colours, dimensions and typography are defined as literals in the theme.
+    excludes: ['**/ui/theme/**', '**/test/**', '**/androidTest/**', '**/core-testing/**']
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreAnnotated: ['Composable', 'Preview']
+  UnusedPrivateMember:
+    ignoreAnnotated: ['Preview']
+  MaxLineLength:
+    maxLineLength: 140
+    # The type scale is a table of one TextStyle per line; wrapping it hurts readability.
+    excludes: ['**/ui/theme/Type.kt']
+  ReturnCount:
+    # Early-return guard clauses read better than nested conditionals.
+    excludeGuardClauses: true
+  WildcardImport:
+    active: true
+  ForbiddenComment:
+    active: false
+
+exceptions:
+  TooGenericExceptionCaught:
+    # Boundary code converts any failure into a safe state (startup, use cases, crash handler).
+    excludes: ['**/test/**', '**/androidTest/**']
+    allowedExceptionNameRegex: '_|(ignore|expected).*'
+    active: false

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Splash icon: 240dp canvas, artwork inside the 160dp centre circle the system keeps visible. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="VectorRaster"
+    android:width="240dp"
+    android:height="240dp"
+    android:viewportWidth="240"
+    android:viewportHeight="240">
+    <path
+        android:fillColor="@color/brand_yolk"
+        android:pathData="M40,120 a80,80 0 1,0 160,0 a80,80 0 1,0 -160,0 Z" />
+    <path
+        android:fillColor="@color/brand_shell"
+        android:pathData="M120,70 C144,70 160,105 160,128 C160,152 142,168 120,168 C98,168 80,152 80,128 C80,105 96,70 120,70 Z" />
+    <path
+        android:fillColor="@color/brand_yolk_core"
+        android:pathData="M102,132 a18,18 0 1,0 36,0 a18,18 0 1,0 -36,0 Z" />
+</vector>

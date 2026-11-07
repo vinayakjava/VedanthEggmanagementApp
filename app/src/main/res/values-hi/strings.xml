@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_tagline">आपकी अंडा दुकान का हिसाब — आपके फ़ोन पर, हमेशा ऑफ़लाइन।</string>
+
+    <!-- Welcome -->
+    <string name="welcome_body">अंडों की ख़रीद और बिक्री दर्ज करें, हर ग्राहक का बकाया देखें, और अपना डेटा इसी फ़ोन पर सुरक्षित रखें।</string>
+    <string name="welcome_offline_badge">बिना इंटरनेट के चलता है</string>
+
+    <!-- Top-level destinations -->
+    <string name="nav_dashboard">डैशबोर्ड</string>
+    <string name="nav_customers">ग्राहक</string>
+    <string name="nav_transactions">लेन-देन</string>
+    <string name="nav_reports">रिपोर्ट</string>
+    <string name="nav_more">और</string>
+
+    <!-- Placeholders shown until each module is built -->
+    <string name="placeholder_body">यह हिस्सा अभी बन रहा है और आने वाले अपडेट में उपलब्ध होगा।</string>
+
+    <!-- Startup and errors -->
+    <string name="startup_update_required_title">अपडेट ज़रूरी है</string>
+    <string name="startup_update_required_body">आपका डेटा ऐप के नए संस्करण से सहेजा गया था। आगे बढ़ने के लिए कृपया नवीनतम संस्करण इंस्टॉल करें। आपके डेटा में कोई बदलाव नहीं हुआ है।</string>
+    <string name="startup_failed_title">आपका डेटा नहीं खुल सका</string>
+    <string name="startup_failed_key_body">इस फ़ोन पर आपके डेटा की सुरक्षा करने वाली कुंजी उपलब्ध नहीं है। आपका डेटा हटाया नहीं गया है। अगर आपके पास बैकअप है, तो दोबारा इंस्टॉल करके उसे रीस्टोर कर सकते हैं।</string>
+    <string name="startup_failed_storage_body">ऐप को सुरक्षित रूप से खोलने के लिए पर्याप्त जगह नहीं है। कुछ जगह खाली करके फिर से कोशिश करें।</string>
+    <string name="startup_failed_unknown_body">आपका डेटा खोलते समय कुछ गड़बड़ हो गई। आपका सहेजा गया डेटा सुरक्षित है। कृपया फिर से कोशिश करें।</string>
+    <string name="action_retry">फिर से कोशिश करें</string>
+    <string name="action_dismiss">बंद करें</string>
+
+    <string name="error_generic">कुछ गड़बड़ हो गई। आपका सहेजा गया डेटा सुरक्षित है।</string>
+    <string name="error_not_found">यह आइटम नहीं मिला।</string>
+    <string name="error_low_storage">सहेजने के लिए पर्याप्त जगह नहीं है। जगह खाली करके फिर से कोशिश करें।</string>
+    <string name="error_storage_unavailable">आपका डेटा अभी नहीं खुल सका। कृपया फिर से कोशिश करें।</string>
+    <string name="error_validation">कृपया चिह्नित फ़ील्ड जाँचें।</string>
+
+    <string name="cd_brand_mark">एग बिज़नेस मैनेजर लोगो</string>
+    <string name="cd_warning">चेतावनी</string>
+    <string name="loading">लोड हो रहा है…</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Launcher icon and splash screen. In-app colours live in ui/theme/Color.kt. -->
+    <color name="brand_yolk">#F2A93B</color>
+    <color name="brand_shell">#FFF8F0</color>
+    <color name="brand_yolk_core">#E07B00</color>
+    <color name="splash_background">#FFF8F4</color>
+</resources>

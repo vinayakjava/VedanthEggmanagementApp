@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Hardcoded user-facing text is not allowed: all text goes through string resources (Constitution IX). -->
+    <issue id="HardcodedText" severity="error" />
+    <issue id="MissingTranslation" severity="error" />
+    <!-- Dependency freshness is reviewed deliberately, not on every build. -->
+    <issue id="GradleDependency" severity="ignore" />
+    <issue id="NewerVersionAvailable" severity="ignore" />
+    <issue id="AndroidGradlePluginVersion" severity="ignore" />
+    <issue id="OldTargetApi" severity="warning" />
+</lint>

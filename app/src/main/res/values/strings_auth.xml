@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Welcome -->
+    <string name="welcome_create_account">Create account</string>
+    <string name="welcome_restore">Restore from backup</string>
+    <string name="welcome_restore_soon">Restoring from a backup will be available in a coming update.</string>
+
+    <!-- Common form actions and labels -->
+    <string name="action_next">Next</string>
+    <string name="action_back">Back</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_show_password">Show password</string>
+    <string name="action_hide_password">Hide password</string>
+    <string name="field_optional">%1$s (optional)</string>
+    <string name="working">Please wait…</string>
+    <string name="secure_processing">Securing your details… this takes a few seconds.</string>
+
+    <!-- Field labels -->
+    <string name="label_owner_name">Owner name</string>
+    <string name="label_mobile">Mobile number</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Password</string>
+    <string name="label_confirm_password">Confirm password</string>
+    <string name="label_new_password">New password</string>
+    <string name="label_confirm_new_password">Confirm new password</string>
+    <string name="label_current_password">Current password</string>
+    <string name="label_shop_name">Shop name</string>
+    <string name="label_address">Shop address</string>
+    <string name="label_city">City</string>
+    <string name="label_state">State or union territory</string>
+    <string name="label_pin_code">PIN code</string>
+    <string name="label_recovery_pin">Recovery PIN (6 digits)</string>
+    <string name="label_confirm_recovery_pin">Confirm recovery PIN</string>
+    <string name="label_security_question">Question %1$d</string>
+    <string name="label_security_answer">Answer %1$d</string>
+    <string name="label_identifier">Mobile number or email</string>
+    <string name="hint_mobile_prefix">+91</string>
+    <string name="hint_password_rules">8–64 characters, with at least one letter and one number.</string>
+    <string name="hint_recovery_pin">Used only if you forget your password. Avoid 123456 or repeated digits.</string>
+    <string name="hint_security_answers">Choose answers people close to you cannot guess. Capital letters and extra spaces do not matter.</string>
+
+    <!-- Signup -->
+    <string name="signup_title">Create account</string>
+    <string name="signup_step">Step %1$d of %2$d</string>
+    <string name="signup_account_heading">Your details</string>
+    <string name="signup_account_body">You will sign in with your mobile number or email and this password. Everything stays on this phone.</string>
+    <string name="signup_shop_heading">Shop details</string>
+    <string name="signup_shop_body">These details appear on statements and receipts.</string>
+    <string name="signup_security_heading">Password recovery</string>
+    <string name="signup_security_body">If you forget your password, you can reset it on this phone with either your recovery PIN or your 3 security answers. No internet or SMS is needed.</string>
+    <string name="signup_questions_heading">Security questions</string>
+    <string name="signup_create">Create account</string>
+
+    <!-- Sign in -->
+    <string name="signin_title">Sign in</string>
+    <string name="signin_welcome_back">Welcome back</string>
+    <string name="signin_action">Sign in</string>
+    <string name="signin_forgot">Forgot password?</string>
+    <string name="signin_biometric">Use fingerprint or face</string>
+
+    <!-- Lockout -->
+    <string name="lockout_message">Too many failed attempts. Try again in %1$s.</string>
+
+    <!-- Lock overlay -->
+    <string name="lock_title">App locked</string>
+    <string name="lock_body">Enter your password to continue. Anything you were typing is kept.</string>
+    <string name="lock_unlock">Unlock</string>
+    <string name="lock_sign_out">Sign out instead</string>
+
+    <!-- Biometric -->
+    <string name="biometric_prompt_title">Unlock Egg Business Manager</string>
+    <string name="biometric_prompt_enable_title">Turn on biometric unlock</string>
+    <string name="biometric_prompt_subtitle">Confirm with your fingerprint or face</string>
+    <string name="biometric_use_password">Use password</string>
+    <string name="biometric_invalidated">Biometric unlock was turned off because the fingerprints or face on this phone changed. Sign in with your password and turn it on again in Security.</string>
+    <string name="biometric_unavailable">This phone has no fingerprint or face unlock set up. Set it up in phone settings first.</string>
+    <string name="biometric_failed">Biometric unlock did not work. Use your password.</string>
+
+    <!-- Recovery -->
+    <string name="recovery_title">Reset password</string>
+    <string name="recovery_choose_body">Choose how to prove it is you. Your business data is not affected.</string>
+    <string name="recovery_with_pin">Use my recovery PIN</string>
+    <string name="recovery_with_questions">Answer my security questions</string>
+    <string name="recovery_pin_title">Reset with recovery PIN</string>
+    <string name="recovery_questions_title">Reset with security questions</string>
+    <string name="recovery_new_password_heading">Choose a new password</string>
+    <string name="recovery_reset_action">Reset password</string>
+    <string name="recovery_lost_everything_title">Forgot everything?</string>
+    <string name="recovery_lost_everything_body">If you remember neither your password, your recovery PIN nor your security answers, the only option is to reinstall the app and restore a backup using your backup passphrase. Data that was not backed up cannot be recovered.</string>
+    <string name="recovery_review_title">Password reset</string>
+    <string name="recovery_review_body">Your password was changed. Please review your recovery PIN and security questions so they are still something only you know.</string>
+    <string name="recovery_review_now">Review now</string>
+    <string name="recovery_review_later">Later</string>
+
+    <!-- More and security settings -->
+    <string name="more_security">Security</string>
+    <string name="more_security_summary">Password, recovery PIN, security questions, biometric unlock</string>
+    <string name="more_sign_out">Sign out</string>
+    <string name="more_sign_out_summary">Your data stays on this phone</string>
+    <string name="more_sign_out_confirm_title">Sign out?</string>
+    <string name="more_sign_out_confirm_body">You will need your password to sign in again. Your data stays on this phone.</string>
+    <string name="security_title">Security</string>
+    <string name="security_change_password">Change password</string>
+    <string name="security_change_pin">Change recovery PIN</string>
+    <string name="security_change_questions">Change security questions</string>
+    <string name="security_biometric">Biometric unlock</string>
+    <string name="security_biometric_summary">Unlock with fingerprint or face. Your password always works too.</string>
+    <string name="security_lock_now">Lock now</string>
+    <string name="security_confirm_with_password">Enter your current password to confirm this change.</string>
+
+    <!-- Field validation messages (spec § Validation Rules) -->
+    <string name="v_identifier_required">Enter your mobile number or email</string>
+    <string name="v_owner_name_required">Enter the owner name</string>
+    <string name="v_shop_name_required">Enter the shop name</string>
+    <string name="v_name_length">Enter between 2 and 80 characters</string>
+    <string name="v_mobile">Enter a valid 10-digit mobile number</string>
+    <string name="v_email">Enter a valid email address</string>
+    <string name="v_password_required">Enter a password</string>
+    <string name="v_password_rules">Password must be 8–64 characters with at least one letter and one number</string>
+    <string name="v_password_equals_mobile">Password must not be your mobile number</string>
+    <string name="v_confirm_required">Enter it again to confirm</string>
+    <string name="v_passwords_mismatch">Passwords do not match</string>
+    <string name="v_current_password_required">Enter your current password</string>
+    <string name="v_address_too_long">Address is too long (max 250)</string>
+    <string name="v_city_required">Enter the city</string>
+    <string name="v_city_length">City must be 2–60 characters</string>
+    <string name="v_state_required">Select a state</string>
+    <string name="v_pin_code">Enter a valid 6-digit PIN code</string>
+    <string name="v_recovery_pin_required">Enter a 6-digit recovery PIN</string>
+    <string name="v_recovery_pin_format">The recovery PIN must be exactly 6 digits</string>
+    <string name="v_recovery_pin_weak">Choose a 6-digit PIN that is not easy to guess</string>
+    <string name="v_pins_mismatch">PINs do not match</string>
+    <string name="v_questions_required">Choose 3 questions</string>
+    <string name="v_questions_duplicate">Choose 3 different questions</string>
+    <string name="v_answer_short">Enter an answer of at least 2 characters</string>
+    <string name="v_answer_long">Answer is too long (max 50)</string>
+    <string name="v_answers_all_same">The 3 answers must not all be the same</string>
+    <string name="v_answer_equals_password">An answer must not be your password</string>
+
+    <!-- Auth error messages (spec § Error Scenarios) -->
+    <string name="error_invalid_credentials">Mobile/email or password is incorrect</string>
+    <string name="error_incorrect_password">The password is incorrect</string>
+    <string name="error_incorrect_recovery_pin">The recovery PIN is incorrect</string>
+    <string name="error_incorrect_answers">One or more answers are incorrect</string>
+    <string name="error_account_exists">An account already exists on this phone. Sign in instead.</string>
+    <string name="error_no_account">No account exists on this phone yet.</string>
+    <string name="error_locked">Too many failed attempts. Please wait and try again.</string>
+</resources>

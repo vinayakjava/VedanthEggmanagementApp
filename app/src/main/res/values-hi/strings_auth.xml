@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Welcome -->
+    <string name="welcome_create_account">खाता बनाएँ</string>
+    <string name="welcome_restore">बैकअप से वापस लाएँ</string>
+    <string name="welcome_restore_soon">बैकअप से डेटा वापस लाने की सुविधा अगले अपडेट में आएगी।</string>
+
+    <!-- Common form actions and labels -->
+    <string name="action_next">आगे</string>
+    <string name="action_back">पीछे</string>
+    <string name="action_save">सहेजें</string>
+    <string name="action_cancel">रद्द करें</string>
+    <string name="action_show_password">पासवर्ड दिखाएँ</string>
+    <string name="action_hide_password">पासवर्ड छिपाएँ</string>
+    <string name="field_optional">%1$s (वैकल्पिक)</string>
+    <string name="working">कृपया प्रतीक्षा करें…</string>
+    <string name="secure_processing">आपकी जानकारी सुरक्षित की जा रही है… इसमें कुछ सेकंड लगते हैं।</string>
+
+    <!-- Field labels -->
+    <string name="label_owner_name">मालिक का नाम</string>
+    <string name="label_mobile">मोबाइल नंबर</string>
+    <string name="label_email">ईमेल</string>
+    <string name="label_password">पासवर्ड</string>
+    <string name="label_confirm_password">पासवर्ड की पुष्टि करें</string>
+    <string name="label_new_password">नया पासवर्ड</string>
+    <string name="label_confirm_new_password">नए पासवर्ड की पुष्टि करें</string>
+    <string name="label_current_password">वर्तमान पासवर्ड</string>
+    <string name="label_shop_name">दुकान का नाम</string>
+    <string name="label_address">दुकान का पता</string>
+    <string name="label_city">शहर</string>
+    <string name="label_state">राज्य या केंद्र शासित प्रदेश</string>
+    <string name="label_pin_code">पिन कोड</string>
+    <string name="label_recovery_pin">रिकवरी पिन (6 अंक)</string>
+    <string name="label_confirm_recovery_pin">रिकवरी पिन की पुष्टि करें</string>
+    <string name="label_security_question">प्रश्न %1$d</string>
+    <string name="label_security_answer">उत्तर %1$d</string>
+    <string name="label_identifier">मोबाइल नंबर या ईमेल</string>
+    <string name="hint_mobile_prefix">+91</string>
+    <string name="hint_password_rules">8–64 अक्षर, जिनमें कम से कम एक अक्षर और एक अंक हो।</string>
+    <string name="hint_recovery_pin">केवल पासवर्ड भूलने पर काम आता है। 123456 या एक जैसे अंक न चुनें।</string>
+    <string name="hint_security_answers">ऐसे उत्तर चुनें जिन्हें आपके करीबी भी न जान सकें। बड़े-छोटे अक्षर और अतिरिक्त स्पेस से फ़र्क नहीं पड़ता।</string>
+
+    <!-- Signup -->
+    <string name="signup_title">खाता बनाएँ</string>
+    <string name="signup_step">चरण %1$d / %2$d</string>
+    <string name="signup_account_heading">आपकी जानकारी</string>
+    <string name="signup_account_body">आप अपने मोबाइल नंबर या ईमेल और इस पासवर्ड से साइन इन करेंगे। सारा डेटा इसी फ़ोन पर रहता है।</string>
+    <string name="signup_shop_heading">दुकान की जानकारी</string>
+    <string name="signup_shop_body">यह जानकारी स्टेटमेंट और रसीदों पर दिखेगी।</string>
+    <string name="signup_security_heading">पासवर्ड रिकवरी</string>
+    <string name="signup_security_body">पासवर्ड भूलने पर आप इसी फ़ोन पर अपने रिकवरी पिन या 3 सुरक्षा उत्तरों में से किसी एक से उसे बदल सकते हैं। इंटरनेट या SMS की ज़रूरत नहीं है।</string>
+    <string name="signup_questions_heading">सुरक्षा प्रश्न</string>
+    <string name="signup_create">खाता बनाएँ</string>
+
+    <!-- Sign in -->
+    <string name="signin_title">साइन इन</string>
+    <string name="signin_welcome_back">फिर से स्वागत है</string>
+    <string name="signin_action">साइन इन करें</string>
+    <string name="signin_forgot">पासवर्ड भूल गए?</string>
+    <string name="signin_biometric">फ़िंगरप्रिंट या चेहरे से खोलें</string>
+
+    <!-- Lockout -->
+    <string name="lockout_message">बहुत अधिक गलत प्रयास। %1$s बाद फिर कोशिश करें।</string>
+
+    <!-- Lock overlay -->
+    <string name="lock_title">ऐप लॉक है</string>
+    <string name="lock_body">जारी रखने के लिए पासवर्ड डालें। आप जो लिख रहे थे वह सुरक्षित है।</string>
+    <string name="lock_unlock">अनलॉक करें</string>
+    <string name="lock_sign_out">इसके बजाय साइन आउट करें</string>
+
+    <!-- Biometric -->
+    <string name="biometric_prompt_title">एग बिज़नेस मैनेजर अनलॉक करें</string>
+    <string name="biometric_prompt_enable_title">बायोमेट्रिक अनलॉक चालू करें</string>
+    <string name="biometric_prompt_subtitle">अपने फ़िंगरप्रिंट या चेहरे से पुष्टि करें</string>
+    <string name="biometric_use_password">पासवर्ड का उपयोग करें</string>
+    <string name="biometric_invalidated">इस फ़ोन के फ़िंगरप्रिंट या चेहरे बदलने के कारण बायोमेट्रिक अनलॉक बंद कर दिया गया। पासवर्ड से साइन इन करें और सुरक्षा में इसे फिर से चालू करें।</string>
+    <string name="biometric_unavailable">इस फ़ोन पर फ़िंगरप्रिंट या फ़ेस अनलॉक सेट नहीं है। पहले फ़ोन की सेटिंग में इसे सेट करें।</string>
+    <string name="biometric_failed">बायोमेट्रिक अनलॉक नहीं हो सका। अपना पासवर्ड इस्तेमाल करें।</string>
+
+    <!-- Recovery -->
+    <string name="recovery_title">पासवर्ड रीसेट करें</string>
+    <string name="recovery_choose_body">पहचान साबित करने का तरीका चुनें। आपके व्यापार का डेटा प्रभावित नहीं होगा।</string>
+    <string name="recovery_with_pin">मेरा रिकवरी पिन इस्तेमाल करें</string>
+    <string name="recovery_with_questions">मेरे सुरक्षा प्रश्नों के उत्तर दें</string>
+    <string name="recovery_pin_title">रिकवरी पिन से रीसेट करें</string>
+    <string name="recovery_questions_title">सुरक्षा प्रश्नों से रीसेट करें</string>
+    <string name="recovery_new_password_heading">नया पासवर्ड चुनें</string>
+    <string name="recovery_reset_action">पासवर्ड रीसेट करें</string>
+    <string name="recovery_lost_everything_title">सब कुछ भूल गए?</string>
+    <string name="recovery_lost_everything_body">अगर आपको पासवर्ड, रिकवरी पिन और सुरक्षा उत्तर तीनों याद नहीं हैं, तो एकमात्र उपाय है ऐप को दोबारा इंस्टॉल करके बैकअप पासफ़्रेज़ से बैकअप वापस लाना। जिस डेटा का बैकअप नहीं लिया गया, वह वापस नहीं मिल सकता।</string>
+    <string name="recovery_review_title">पासवर्ड रीसेट हो गया</string>
+    <string name="recovery_review_body">आपका पासवर्ड बदल दिया गया है। कृपया अपना रिकवरी पिन और सुरक्षा प्रश्न देख लें ताकि वे अब भी केवल आपको पता हों।</string>
+    <string name="recovery_review_now">अभी देखें</string>
+    <string name="recovery_review_later">बाद में</string>
+
+    <!-- More and security settings -->
+    <string name="more_security">सुरक्षा</string>
+    <string name="more_security_summary">पासवर्ड, रिकवरी पिन, सुरक्षा प्रश्न, बायोमेट्रिक अनलॉक</string>
+    <string name="more_sign_out">साइन आउट</string>
+    <string name="more_sign_out_summary">आपका डेटा इसी फ़ोन पर रहेगा</string>
+    <string name="more_sign_out_confirm_title">साइन आउट करें?</string>
+    <string name="more_sign_out_confirm_body">फिर से साइन इन करने के लिए पासवर्ड चाहिए होगा। आपका डेटा इसी फ़ोन पर रहेगा।</string>
+    <string name="security_title">सुरक्षा</string>
+    <string name="security_change_password">पासवर्ड बदलें</string>
+    <string name="security_change_pin">रिकवरी पिन बदलें</string>
+    <string name="security_change_questions">सुरक्षा प्रश्न बदलें</string>
+    <string name="security_biometric">बायोमेट्रिक अनलॉक</string>
+    <string name="security_biometric_summary">फ़िंगरप्रिंट या चेहरे से अनलॉक करें। पासवर्ड भी हमेशा काम करेगा।</string>
+    <string name="security_lock_now">अभी लॉक करें</string>
+    <string name="security_confirm_with_password">इस बदलाव की पुष्टि के लिए वर्तमान पासवर्ड डालें।</string>
+
+    <!-- Field validation messages -->
+    <string name="v_identifier_required">अपना मोबाइल नंबर या ईमेल डालें</string>
+    <string name="v_owner_name_required">मालिक का नाम डालें</string>
+    <string name="v_shop_name_required">दुकान का नाम डालें</string>
+    <string name="v_name_length">2 से 80 अक्षर डालें</string>
+    <string name="v_mobile">सही 10 अंकों का मोबाइल नंबर डालें</string>
+    <string name="v_email">सही ईमेल पता डालें</string>
+    <string name="v_password_required">पासवर्ड डालें</string>
+    <string name="v_password_rules">पासवर्ड 8–64 अक्षरों का हो और उसमें कम से कम एक अक्षर और एक अंक हो</string>
+    <string name="v_password_equals_mobile">पासवर्ड आपका मोबाइल नंबर नहीं हो सकता</string>
+    <string name="v_confirm_required">पुष्टि के लिए फिर से डालें</string>
+    <string name="v_passwords_mismatch">पासवर्ड मेल नहीं खाते</string>
+    <string name="v_current_password_required">अपना वर्तमान पासवर्ड डालें</string>
+    <string name="v_address_too_long">पता बहुत लंबा है (अधिकतम 250)</string>
+    <string name="v_city_required">शहर डालें</string>
+    <string name="v_city_length">शहर 2–60 अक्षरों का होना चाहिए</string>
+    <string name="v_state_required">राज्य चुनें</string>
+    <string name="v_pin_code">सही 6 अंकों का पिन कोड डालें</string>
+    <string name="v_recovery_pin_required">6 अंकों का रिकवरी पिन डालें</string>
+    <string name="v_recovery_pin_format">रिकवरी पिन ठीक 6 अंकों का होना चाहिए</string>
+    <string name="v_recovery_pin_weak">ऐसा 6 अंकों का पिन चुनें जिसका अंदाज़ा आसानी से न लगे</string>
+    <string name="v_pins_mismatch">पिन मेल नहीं खाते</string>
+    <string name="v_questions_required">3 प्रश्न चुनें</string>
+    <string name="v_questions_duplicate">3 अलग-अलग प्रश्न चुनें</string>
+    <string name="v_answer_short">कम से कम 2 अक्षरों का उत्तर डालें</string>
+    <string name="v_answer_long">उत्तर बहुत लंबा है (अधिकतम 50)</string>
+    <string name="v_answers_all_same">तीनों उत्तर एक जैसे नहीं हो सकते</string>
+    <string name="v_answer_equals_password">उत्तर आपका पासवर्ड नहीं हो सकता</string>
+
+    <!-- Auth error messages -->
+    <string name="error_invalid_credentials">मोबाइल/ईमेल या पासवर्ड गलत है</string>
+    <string name="error_incorrect_password">पासवर्ड गलत है</string>
+    <string name="error_incorrect_recovery_pin">रिकवरी पिन गलत है</string>
+    <string name="error_incorrect_answers">एक या अधिक उत्तर गलत हैं</string>
+    <string name="error_account_exists">इस फ़ोन पर पहले से एक खाता है। साइन इन करें।</string>
+    <string name="error_no_account">इस फ़ोन पर अभी कोई खाता नहीं है।</string>
+    <string name="error_locked">बहुत अधिक गलत प्रयास। कृपया थोड़ी देर बाद फिर कोशिश करें।</string>
+</resources>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Security questions (keys are stable; see SecurityQuestion) -->
+    <string name="sq_first_school">What was the name of your first school?</string>
+    <string name="sq_birth_town">In which town or village were you born?</string>
+    <string name="sq_mother_native_village">What is your mother\'s native village?</string>
+    <string name="sq_first_teacher">What was the name of your first teacher?</string>
+    <string name="sq_childhood_friend">What is the name of your childhood best friend?</string>
+    <string name="sq_favourite_dish">What is your favourite dish?</string>
+    <string name="sq_first_vehicle">What was your first vehicle?</string>
+    <string name="sq_grandfather_name">What is your paternal grandfather\'s first name?</string>
+    <string name="sq_first_job_place">Where was your first job?</string>
+    <string name="sq_childhood_nickname">What was your childhood nickname?</string>
+    <string name="sq_favourite_film">What is your favourite film?</string>
+    <string name="sq_first_shop_location">Where did you start your first shop?</string>
+
+    <!-- Indian states and union territories (keys are stable; see IndianState) -->
+    <string name="state_andhra_pradesh">Andhra Pradesh</string>
+    <string name="state_arunachal_pradesh">Arunachal Pradesh</string>
+    <string name="state_assam">Assam</string>
+    <string name="state_bihar">Bihar</string>
+    <string name="state_chhattisgarh">Chhattisgarh</string>
+    <string name="state_goa">Goa</string>
+    <string name="state_gujarat">Gujarat</string>
+    <string name="state_haryana">Haryana</string>
+    <string name="state_himachal_pradesh">Himachal Pradesh</string>
+    <string name="state_jharkhand">Jharkhand</string>
+    <string name="state_karnataka">Karnataka</string>
+    <string name="state_kerala">Kerala</string>
+    <string name="state_madhya_pradesh">Madhya Pradesh</string>
+    <string name="state_maharashtra">Maharashtra</string>
+    <string name="state_manipur">Manipur</string>
+    <string name="state_meghalaya">Meghalaya</string>
+    <string name="state_mizoram">Mizoram</string>
+    <string name="state_nagaland">Nagaland</string>
+    <string name="state_odisha">Odisha</string>
+    <string name="state_punjab">Punjab</string>
+    <string name="state_rajasthan">Rajasthan</string>
+    <string name="state_sikkim">Sikkim</string>
+    <string name="state_tamil_nadu">Tamil Nadu</string>
+    <string name="state_telangana">Telangana</string>
+    <string name="state_tripura">Tripura</string>
+    <string name="state_uttar_pradesh">Uttar Pradesh</string>
+    <string name="state_uttarakhand">Uttarakhand</string>
+    <string name="state_west_bengal">West Bengal</string>
+    <string name="state_andaman_and_nicobar_islands">Andaman and Nicobar Islands</string>
+    <string name="state_chandigarh">Chandigarh</string>
+    <string name="state_dadra_nagar_haveli_and_daman_diu">Dadra and Nagar Haveli and Daman and Diu</string>
+    <string name="state_delhi">Delhi</string>
+    <string name="state_jammu_and_kashmir">Jammu and Kashmir</string>
+    <string name="state_ladakh">Ladakh</string>
+    <string name="state_lakshadweep">Lakshadweep</string>
+    <string name="state_puducherry">Puducherry</string>
+</resources>

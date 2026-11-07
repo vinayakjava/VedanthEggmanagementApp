@@ -1,0 +1,28 @@
+# Gradle / build
+.gradle/
+build/
+out/
+*.class
+*.log
+
+# Android
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Secrets — never commit signing material or env files
+*.jks
+*.keystore
+keystore.properties
+.env*
+
+# Claude Code local settings
+.claude/settings.local.json

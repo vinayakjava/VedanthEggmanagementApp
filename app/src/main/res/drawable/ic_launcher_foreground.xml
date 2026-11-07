@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Brand mark: a cream egg with a yolk, kept inside the 66dp adaptive-icon safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="@color/brand_shell"
+        android:pathData="M54,29 C66.5,29 75,47.5 75,60 C75,72.5 65.6,81 54,81 C42.4,81 33,72.5 33,60 C33,47.5 41.5,29 54,29 Z" />
+    <path
+        android:fillColor="@color/brand_yolk_core"
+        android:pathData="M44.5,62 a9.5,9.5 0 1,0 19,0 a9.5,9.5 0 1,0 -19,0 Z" />
+</vector>
