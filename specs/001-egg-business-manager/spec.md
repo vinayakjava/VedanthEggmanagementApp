@@ -67,6 +67,8 @@ customer is first added. When it is zero the formula is exactly the one requeste
   recovery PIN and 3 security questions at signup and can recover with either one (FR-012).
 - Q: Should the shop address capture city, state and PIN code? → A: Yes; city, state and a valid
   6-digit PIN code are required at signup, and the street address stays optional (FR-002).
+- Q: Customer "archive" or "activate/deactivate"? → A: Same behaviour; the owner-facing wording is
+  "Deactivate" / "Activate". A deactivated customer is what this spec calls archived.
 
 ## User Scenarios & Testing *(mandatory)*
 

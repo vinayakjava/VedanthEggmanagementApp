@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Customer list -->
+    <string name="customers_search_hint">नाम या मोबाइल से खोजें</string>
+    <string name="customers_add">ग्राहक जोड़ें</string>
+    <string name="customers_empty_title">अभी कोई ग्राहक नहीं</string>
+    <string name="customers_empty_body">जिनसे आप अंडे खरीदते या जिन्हें बेचते हैं, उन लोगों और दुकानों को जोड़ें। एक ग्राहक दोनों हो सकता है।</string>
+    <string name="customers_none_found">कोई ग्राहक नहीं मिला</string>
+    <string name="customers_add_typed">“%1$s” को नए ग्राहक के रूप में जोड़ें</string>
+    <string name="customers_count">%1$d ग्राहक</string>
+    <string name="filter_active">सक्रिय</string>
+    <string name="filter_to_receive">लेना है</string>
+    <string name="filter_to_pay">देना है</string>
+    <string name="filter_settled">हिसाब बराबर</string>
+    <string name="filter_deactivated">निष्क्रिय</string>
+    <string name="sort_label">क्रम</string>
+    <string name="sort_name">नाम</string>
+    <string name="sort_receivable">सबसे ज़्यादा लेना</string>
+    <string name="sort_payable">सबसे ज़्यादा देना</string>
+    <string name="sort_last_activity">हाल की गतिविधि</string>
+
+    <!-- Balance -->
+    <string name="balance_to_receive">लेना है %1$s</string>
+    <string name="balance_to_pay">देना है %1$s</string>
+    <string name="balance_settled">हिसाब बराबर</string>
+    <string name="customer_current_balance">मौजूदा बकाया</string>
+    <string name="customer_deactivated_badge">निष्क्रिय</string>
+    <string name="customer_last_activity">आख़िरी लेन-देन %1$s</string>
+
+    <!-- Editor -->
+    <string name="editor_add_title">ग्राहक जोड़ें</string>
+    <string name="editor_edit_title">ग्राहक बदलें</string>
+    <string name="label_customer_name">ग्राहक का नाम</string>
+    <string name="label_notes">टिप्पणी</string>
+    <string name="editor_opening_heading">शुरुआती बकाया</string>
+    <string name="editor_opening_body">अपनी बही से पुराना बकाया आगे लाएँ। अगर कुछ बकाया नहीं है तो राशि खाली छोड़ दें।</string>
+    <string name="label_opening_amount">राशि (₹)</string>
+    <string name="opening_customer_owes">ग्राहक को देना है</string>
+    <string name="opening_shop_owes">मुझे देना है</string>
+    <string name="label_opening_date">इस तारीख़ तक</string>
+    <string name="editor_duplicate_name_warning">इस नाम का एक ग्राहक पहले से है</string>
+    <string name="action_open_customer">%1$s खोलें</string>
+    <string name="action_choose_date">तारीख़ चुनें</string>
+    <string name="action_ok">ठीक है</string>
+
+    <!-- Detail -->
+    <string name="detail_transactions">लेन-देन का इतिहास</string>
+    <string name="detail_edit">बदलें</string>
+    <string name="detail_deactivate">निष्क्रिय करें</string>
+    <string name="detail_activate">सक्रिय करें</string>
+    <string name="detail_delete">हटाएँ</string>
+    <string name="detail_contact">संपर्क</string>
+    <string name="detail_no_contact">कोई मोबाइल नंबर या पता सहेजा नहीं गया।</string>
+    <string name="deactivate_title">%1$s को निष्क्रिय करें?</string>
+    <string name="deactivate_body">वे ग्राहक सूची और चुनाव सूची में नहीं दिखेंगे। उनका रिकॉर्ड रिपोर्ट और बैकअप में रहेगा, और आप उन्हें कभी भी फिर से सक्रिय कर सकते हैं।</string>
+    <string name="deactivate_outstanding">बकाया: %1$s। निष्क्रिय करने से यह राशि बराबर नहीं होती।</string>
+    <string name="delete_title">%1$s को हमेशा के लिए हटाएँ?</string>
+    <string name="delete_body">इस ग्राहक का कोई लेन-देन नहीं है। इसे वापस नहीं लाया जा सकता।</string>
+    <string name="delete_blocked_title">इस ग्राहक को हटाया नहीं जा सकता</string>
+    <string name="delete_blocked_body">%1$s के लेन-देन हैं, और हटाने से हिसाब का इतिहास खो जाएगा। इसके बजाय आप ग्राहक को निष्क्रिय कर सकते हैं।</string>
+
+    <!-- Transaction history -->
+    <string name="history_title">लेन-देन का इतिहास</string>
+    <string name="history_empty_title">अभी कोई लेन-देन नहीं</string>
+    <string name="history_empty_body">इस ग्राहक के साथ बिक्री, ख़रीद और भुगतान यहाँ दिखेंगे।</string>
+    <string name="history_balance_after">बकाया %1$s</string>
+    <string name="entry_type_opening">शुरुआती बकाया</string>
+    <string name="entry_type_sell">बिक्री</string>
+    <string name="entry_type_buy">ख़रीद</string>
+    <string name="entry_type_payment_received">भुगतान मिला</string>
+    <string name="entry_type_payment_made">भुगतान किया</string>
+
+    <!-- Validation and errors -->
+    <string name="v_customer_name_required">ग्राहक का नाम डालें</string>
+    <string name="v_notes_too_long">बहुत लंबा है (अधिकतम 500 अक्षर)</string>
+    <string name="v_amount">सही राशि डालें</string>
+    <string name="v_date_future">तारीख़ भविष्य की नहीं हो सकती</string>
+    <string name="v_date_invalid">सही तारीख़ डालें</string>
+    <string name="error_duplicate_mobile">यह मोबाइल नंबर %1$s का है</string>
+    <string name="error_customer_has_entries">इस ग्राहक के लेन-देन हैं, इसलिए इसे हटाया नहीं जा सकता। इसके बजाय निष्क्रिय करें।</string>
+</resources>

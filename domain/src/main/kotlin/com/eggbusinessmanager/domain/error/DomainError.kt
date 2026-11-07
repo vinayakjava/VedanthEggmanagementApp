@@ -35,6 +35,12 @@ sealed interface DomainError {
 
     data object NotFound : DomainError
 
+    /** Another customer (active or deactivated) already has this mobile number (FR-016). */
+    data class DuplicateMobile(val customerId: Long, val customerName: String) : DomainError
+
+    /** The customer has ledger entries, so it can only be deactivated, never deleted (US2-6). */
+    data object CustomerHasEntries : DomainError
+
     /** The device does not have enough free storage to complete the operation. */
     data object LowStorage : DomainError
 

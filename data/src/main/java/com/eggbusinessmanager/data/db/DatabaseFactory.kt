@@ -47,6 +47,7 @@ object DatabaseFactory {
             .openHelperFactory(SupportOpenHelperFactory(sqlCipherRawKey(key)))
             .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
             .addCallback(ForeignKeysCallback)
+            .addCallback(SchemaCallback)
             .build()
     }
 

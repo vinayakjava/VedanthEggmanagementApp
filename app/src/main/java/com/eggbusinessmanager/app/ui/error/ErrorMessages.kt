@@ -13,22 +13,29 @@ import com.eggbusinessmanager.domain.model.StartupState
  */
 object ErrorMessages {
 
-    fun forError(error: DomainError): UiText = UiText.Resource(
-        when (error) {
-            is DomainError.Validation -> R.string.error_validation
-            DomainError.InvalidCredentials -> R.string.error_invalid_credentials
-            DomainError.IncorrectPassword -> R.string.error_incorrect_password
-            DomainError.IncorrectRecoveryPin -> R.string.error_incorrect_recovery_pin
-            DomainError.IncorrectSecurityAnswers -> R.string.error_incorrect_answers
-            is DomainError.Locked -> R.string.error_locked
-            DomainError.AccountAlreadyExists -> R.string.error_account_exists
-            DomainError.NoAccount -> R.string.error_no_account
-            DomainError.NotFound -> R.string.error_not_found
-            DomainError.LowStorage -> R.string.error_low_storage
-            DomainError.StorageUnavailable -> R.string.error_storage_unavailable
-            is DomainError.Unexpected -> R.string.error_generic
-        },
-    )
+    fun forError(error: DomainError): UiText = when (error) {
+        is DomainError.DuplicateMobile -> UiText.Resource(R.string.error_duplicate_mobile, listOf(error.customerName))
+        else -> UiText.Resource(simpleMessage(error))
+    }
+
+    @Suppress("CyclomaticComplexMethod") // A flat lookup table; splitting it would hide the mapping.
+    @StringRes
+    private fun simpleMessage(error: DomainError): Int = when (error) {
+        is DomainError.Validation -> R.string.error_validation
+        DomainError.InvalidCredentials -> R.string.error_invalid_credentials
+        DomainError.IncorrectPassword -> R.string.error_incorrect_password
+        DomainError.IncorrectRecoveryPin -> R.string.error_incorrect_recovery_pin
+        DomainError.IncorrectSecurityAnswers -> R.string.error_incorrect_answers
+        is DomainError.Locked -> R.string.error_locked
+        DomainError.AccountAlreadyExists -> R.string.error_account_exists
+        DomainError.NoAccount -> R.string.error_no_account
+        DomainError.NotFound -> R.string.error_not_found
+        is DomainError.DuplicateMobile -> R.string.error_duplicate_mobile
+        DomainError.CustomerHasEntries -> R.string.error_customer_has_entries
+        DomainError.LowStorage -> R.string.error_low_storage
+        DomainError.StorageUnavailable -> R.string.error_storage_unavailable
+        is DomainError.Unexpected -> R.string.error_generic
+    }
 
     /** Inline message for one invalid field (spec § Validation Rules). */
     fun forField(field: Field, code: ValidationCode): UiText = UiText.Resource(fieldMessage(field, code))
@@ -70,6 +77,10 @@ object ErrorMessages {
             ValidationCode.ANSWER_EQUALS_PASSWORD -> R.string.v_answer_equals_password
             else -> R.string.v_answer_short
         }
+        Field.CUSTOMER_NAME -> if (code == ValidationCode.REQUIRED) R.string.v_customer_name_required else R.string.v_name_length
+        Field.NOTES -> R.string.v_notes_too_long
+        Field.OPENING_AMOUNT -> R.string.v_amount
+        Field.OPENING_DATE -> if (code == ValidationCode.DATE_IN_FUTURE) R.string.v_date_future else R.string.v_date_invalid
     }
 
     @StringRes

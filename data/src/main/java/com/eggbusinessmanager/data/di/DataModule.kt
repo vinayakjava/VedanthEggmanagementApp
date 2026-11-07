@@ -9,7 +9,10 @@ import com.eggbusinessmanager.data.db.DatabaseFactory
 import com.eggbusinessmanager.data.db.EggBusinessDatabase
 import com.eggbusinessmanager.data.db.RoomTransactionRunner
 import com.eggbusinessmanager.data.repository.RoomAccountRepository
+import com.eggbusinessmanager.data.repository.RoomAuditRepository
 import com.eggbusinessmanager.data.repository.RoomBusinessProfileRepository
+import com.eggbusinessmanager.data.repository.RoomCustomerRepository
+import com.eggbusinessmanager.data.repository.RoomLedgerRepository
 import com.eggbusinessmanager.data.repository.RoomSettingsRepository
 import com.eggbusinessmanager.data.security.BiometricKeyManager
 import com.eggbusinessmanager.data.security.Pbkdf2SecretHasher
@@ -17,9 +20,12 @@ import com.eggbusinessmanager.data.security.DatabaseKeyProvider
 import com.eggbusinessmanager.data.time.SystemClock
 import com.eggbusinessmanager.data.time.UuidIdGenerator
 import com.eggbusinessmanager.domain.repository.AccountRepository
+import com.eggbusinessmanager.domain.repository.AuditRepository
 import com.eggbusinessmanager.domain.repository.BiometricUnlockStore
 import com.eggbusinessmanager.domain.repository.BusinessProfileRepository
 import com.eggbusinessmanager.domain.repository.Clock
+import com.eggbusinessmanager.domain.repository.CustomerRepository
+import com.eggbusinessmanager.domain.repository.LedgerRepository
 import com.eggbusinessmanager.domain.repository.SecretHasher
 import com.eggbusinessmanager.domain.repository.IdGenerator
 import com.eggbusinessmanager.domain.repository.SettingsRepository
@@ -87,4 +93,18 @@ abstract class DataBindingsModule {
 
     @Binds
     abstract fun bindIdGenerator(impl: UuidIdGenerator): IdGenerator
+}
+
+/** Business data: customers, the ledger and the audit trail. */
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class BusinessDataBindingsModule {
+    @Binds
+    abstract fun bindCustomerRepository(impl: RoomCustomerRepository): CustomerRepository
+
+    @Binds
+    abstract fun bindLedgerRepository(impl: RoomLedgerRepository): LedgerRepository
+
+    @Binds
+    abstract fun bindAuditRepository(impl: RoomAuditRepository): AuditRepository
 }

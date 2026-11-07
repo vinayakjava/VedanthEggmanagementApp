@@ -22,6 +22,11 @@ import kotlinx.serialization.Serializable
 @Serializable data object ReportsRoute
 @Serializable data object MoreRoute
 
+/** Customers (US2). `customerId = 0` opens the editor for a new customer; `prefill` is text typed in search. */
+@Serializable data class CustomerDetailRoute(val customerId: Long)
+@Serializable data class CustomerEditorRoute(val customerId: Long = 0, val prefill: String = "")
+@Serializable data class CustomerHistoryRoute(val customerId: Long)
+
 /** Settings reached from More. */
 @Serializable data object SecurityRoute
 @Serializable data object ChangePasswordRoute

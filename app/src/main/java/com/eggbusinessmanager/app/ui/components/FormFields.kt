@@ -74,6 +74,7 @@ fun FormTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     trailingIcon: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
+    readOnly: Boolean = false,
 ) {
     val errorText = error?.asString()
     OutlinedTextField(
@@ -93,6 +94,7 @@ fun FormTextField(
         visualTransformation = visualTransformation,
         trailingIcon = trailingIcon,
         enabled = enabled,
+        readOnly = readOnly,
     )
 }
 

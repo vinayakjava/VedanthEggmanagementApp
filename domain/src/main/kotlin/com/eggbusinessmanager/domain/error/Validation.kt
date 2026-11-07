@@ -20,6 +20,10 @@ enum class Field {
     SECURITY_ANSWER_1,
     SECURITY_ANSWER_2,
     SECURITY_ANSWER_3,
+    CUSTOMER_NAME,
+    NOTES,
+    OPENING_AMOUNT,
+    OPENING_DATE,
     ;
 
     companion object {
@@ -41,6 +45,8 @@ enum class ValidationCode {
     DUPLICATE_QUESTIONS,
     ANSWERS_ALL_SAME,
     ANSWER_EQUALS_PASSWORD,
+    DATE_IN_FUTURE,
+    DATE_TOO_EARLY,
 }
 
 /** Collects field errors, keeping only the first error per field, in the order fields were checked. */

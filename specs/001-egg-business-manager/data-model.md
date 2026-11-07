@@ -293,8 +293,8 @@ sort_order INTEGER. Exactly one row has `is_default = 1` and at least one row is
 | id | INTEGER PK | |
 | entity_type | TEXT | `LEDGER_ENTRY` \| `CUSTOMER` \| `UNIT` \| `VARIETY` \| `ACCOUNT` \| `PROFILE` |
 | entity_id | INTEGER | root_entry_id for entries; customer id, etc. |
-| customer_id | INTEGER NULL | FK → customer; customer-related actions (both customers for a customer change get rows) |
-| action | TEXT | `CREATE` \| `EDIT` \| `VOID` \| `TYPE_CHANGE` \| `CUSTOMER_CHANGE` \| `OPENING_CHANGE` \| `ARCHIVE` \| `UNARCHIVE` \| `UNIT_RESIZE` \| `RENAME` \| `PASSWORD_CHANGE` \| `RECOVERY` |
+| customer_id | INTEGER NULL | FK → customer `ON DELETE SET NULL`; customer-related actions (both customers for a customer change get rows). SET NULL rather than RESTRICT so an unused customer stays deletable; the deleted customer's id remains in `entity_id` and a `DELETE` row is written |
+| action | TEXT | `CREATE` \| `DELETE` \| `EDIT` \| `VOID` \| `TYPE_CHANGE` \| `CUSTOMER_CHANGE` \| `OPENING_CHANGE` \| `ARCHIVE` \| `UNARCHIVE` \| `UNIT_RESIZE` \| `RENAME` \| `PASSWORD_CHANGE` \| `RECOVERY` |
 | before_json / after_json | TEXT NULL | kotlinx.serialization snapshots of business fields only (never secrets) |
 | reason | TEXT NULL | ≤ 200 |
 | at | INTEGER | |

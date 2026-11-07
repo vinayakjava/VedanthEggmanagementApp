@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Customer list -->
+    <string name="customers_search_hint">Search name or mobile</string>
+    <string name="customers_add">Add customer</string>
+    <string name="customers_empty_title">No customers yet</string>
+    <string name="customers_empty_body">Add the people and shops you buy eggs from or sell eggs to. One customer can be both.</string>
+    <string name="customers_none_found">No customers found</string>
+    <string name="customers_add_typed">Add “%1$s” as new customer</string>
+    <string name="customers_count">%1$d customers</string>
+    <string name="filter_active">Active</string>
+    <string name="filter_to_receive">To receive</string>
+    <string name="filter_to_pay">To pay</string>
+    <string name="filter_settled">Settled</string>
+    <string name="filter_deactivated">Deactivated</string>
+    <string name="sort_label">Sort</string>
+    <string name="sort_name">Name</string>
+    <string name="sort_receivable">Highest to receive</string>
+    <string name="sort_payable">Highest to pay</string>
+    <string name="sort_last_activity">Recent activity</string>
+
+    <!-- Balance -->
+    <string name="balance_to_receive">To receive %1$s</string>
+    <string name="balance_to_pay">To pay %1$s</string>
+    <string name="balance_settled">Settled</string>
+    <string name="customer_current_balance">Current balance</string>
+    <string name="customer_deactivated_badge">Deactivated</string>
+    <string name="customer_last_activity">Last activity %1$s</string>
+
+    <!-- Editor -->
+    <string name="editor_add_title">Add customer</string>
+    <string name="editor_edit_title">Edit customer</string>
+    <string name="label_customer_name">Customer name</string>
+    <string name="label_notes">Notes</string>
+    <string name="editor_opening_heading">Opening balance</string>
+    <string name="editor_opening_body">Carry over dues from your paper book. Leave the amount empty if there are none.</string>
+    <string name="label_opening_amount">Amount (₹)</string>
+    <string name="opening_customer_owes">Customer owes me</string>
+    <string name="opening_shop_owes">I owe customer</string>
+    <string name="label_opening_date">As of date</string>
+    <string name="editor_duplicate_name_warning">A customer with this name already exists</string>
+    <string name="action_open_customer">Open %1$s</string>
+    <string name="action_choose_date">Choose date</string>
+    <string name="action_ok">OK</string>
+
+    <!-- Detail -->
+    <string name="detail_transactions">Transaction history</string>
+    <string name="detail_edit">Edit</string>
+    <string name="detail_deactivate">Deactivate</string>
+    <string name="detail_activate">Activate</string>
+    <string name="detail_delete">Delete</string>
+    <string name="detail_contact">Contact</string>
+    <string name="detail_no_contact">No mobile number or address saved.</string>
+    <string name="deactivate_title">Deactivate %1$s?</string>
+    <string name="deactivate_body">They will be hidden from the customer list and pickers. Their records stay in reports and backups, and you can activate them again at any time.</string>
+    <string name="deactivate_outstanding">Outstanding: %1$s. Deactivating does not settle this amount.</string>
+    <string name="delete_title">Delete %1$s permanently?</string>
+    <string name="delete_body">This customer has no transactions. This cannot be undone.</string>
+    <string name="delete_blocked_title">This customer can\'t be deleted</string>
+    <string name="delete_blocked_body">%1$s has transactions, and deleting would lose financial history. You can deactivate the customer instead.</string>
+
+    <!-- Transaction history -->
+    <string name="history_title">Transaction history</string>
+    <string name="history_empty_title">No transactions yet</string>
+    <string name="history_empty_body">Sales, purchases and payments with this customer will appear here.</string>
+    <string name="history_balance_after">Balance %1$s</string>
+    <string name="entry_type_opening">Opening balance</string>
+    <string name="entry_type_sell">Sale</string>
+    <string name="entry_type_buy">Purchase</string>
+    <string name="entry_type_payment_received">Payment received</string>
+    <string name="entry_type_payment_made">Payment made</string>
+
+    <!-- Validation and errors -->
+    <string name="v_customer_name_required">Enter the customer\'s name</string>
+    <string name="v_notes_too_long">Too long (max 500 characters)</string>
+    <string name="v_amount">Enter a valid amount</string>
+    <string name="v_date_future">Date cannot be in the future</string>
+    <string name="v_date_invalid">Enter a valid date</string>
+    <string name="error_duplicate_mobile">This mobile number belongs to %1$s</string>
+    <string name="error_customer_has_entries">This customer has transactions and can\'t be deleted. Deactivate them instead.</string>
+</resources>

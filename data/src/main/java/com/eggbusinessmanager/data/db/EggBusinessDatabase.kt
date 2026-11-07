@@ -4,7 +4,14 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.eggbusinessmanager.data.db.dao.AccountDao
 import com.eggbusinessmanager.data.db.dao.AppSettingDao
+import com.eggbusinessmanager.data.db.dao.AuditLogDao
+import com.eggbusinessmanager.data.db.dao.CustomerDao
+import com.eggbusinessmanager.data.db.dao.LedgerEntryDao
 import com.eggbusinessmanager.data.db.entity.AppSettingEntity
+import com.eggbusinessmanager.data.db.entity.AuditLogEntity
+import com.eggbusinessmanager.data.db.entity.CustomerEntity
+import com.eggbusinessmanager.data.db.entity.LedgerEntryEntity
+import com.eggbusinessmanager.data.db.entity.ReferenceSequenceEntity
 import com.eggbusinessmanager.data.db.entity.BusinessProfileEntity
 import com.eggbusinessmanager.data.db.entity.OwnerAccountEntity
 import com.eggbusinessmanager.data.db.entity.SecurityAnswerEntity
@@ -26,6 +33,10 @@ import com.eggbusinessmanager.data.db.entity.SecurityAnswerEntity
         OwnerAccountEntity::class,
         SecurityAnswerEntity::class,
         BusinessProfileEntity::class,
+        CustomerEntity::class,
+        LedgerEntryEntity::class,
+        AuditLogEntity::class,
+        ReferenceSequenceEntity::class,
     ],
     version = EggBusinessDatabase.VERSION,
     exportSchema = true,
@@ -33,6 +44,9 @@ import com.eggbusinessmanager.data.db.entity.SecurityAnswerEntity
 abstract class EggBusinessDatabase : RoomDatabase() {
     abstract fun appSettingDao(): AppSettingDao
     abstract fun accountDao(): AccountDao
+    abstract fun customerDao(): CustomerDao
+    abstract fun ledgerEntryDao(): LedgerEntryDao
+    abstract fun auditLogDao(): AuditLogDao
 
     companion object {
         const val VERSION = 1

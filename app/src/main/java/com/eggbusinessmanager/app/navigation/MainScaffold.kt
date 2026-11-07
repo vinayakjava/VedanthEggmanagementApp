@@ -20,6 +20,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.eggbusinessmanager.app.R
+import com.eggbusinessmanager.app.feature.customers.detail.CustomerDetailScreen
+import com.eggbusinessmanager.app.feature.customers.editor.CustomerEditorScreen
+import com.eggbusinessmanager.app.feature.customers.history.CustomerHistoryScreen
+import com.eggbusinessmanager.app.feature.customers.list.CustomersScreen
 import com.eggbusinessmanager.app.feature.settings.MoreScreen
 import com.eggbusinessmanager.app.feature.settings.security.ChangePasswordScreen
 import com.eggbusinessmanager.app.feature.settings.security.ChangeRecoveryPinScreen
@@ -64,7 +68,38 @@ fun MainScaffold(
             modifier = Modifier.fillMaxSize(),
         ) {
             composable<DashboardRoute> { SectionPlaceholder(TopLevelDestination.DASHBOARD) }
-            composable<CustomersRoute> { SectionPlaceholder(TopLevelDestination.CUSTOMERS) }
+            composable<CustomersRoute> {
+                CustomersScreen(
+                    onOpenCustomer = { navController.navigate(CustomerDetailRoute(it)) },
+                    onAddCustomer = { prefill -> navController.navigate(CustomerEditorRoute(prefill = prefill)) },
+                )
+            }
+            composable<CustomerDetailRoute> {
+                CustomerDetailScreen(
+                    onEdit = { navController.navigate(CustomerEditorRoute(customerId = it)) },
+                    onHistory = { navController.navigate(CustomerHistoryRoute(it)) },
+                    onBack = navController::popBackStack,
+                )
+            }
+            composable<CustomerEditorRoute> {
+                CustomerEditorScreen(
+                    onSaved = { id, isNew ->
+                        if (isNew) {
+                            // Replace the editor with the new customer's detail.
+                            navController.navigate(CustomerDetailRoute(id)) {
+                                popUpTo<CustomerEditorRoute> { inclusive = true }
+                            }
+                        } else {
+                            navController.popBackStack()
+                        }
+                    },
+                    onOpenCustomer = { id ->
+                        navController.navigate(CustomerDetailRoute(id)) { popUpTo<CustomerEditorRoute> { inclusive = true } }
+                    },
+                    onBack = navController::popBackStack,
+                )
+            }
+            composable<CustomerHistoryRoute> { CustomerHistoryScreen(onBack = navController::popBackStack) }
             composable<TransactionsRoute> { SectionPlaceholder(TopLevelDestination.TRANSACTIONS) }
             composable<ReportsRoute> { SectionPlaceholder(TopLevelDestination.REPORTS) }
             composable<MoreRoute> { MoreScreen(onSecurity = { navController.navigate(SecurityRoute) }) }
