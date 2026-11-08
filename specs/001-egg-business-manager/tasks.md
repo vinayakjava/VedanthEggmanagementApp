@@ -337,24 +337,24 @@ chooser opens
 
 ### Tests for User Story 7
 
-- [ ] T137 [P] [US7] Unit tests for `BuildStatementUseCase` (brought-forward per BR-012, debit/credit columns, empty period line, voided excluded) and `BuildReceiptUseCase` (content per FR-042a, voided refused, revised label) in `{domainTest}/usecase/document/StatementAndReceiptTest.kt`
-- [ ] T138 [P] [US7] JVM tests for `CsvRenderer` (BOM, RFC 4180 escaping, CRLF, ISO dates, plain amounts, Hindi text) and `XlsxRenderer` (valid ZIP parts, numeric and date cells, frozen header) in `{dataTest}/document/CsvRendererTest.kt` and `{dataTest}/document/XlsxRendererTest.kt`
-- [ ] T139 [P] [US7] Instrumented tests for `PdfRenderer` (pagination with page "x of y", shop header, Devanagari text renders, one-page receipt) in `{dataIt}/document/PdfRendererTest.kt`
+- [ ] T137 [P] [US7] Unit tests for `BuildStatementUseCase` (brought-forward per BR-012, debit/credit columns, empty period line, voided excluded) and `BuildReceiptUseCase` (content per FR-042a, voided refused, revised label) in `{domainTest}/usecase/document/StatementAndReceiptTest.kt` — *Partial (2026-11-08): Phase 7 (Reporting and export): statement tests in `{domainTest}/usecase/report/LoadReportUseCaseTest.kt` (brought forward, debit/credit, running and closing balance, quiet range, deleted excluded); receipts pending.*
+- [X] T138 [P] [US7] JVM tests for `CsvRenderer` (BOM, RFC 4180 escaping, CRLF, ISO dates, plain amounts, Hindi text) and `XlsxRenderer` (valid ZIP parts, numeric and date cells, frozen header) in `{dataTest}/document/CsvRendererTest.kt` and `{dataTest}/document/XlsxRendererTest.kt` — *As `{dataTest}/export/CsvReportWriterTest.kt` (BOM, CRLF, RFC 4180 round trip, ISO dates, plain amounts, Hindi, CSV-injection guard) and `XlsxReportWriterTest.kt` (package parts parse, typed number/date cells, styles, escaping, 1,500-row sheet).*
+- [ ] T139 [P] [US7] Instrumented tests for `PdfRenderer` (pagination with page "x of y", shop header, Devanagari text renders, one-page receipt) in `{dataIt}/document/PdfRendererTest.kt` — *Partial (2026-11-08): Phase 7 (Reporting and export): `{appUiTest}/reports/ReportExportTest.kt` renders saved PDFs with PdfRenderer (A4, ink on every page, multi-page statements); receipt layout pending.*
 - [ ] T140 [P] [US7] Instrumented tests for `IntentShareGateway` (WhatsApp package selection incl. w4b fallback, `jid` extra, chooser fallback, URI read grant) in `{dataIt}/share/IntentShareGatewayTest.kt`
 
 ### Implementation for User Story 7
 
-- [ ] T141 [P] [US7] Define the format-independent `DocumentModel` (header, sections, tables, totals, footer) in `{domain}/model/DocumentModel.kt`
-- [ ] T142 [P] [US7] Implement `CsvRenderer` in `{data}/document/csv/CsvRenderer.kt`
-- [ ] T143 [P] [US7] Implement the minimal `XlsxRenderer` (SpreadsheetML via `java.util.zip`) in `{data}/document/xlsx/XlsxRenderer.kt`
-- [ ] T144 [P] [US7] Implement `PdfRenderer` (PdfDocument + StaticLayout table engine, A4 and receipt layouts, localized context) in `{data}/document/pdf/PdfRenderer.kt` and `{data}/document/pdf/PdfTableLayout.kt`
-- [ ] T145 [US7] Implement `DocumentRendererImpl` (format dispatch, file naming per contract, writes to `cacheDir/exports`) in `{data}/document/DocumentRendererImpl.kt`
-- [ ] T146 [US7] Implement `IntentShareGateway` (FileProvider URIs, WhatsApp/w4b, chooser, SAF save, text share) in `{data}/share/IntentShareGateway.kt`
-- [ ] T147 [US7] Implement `RoomReportRepository.statement` (brought-forward + range lines) in `{data}/repository/RoomReportRepository.kt`
-- [ ] T148 [US7] Implement `BuildStatementUseCase`, `BuildReceiptUseCase`, `ExportDocumentUseCase`, `ShareDocumentUseCase`, `ShareBalanceReminderUseCase` in `{domain}/usecase/document/`
-- [ ] T149 [US7] Implement `StatementScreen` (range picker default this month, preview, export format menu, Share on WhatsApp, Save, Send balance reminder with editable text dialog) + `StatementViewModel` in `{app}/feature/statements/`
+- [X] T141 [P] [US7] Define the format-independent `DocumentModel` (header, sections, tables, totals, footer) in `{domain}/model/DocumentModel.kt` — *As `ReportDocument`/`Table`/`Cell` in `{domain}/export/ReportDocument.kt` (typed cells keep raw values for spreadsheets).*
+- [X] T142 [P] [US7] Implement `CsvRenderer` in `{data}/document/csv/CsvRenderer.kt` — *As `CsvReportWriter` in `{data}/export/`.*
+- [X] T143 [P] [US7] Implement the minimal `XlsxRenderer` (SpreadsheetML via `java.util.zip`) in `{data}/document/xlsx/XlsxRenderer.kt` — *As `XlsxReportWriter` in `{data}/export/` (no spreadsheet library).*
+- [ ] T144 [P] [US7] Implement `PdfRenderer` (PdfDocument + StaticLayout table engine, A4 and receipt layouts, localized context) in `{data}/document/pdf/PdfRenderer.kt` and `{data}/document/pdf/PdfTableLayout.kt` — *Partial (2026-11-08): Phase 7 (Reporting and export): `PdfReportWriter` (A4, letterhead, summary box, repeated table header, zebra rows, word-wrapped cells, totals row, page x of y); receipt layout pending.*
+- [ ] T145 [US7] Implement `DocumentRendererImpl` (format dispatch, file naming per contract, writes to `cacheDir/exports`) in `{data}/document/DocumentRendererImpl.kt` — *Partial (2026-11-08): Phase 7 (Reporting and export): `FileReportExporter` (format dispatch) and `ReportFileName`; files are written straight to the SAF document, no cache copy.*
+- [ ] T146 [US7] Implement `IntentShareGateway` (FileProvider URIs, WhatsApp/w4b, chooser, SAF save, text share) in `{data}/share/IntentShareGateway.kt` — *Partial (2026-11-08): Phase 7 (Reporting and export): SAF save via `CreateDocument` + `ReportFileSaver`; WhatsApp/share pending.*
+- [X] T147 [US7] Implement `RoomReportRepository.statement` (brought-forward + range lines) in `{data}/repository/RoomReportRepository.kt` — *Statement built from the customer ledger by `ReportBuilder.statement` (brought-forward + range lines).*
+- [ ] T148 [US7] Implement `BuildStatementUseCase`, `BuildReceiptUseCase`, `ExportDocumentUseCase`, `ShareDocumentUseCase`, `ShareBalanceReminderUseCase` in `{domain}/usecase/document/` — *Partial (2026-11-08): Phase 7 (Reporting and export): `LoadReportUseCase` + `ReportBuilder` for all nine reports; receipts and sharing pending.*
+- [ ] T149 [US7] Implement `StatementScreen` (range picker default this month, preview, export format menu, Share on WhatsApp, Save, Send balance reminder with editable text dialog) + `StatementViewModel` in `{app}/feature/statements/` — *Partial (2026-11-08): Phase 7 (Reporting and export): `ReportViewerScreen` (customer picker, date range defaulting to this month, preview, Save as PDF/Excel/CSV); WhatsApp share and balance reminder pending.*
 - [ ] T150 [US7] Implement `ReceiptPreviewScreen` and enable "Share receipt" on the save confirmation (T101) and on `EntryDetailScreen` in `{app}/feature/entries/receipt/`, `{app}/feature/entries/editor/SaveConfirmationSheet.kt`, `{app}/feature/entries/detail/EntryDetailScreen.kt`
-- [ ] T151 [US7] Add statement, receipt, reminder template and document label strings in English and Hindi to `{appRes}/values/strings_documents.xml` and `{appRes}/values-hi/strings_documents.xml`
+- [ ] T151 [US7] Add statement, receipt, reminder template and document label strings in English and Hindi to `{appRes}/values/strings_documents.xml` and `{appRes}/values-hi/strings_documents.xml` — *Partial (2026-11-08): Phase 7 (Reporting and export): report and document strings in `strings_exports.xml` (English and Hindi); receipt/reminder templates pending.*
 
 **Checkpoint**: customers can receive accurate statements and receipts on WhatsApp
 
@@ -370,18 +370,18 @@ calculation; export all three formats; open in viewer apps
 
 ### Tests for User Story 8
 
-- [ ] T152 [P] [US8] Unit tests for `BuildDailyReportUseCase` and `BuildMonthlyReportUseCase` (trading difference label, average price per piece by variety, payment mode breakdown, empty period) in `{domainTest}/usecase/document/ReportsTest.kt`
+- [ ] T152 [P] [US8] Unit tests for `BuildDailyReportUseCase` and `BuildMonthlyReportUseCase` (trading difference label, average price per piece by variety, payment mode breakdown, empty period) in `{domainTest}/usecase/document/ReportsTest.kt` — *Partial (2026-11-08): Phase 7 (Reporting and export): daily and monthly sales/purchase report tests (per day/month, per customer, every entry) in `LoadReportUseCaseTest.kt`; average price by variety and payment-mode breakdown pending.*
 - [ ] T153 [P] [US8] Integration tests for report aggregate queries (daily, monthly day-by-day, top 10, dues as at month end) vs `LedgerCalculator` in `{dataIt}/db/ReportQueriesTest.kt`
 - [ ] T154 [P] [US8] Test `CleanupExportsUseCase`/`CleanupWorker` deletes export files older than 24 h only, in `{dataIt}/document/ExportCleanupTest.kt`
 
 ### Implementation for User Story 8
 
-- [ ] T155 [P] [US8] Add daily/monthly/top-customer/dues-as-at queries to `{data}/db/dao/ReportDao.kt` and implement `RoomReportRepository.daily` and `monthly` in `{data}/repository/RoomReportRepository.kt`
-- [ ] T156 [US8] Implement `BuildDailyReportUseCase`, `BuildMonthlyReportUseCase`, `BuildEntryListExportUseCase`, `CleanupExportsUseCase` in `{domain}/usecase/document/`
+- [ ] T155 [P] [US8] Add daily/monthly/top-customer/dues-as-at queries to `{data}/db/dao/ReportDao.kt` and implement `RoomReportRepository.daily` and `monthly` in `{data}/repository/RoomReportRepository.kt` — *Partial (2026-11-08): Phase 7 (Reporting and export): reports reuse `ReportDao.transactions` and a new all-customer balances query; top-10 and dues-as-at-month-end pending.*
+- [ ] T156 [US8] Implement `BuildDailyReportUseCase`, `BuildMonthlyReportUseCase`, `BuildEntryListExportUseCase`, `CleanupExportsUseCase` in `{domain}/usecase/document/` — *Partial (2026-11-08): Phase 7 (Reporting and export): daily/monthly building in `ReportBuilder.tradePeriods`; cleanup not needed (no cache files).*
 - [ ] T157 [US8] Implement `CleanupWorker` (daily unique periodic work + run at app start) in `{data}/document/CleanupWorker.kt`
-- [ ] T158 [US8] Implement `ReportsScreen` (pick a day or a month), `DailyReportScreen`, `MonthlyReportScreen` with export/share/save menus + ViewModels in `{app}/feature/reports/`
+- [ ] T158 [US8] Implement `ReportsScreen` (pick a day or a month), `DailyReportScreen`, `MonthlyReportScreen` with export/share/save menus + ViewModels in `{app}/feature/reports/` — *Partial (2026-11-08): Phase 7 (Reporting and export): Reports tab lists nine reports; one viewer screen serves daily, monthly, outstanding, payment history and date-range transaction reports.*
 - [ ] T159 [US8] Add an Export action to `HistoryScreen` that exports exactly the filtered set, in `{app}/feature/history/HistoryScreen.kt`
-- [ ] T160 [US8] Add report strings in English and Hindi to `{appRes}/values/strings_documents.xml` and `{appRes}/values-hi/strings_documents.xml`
+- [X] T160 [US8] Add report strings in English and Hindi to `{appRes}/values/strings_documents.xml` and `{appRes}/values-hi/strings_documents.xml` — *In `strings_exports.xml` (English and Hindi).*
 
 **Checkpoint**: end-of-day and monthly reporting are available in all formats
 

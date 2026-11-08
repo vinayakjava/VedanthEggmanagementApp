@@ -5,6 +5,7 @@ import com.eggbusinessmanager.data.db.dao.TradeTotalRow
 import com.eggbusinessmanager.data.db.dao.TransactionRowEntity
 import com.eggbusinessmanager.data.di.IoDispatcher
 import com.eggbusinessmanager.data.mapper.toDomain
+import com.eggbusinessmanager.domain.customer.CustomerSummary
 import com.eggbusinessmanager.domain.ledger.EntryType
 import com.eggbusinessmanager.domain.money.Money
 import com.eggbusinessmanager.domain.report.DashboardSummary
@@ -71,6 +72,12 @@ class RoomReportRepository @Inject constructor(
             },
         )
     }.distinctUntilChanged().flowOn(io)
+
+    override fun observeCustomerBalances(): Flow<List<CustomerSummary>> =
+        flow { emitAll(database.get().customerDao().allSummaries()) }
+            .map { rows -> rows.map { it.toDomain() } }
+            .distinctUntilChanged()
+            .flowOn(io)
 
     private fun List<TradeTotalRow>.of(type: EntryType): TradeTotals =
         firstOrNull { it.entryType == type.name }?.let { TradeTotals(it.count, it.eggs, Money(it.valuePaise)) } ?: TradeTotals()

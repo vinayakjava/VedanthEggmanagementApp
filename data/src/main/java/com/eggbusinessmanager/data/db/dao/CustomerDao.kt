@@ -64,6 +64,19 @@ interface CustomerDao {
     )
     fun observeSummary(id: Long): Flow<CustomerSummaryRow?>
 
+    /** Every customer, deactivated included, with balance and last activity. */
+    @Query(
+        """
+        SELECT c.*, COALESCE(b.balance, 0) AS net_balance_paise, b.last_activity AS last_activity_day
+        FROM customer c
+        LEFT JOIN (
+            SELECT customer_id, SUM(balance_effect_paise) AS balance, MAX(entry_date) AS last_activity
+            FROM ledger_entry WHERE status = 'ACTIVE' GROUP BY customer_id
+        ) b ON b.customer_id = c.id
+        """,
+    )
+    fun allSummaries(): Flow<List<CustomerSummaryRow>>
+
     @Query("SELECT * FROM customer WHERE id = :id")
     suspend fun get(id: Long): CustomerEntity?
 

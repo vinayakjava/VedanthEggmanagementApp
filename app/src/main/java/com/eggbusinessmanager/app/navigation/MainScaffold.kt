@@ -27,6 +27,8 @@ import com.eggbusinessmanager.app.feature.settings.catalog.UnitsScreen
 import com.eggbusinessmanager.app.feature.settings.catalog.VarietiesScreen
 import com.eggbusinessmanager.app.feature.trade.EntryDetailScreen
 import com.eggbusinessmanager.app.feature.payment.PaymentEditorScreen
+import com.eggbusinessmanager.app.feature.reports.ReportViewerScreen
+import com.eggbusinessmanager.app.feature.reports.ReportsScreen
 import com.eggbusinessmanager.app.feature.trade.TradeEditorScreen
 import com.eggbusinessmanager.app.feature.transactions.TransactionsScreen
 import com.eggbusinessmanager.domain.ledger.EntryType
@@ -39,7 +41,6 @@ import com.eggbusinessmanager.app.feature.settings.security.ChangePasswordScreen
 import com.eggbusinessmanager.app.feature.settings.security.ChangeRecoveryPinScreen
 import com.eggbusinessmanager.app.feature.settings.security.ChangeSecurityQuestionsScreen
 import com.eggbusinessmanager.app.feature.settings.security.SecurityScreen
-import com.eggbusinessmanager.app.ui.components.EmptyState
 
 /**
  * Adaptive shell: bottom bar on phones, navigation rail on medium widths, drawer on large screens
@@ -160,7 +161,8 @@ fun MainScaffold(
             composable<UnitsRoute> { UnitsScreen(onBack = navController::popBackStack) }
             composable<VarietiesRoute> { VarietiesScreen(onBack = navController::popBackStack) }
             composable<TransactionsRoute> { TransactionsScreen(onOpenEntry = { navController.navigate(EntryDetailRoute(it)) }) }
-            composable<ReportsRoute> { SectionPlaceholder(TopLevelDestination.REPORTS) }
+            composable<ReportsRoute> { ReportsScreen(onOpen = { navController.navigate(ReportViewerRoute(it.name)) }) }
+            composable<ReportViewerRoute> { ReportViewerScreen(onBack = navController::popBackStack) }
             composable<MoreRoute> {
                 MoreScreen(
                     onSecurity = { navController.navigate(SecurityRoute) },
@@ -212,15 +214,5 @@ private fun RecoveryReviewDialog(onReview: () -> Unit, onLater: () -> Unit) {
         text = { Text(stringResource(R.string.recovery_review_body)) },
         confirmButton = { TextButton(onClick = onReview) { Text(stringResource(R.string.recovery_review_now)) } },
         dismissButton = { TextButton(onClick = onLater) { Text(stringResource(R.string.recovery_review_later)) } },
-    )
-}
-
-/** Shown until each business module is implemented (later phases). */
-@Composable
-private fun SectionPlaceholder(destination: TopLevelDestination) {
-    EmptyState(
-        title = stringResource(destination.labelRes),
-        body = stringResource(R.string.placeholder_body),
-        iconRes = destination.iconRes,
     )
 }

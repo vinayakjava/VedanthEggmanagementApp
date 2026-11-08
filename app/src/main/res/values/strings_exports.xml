@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Report names and one-line descriptions (Phase 7) -->
+    <string name="rk_statement">Customer statement</string>
+    <string name="rk_statement_desc">Opening balance, every entry, running and closing balance</string>
+    <string name="rk_daily_sales">Daily sales</string>
+    <string name="rk_daily_sales_desc">Sales per day, per customer and every sale</string>
+    <string name="rk_daily_purchases">Daily purchases</string>
+    <string name="rk_daily_purchases_desc">Purchases per day, per supplier and every purchase</string>
+    <string name="rk_monthly_sales">Monthly sales</string>
+    <string name="rk_monthly_sales_desc">Sales per month and per customer</string>
+    <string name="rk_monthly_purchases">Monthly purchases</string>
+    <string name="rk_monthly_purchases_desc">Purchases per month and per supplier</string>
+    <string name="rk_receivables">Outstanding receivables</string>
+    <string name="rk_receivables_desc">Customers who owe you, largest first</string>
+    <string name="rk_payables">Outstanding payables</string>
+    <string name="rk_payables_desc">Customers you owe, largest first</string>
+    <string name="rk_payments">Payment history</string>
+    <string name="rk_payments_desc">Every payment received and made</string>
+    <string name="rk_transactions">Transaction report</string>
+    <string name="rk_transactions_desc">All sales, purchases and payments in a date range</string>
+
+    <!-- Viewer -->
+    <string name="rv_choose_customer">Choose a customer to see the statement.</string>
+    <string name="rv_customer">Customer</string>
+    <string name="rv_export_pdf">PDF</string>
+    <string name="rv_export_xlsx">Excel</string>
+    <string name="rv_export_csv">CSV</string>
+    <string name="rv_saved">Saved %1$s</string>
+    <string name="rv_save_failed">Could not save the file. Try another folder.</string>
+    <string name="rv_export_heading">Save as</string>
+
+    <!-- Document text -->
+    <string name="doc_generated">Generated %1$s · Egg Business Manager</string>
+    <string name="doc_period">Period: %1$s – %2$s</string>
+    <string name="doc_period_from">Period: from %1$s</string>
+    <string name="doc_period_to">Period: up to %1$s</string>
+    <string name="doc_period_all">Period: all dates</string>
+    <string name="doc_as_of">As of %1$s</string>
+    <string name="doc_customer">Customer: %1$s</string>
+    <string name="doc_customer_mobile">Customer: %1$s · %2$s</string>
+    <string name="doc_all_customers">All customers</string>
+    <string name="doc_opening">Opening balance</string>
+    <string name="doc_closing">Closing balance</string>
+    <string name="doc_brought_forward">Balance brought forward</string>
+    <string name="doc_total">Total</string>
+    <string name="doc_total_value">Total value</string>
+    <string name="doc_entries">Entries</string>
+    <string name="doc_eggs">Eggs</string>
+    <string name="doc_customers">Customers</string>
+    <string name="doc_net">Net (received − paid)</string>
+    <string name="doc_none">Nothing in this period.</string>
+    <string name="doc_none_due">No outstanding balances.</string>
+    <string name="doc_col_date">Date</string>
+    <string name="doc_col_month">Month</string>
+    <string name="doc_col_ref">Ref.</string>
+    <string name="doc_col_particulars">Particulars</string>
+    <string name="doc_col_debit">Debit</string>
+    <string name="doc_col_credit">Credit</string>
+    <string name="doc_col_balance">Balance</string>
+    <string name="doc_col_customer">Customer</string>
+    <string name="doc_col_mobile">Mobile</string>
+    <string name="doc_col_last_activity">Last activity</string>
+    <string name="doc_col_amount">Amount</string>
+    <string name="doc_col_variety">Variety</string>
+    <string name="doc_col_quantity">Quantity</string>
+    <string name="doc_col_rate">Rate</string>
+    <string name="doc_col_type">Type</string>
+    <string name="doc_col_mode">Mode</string>
+    <string name="doc_col_payment_ref">Reference no.</string>
+    <string name="doc_col_received">Received</string>
+    <string name="doc_col_paid">Paid</string>
+    <string name="doc_col_details">Details</string>
+    <string name="doc_by_day">By day</string>
+    <string name="doc_by_month">By month</string>
+    <string name="doc_by_customer">By customer</string>
+    <string name="doc_all_entries">All entries</string>
+    <string name="doc_dr">%1$s Dr</string>
+    <string name="doc_cr">%1$s Cr</string>
+    <string name="doc_statement_note">Dr: the customer owes you. Cr: you owe the customer. Debits are sales and payments you made; credits are purchases and payments you received.</string>
+    <string name="doc_quantity">%1$s %2$s (%3$s eggs)</string>
+</resources>

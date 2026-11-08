@@ -35,6 +35,9 @@ import kotlinx.serialization.Serializable
 @Serializable data class EntryDetailRoute(val rootId: Long)
 
 /** Receive payment / Pay customer (US4). `type` is PAYMENT_RECEIVED or PAYMENT_MADE; ids as for trades. */
+/** One report (Phase 7). `kind` is a ReportKind name; `customerId` > 0 pre-selects a customer. */
+@Serializable data class ReportViewerRoute(val kind: String, val customerId: Long = 0)
+
 @Serializable data class PaymentEditorRoute(val type: String, val customerId: Long = 0, val rootId: Long = 0)
 
 /** Settings reached from More. */

@@ -13,6 +13,8 @@ import com.eggbusinessmanager.data.repository.RoomAuditRepository
 import com.eggbusinessmanager.data.repository.RoomBusinessProfileRepository
 import com.eggbusinessmanager.data.repository.RoomCatalogRepository
 import com.eggbusinessmanager.data.repository.RoomReportRepository
+import com.eggbusinessmanager.data.export.FileReportExporter
+import com.eggbusinessmanager.domain.export.ReportExporter
 import com.eggbusinessmanager.data.repository.RoomCustomerRepository
 import com.eggbusinessmanager.data.repository.RoomLedgerRepository
 import com.eggbusinessmanager.data.repository.RoomSettingsRepository
@@ -117,4 +119,7 @@ abstract class BusinessDataBindingsModule {
 
     @Binds
     abstract fun bindReportRepository(impl: RoomReportRepository): ReportRepository
+
+    @Binds
+    abstract fun bindReportExporter(impl: FileReportExporter): ReportExporter
 }

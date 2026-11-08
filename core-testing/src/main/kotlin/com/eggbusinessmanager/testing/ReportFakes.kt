@@ -1,5 +1,8 @@
 package com.eggbusinessmanager.testing
 
+import com.eggbusinessmanager.domain.customer.CustomerSummary
+import com.eggbusinessmanager.domain.ledger.EntryStatus
+import com.eggbusinessmanager.domain.ledger.LedgerCalculator
 import com.eggbusinessmanager.domain.report.DashboardCalculator
 import com.eggbusinessmanager.domain.report.DashboardSummary
 import com.eggbusinessmanager.domain.report.TransactionFilter
@@ -23,4 +26,12 @@ class FakeReportRepository(
 
     override fun observeDashboard(today: LocalDate, recentLimit: Int): Flow<DashboardSummary> =
         combine(customers.customers, ledger.rows) { list, rows -> DashboardCalculator.of(list, rows, today, recentLimit) }
+
+    override fun observeCustomerBalances(): Flow<List<CustomerSummary>> =
+        combine(customers.customers, ledger.rows) { list, rows ->
+            list.map { c ->
+                val mine = rows.filter { it.customerId == c.id }
+                CustomerSummary(c, LedgerCalculator.balance(mine), mine.filter { it.status == EntryStatus.ACTIVE }.maxOfOrNull { it.date })
+            }
+        }
 }

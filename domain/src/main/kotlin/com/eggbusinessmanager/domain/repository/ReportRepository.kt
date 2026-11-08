@@ -1,5 +1,6 @@
 package com.eggbusinessmanager.domain.repository
 
+import com.eggbusinessmanager.domain.customer.CustomerSummary
 import com.eggbusinessmanager.domain.report.DashboardSummary
 import com.eggbusinessmanager.domain.report.TransactionFilter
 import com.eggbusinessmanager.domain.report.TransactionRow
@@ -13,4 +14,7 @@ interface ReportRepository {
 
     /** The dashboard as [com.eggbusinessmanager.domain.report.DashboardCalculator] defines it. */
     fun observeDashboard(today: LocalDate, recentLimit: Int): Flow<DashboardSummary>
+
+    /** Every customer, active or deactivated, with its balance (for outstanding reports). */
+    fun observeCustomerBalances(): Flow<List<CustomerSummary>>
 }
