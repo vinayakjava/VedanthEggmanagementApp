@@ -26,7 +26,9 @@ import com.eggbusinessmanager.app.feature.dashboard.DashboardScreen
 import com.eggbusinessmanager.app.feature.settings.catalog.UnitsScreen
 import com.eggbusinessmanager.app.feature.settings.catalog.VarietiesScreen
 import com.eggbusinessmanager.app.feature.trade.EntryDetailScreen
+import com.eggbusinessmanager.app.feature.payment.PaymentEditorScreen
 import com.eggbusinessmanager.app.feature.trade.TradeEditorScreen
+import com.eggbusinessmanager.app.feature.transactions.TransactionsScreen
 import com.eggbusinessmanager.domain.ledger.EntryType
 import com.eggbusinessmanager.app.feature.customers.detail.CustomerDetailScreen
 import com.eggbusinessmanager.app.feature.customers.editor.CustomerEditorScreen
@@ -79,6 +81,10 @@ fun MainScaffold(
                 DashboardScreen(
                     onSell = { navController.navigate(TradeEditorRoute(EntryType.SELL.name)) },
                     onBuy = { navController.navigate(TradeEditorRoute(EntryType.BUY.name)) },
+                    onReceive = { navController.navigate(PaymentEditorRoute(EntryType.PAYMENT_RECEIVED.name)) },
+                    onPay = { navController.navigate(PaymentEditorRoute(EntryType.PAYMENT_MADE.name)) },
+                    onOpenEntry = { navController.navigate(EntryDetailRoute(it)) },
+                    onSeeAll = { navController.navigateToTopLevel(TransactionsRoute) },
                 )
             }
             composable<CustomersRoute> {
@@ -92,6 +98,7 @@ fun MainScaffold(
                     onEdit = { navController.navigate(CustomerEditorRoute(customerId = it)) },
                     onHistory = { navController.navigate(CustomerHistoryRoute(it)) },
                     onTrade = { id, type -> navController.navigate(TradeEditorRoute(type.name, customerId = id)) },
+                    onPayment = { id, type -> navController.navigate(PaymentEditorRoute(type.name, customerId = id)) },
                     onBack = navController::popBackStack,
                 )
             }
@@ -130,15 +137,29 @@ fun MainScaffold(
                     onClose = navController::popBackStack,
                 )
             }
+            composable<PaymentEditorRoute> { entry ->
+                val newCustomerId by entry.savedStateHandle.getStateFlow<Long?>(NEW_CUSTOMER_KEY, null).collectAsStateWithLifecycle()
+                PaymentEditorScreen(
+                    newCustomerId = newCustomerId,
+                    onNewCustomerConsumed = { entry.savedStateHandle[NEW_CUSTOMER_KEY] = null },
+                    onAddCustomer = { prefill -> navController.navigate(CustomerEditorRoute(prefill = prefill, returnToPicker = true)) },
+                    onClose = navController::popBackStack,
+                )
+            }
             composable<EntryDetailRoute> {
                 EntryDetailScreen(
-                    onEdit = { rootId, type -> navController.navigate(TradeEditorRoute(type.name, rootId = rootId)) },
+                    onEdit = { rootId, type ->
+                        val isPayment = type == EntryType.PAYMENT_RECEIVED || type == EntryType.PAYMENT_MADE
+                        navController.navigate(
+                            if (isPayment) PaymentEditorRoute(type.name, rootId = rootId) else TradeEditorRoute(type.name, rootId = rootId),
+                        )
+                    },
                     onBack = navController::popBackStack,
                 )
             }
             composable<UnitsRoute> { UnitsScreen(onBack = navController::popBackStack) }
             composable<VarietiesRoute> { VarietiesScreen(onBack = navController::popBackStack) }
-            composable<TransactionsRoute> { SectionPlaceholder(TopLevelDestination.TRANSACTIONS) }
+            composable<TransactionsRoute> { TransactionsScreen(onOpenEntry = { navController.navigate(EntryDetailRoute(it)) }) }
             composable<ReportsRoute> { SectionPlaceholder(TopLevelDestination.REPORTS) }
             composable<MoreRoute> {
                 MoreScreen(

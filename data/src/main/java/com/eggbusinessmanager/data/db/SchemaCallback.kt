@@ -41,6 +41,11 @@ object SchemaCallback : RoomDatabase.Callback() {
           OR (NEW.entry_type NOT IN ('SELL', 'BUY') AND (
                 NEW.variety_id IS NOT NULL OR NEW.unit_id IS NOT NULL OR NEW.quantity_milli IS NOT NULL
                 OR NEW.pieces_per_unit_snapshot IS NOT NULL OR NEW.pieces IS NOT NULL OR NEW.price_per_unit_paise IS NOT NULL))
+          OR (NEW.entry_type IN ('PAYMENT_RECEIVED', 'PAYMENT_MADE') AND (
+                NEW.payment_mode IS NULL OR NEW.payment_mode NOT IN ('CASH', 'UPI', 'BANK_TRANSFER', 'CHEQUE', 'OTHER')
+                OR length(NEW.payment_reference) > 50))
+          OR (NEW.entry_type NOT IN ('PAYMENT_RECEIVED', 'PAYMENT_MADE') AND (
+                NEW.payment_mode IS NOT NULL OR NEW.payment_reference IS NOT NULL))
           OR NEW.balance_effect_paise IS NOT CASE
                 WHEN NEW.entry_type IN ('SELL', 'PAYMENT_MADE') THEN NEW.amount_paise
                 WHEN NEW.entry_type IN ('BUY', 'PAYMENT_RECEIVED') THEN -NEW.amount_paise
@@ -59,6 +64,7 @@ object SchemaCallback : RoomDatabase.Callback() {
           OR NEW.quantity_milli IS NOT OLD.quantity_milli OR NEW.pieces_per_unit_snapshot IS NOT OLD.pieces_per_unit_snapshot
           OR NEW.pieces IS NOT OLD.pieces OR NEW.price_per_unit_paise IS NOT OLD.price_per_unit_paise
           OR NEW.remarks IS NOT OLD.remarks OR NEW.client_request_id IS NOT OLD.client_request_id
+          OR NEW.payment_mode IS NOT OLD.payment_mode OR NEW.payment_reference IS NOT OLD.payment_reference
           OR (OLD.status <> 'ACTIVE' AND NEW.status IS NOT OLD.status)
           OR (OLD.root_entry_id > 0 AND NEW.root_entry_id IS NOT OLD.root_entry_id)
         BEGIN SELECT RAISE(ABORT, 'ledger_entry rows are append-only'); END

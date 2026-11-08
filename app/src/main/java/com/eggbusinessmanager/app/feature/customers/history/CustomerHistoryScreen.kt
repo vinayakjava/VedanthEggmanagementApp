@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -36,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.eggbusinessmanager.app.R
+import com.eggbusinessmanager.app.feature.payment.modeLabel
 import com.eggbusinessmanager.app.navigation.CustomerHistoryRoute
 import com.eggbusinessmanager.app.ui.components.BalanceHeadline
 import com.eggbusinessmanager.app.ui.components.EmptyState
@@ -75,13 +81,15 @@ class CustomerHistoryViewModel @Inject constructor(
 }
 
 /**
- * The customer's transaction history (FR-029): every active entry oldest first, with the running
- * balance after each one. Shows opening balances now; sales, purchases and payments as they arrive.
+ * The customer ledger (FR-029, US4-5): per-type totals and the closing balance, then every active entry
+ * with the running balance after it, newest first; "Payments" shows the complete payment history.
+ * Every figure is derived from the stored entries, so corrections are reflected immediately.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomerHistoryScreen(onOpenEntry: (Long) -> Unit, onBack: () -> Unit, viewModel: CustomerHistoryViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    var paymentsOnly by rememberSaveable { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -113,24 +121,56 @@ fun CustomerHistoryScreen(onOpenEntry: (Long) -> Unit, onBack: () -> Unit, viewM
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    item {
-                        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)) {
-                            Column(Modifier.fillMaxWidth().padding(16.dp)) {
-                                Text(stringResource(R.string.customer_current_balance), style = MaterialTheme.typography.labelLarge)
-                                BalanceHeadline(Balance.of(ledger.balance))
-                            }
-                        }
-                    }
+                    item { TotalsCard(ledger) }
+                    item { LedgerFilter(paymentsOnly) { paymentsOnly = it } }
                     // Newest first is easier to scan; the running balance is still computed oldest first.
-                    items(ledger.lines.asReversed(), key = { it.entry.id }) { line -> LedgerRow(line, onOpenEntry) }
+                    val lines = ledger.lines.asReversed().filter { !paymentsOnly || it.entry.payment != null }
+                    if (paymentsOnly && lines.isEmpty()) {
+                        item { Text(stringResource(R.string.ledger_no_payments), style = MaterialTheme.typography.bodyMedium) }
+                    }
+                    items(lines, key = { it.entry.id }) { line -> LedgerRow(line, onOpenEntry) }
                     // Deleted entries stay visible, labelled, and never count (FR-034).
-                    if (ledger.deleted.isNotEmpty()) {
+                    if (ledger.deleted.isNotEmpty() && !paymentsOnly) {
                         item { Text(stringResource(R.string.history_deleted_heading), style = MaterialTheme.typography.titleSmall) }
                         items(ledger.deleted.asReversed(), key = { "deleted-" + it.id }) { entry -> DeletedRow(entry, onOpenEntry) }
                     }
                 }
             }
         }
+    }
+}
+
+/** Opening + sales − purchases − received + paid = closing balance (spec Overview formula). */
+@Composable
+private fun TotalsCard(ledger: CustomerLedger) {
+    val totals = ledger.totals
+    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(stringResource(R.string.ledger_closing), style = MaterialTheme.typography.labelLarge)
+            BalanceHeadline(Balance.of(ledger.closingBalance))
+            HorizontalDivider(Modifier.padding(vertical = 8.dp))
+            if (!totals.opening.isZero) TotalLine(R.string.ledger_opening, balanceLabel(Balance.of(totals.opening)))
+            TotalLine(R.string.ledger_sales, IndianFormatters.money(totals.sales))
+            TotalLine(R.string.ledger_purchases, IndianFormatters.money(totals.purchases))
+            TotalLine(R.string.ledger_received, IndianFormatters.money(totals.received))
+            TotalLine(R.string.ledger_paid, IndianFormatters.money(totals.paid))
+        }
+    }
+}
+
+@Composable
+private fun TotalLine(label: Int, value: String) {
+    Row(Modifier.fillMaxWidth()) {
+        Text(stringResource(label), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+        Text(value, style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+@Composable
+private fun LedgerFilter(paymentsOnly: Boolean, onChange: (Boolean) -> Unit) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FilterChip(selected = !paymentsOnly, onClick = { onChange(false) }, label = { Text(stringResource(R.string.ledger_filter_all)) })
+        FilterChip(selected = paymentsOnly, onClick = { onChange(true) }, label = { Text(stringResource(R.string.ledger_filter_payments)) })
     }
 }
 
@@ -164,8 +204,9 @@ private fun LedgerRow(line: LedgerLine, onOpen: (Long) -> Unit) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(stringResource(typeLabel(entry.type)), style = MaterialTheme.typography.titleSmall)
+                val mode = entry.payment?.let { " · " + stringResource(modeLabel(it.mode)) }.orEmpty()
                 Text(
-                    "${IndianFormatters.date(entry.date, locale)} · ${entry.reference}",
+                    "${IndianFormatters.date(entry.date, locale)} · ${entry.reference}$mode",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

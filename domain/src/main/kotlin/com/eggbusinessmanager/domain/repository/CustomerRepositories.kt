@@ -7,9 +7,9 @@ import com.eggbusinessmanager.domain.customer.CustomerSummary
 import com.eggbusinessmanager.domain.customer.OpeningBalance
 import com.eggbusinessmanager.domain.customer.ValidCustomer
 import com.eggbusinessmanager.domain.ledger.EntryType
+import com.eggbusinessmanager.domain.ledger.EntryValues
 import com.eggbusinessmanager.domain.ledger.LedgerEntry
 import com.eggbusinessmanager.domain.money.Money
-import com.eggbusinessmanager.domain.trade.ValidTrade
 import kotlinx.coroutines.flow.Flow
 import java.time.Instant
 
@@ -59,14 +59,14 @@ interface LedgerRepository {
     /** The root created by an earlier save with the same [clientRequestId] (double-tap protection, R6). */
     suspend fun findByClientRequest(clientRequestId: String): EntryRef?
 
-    /** Creates a SELL/BUY with the next reference in its series. */
-    suspend fun insertTrade(trade: ValidTrade, clientRequestId: String?, at: Instant): EntryRef
+    /** Creates a trade or payment with the next reference in its type's series. */
+    suspend fun insertEntry(values: EntryValues, clientRequestId: String?, at: Instant): EntryRef
 
-    /** Supersedes [current] with [trade] of the same type: same root and reference (FR-033). */
-    suspend fun reviseTrade(current: LedgerEntry, trade: ValidTrade, at: Instant)
+    /** Supersedes [current] with [values] of the same type: same root and reference (FR-033). */
+    suspend fun reviseEntry(current: LedgerEntry, values: EntryValues, at: Instant)
 
     /** Type change (FR-033b): a new entry in the new type's series replaces [current]. */
-    suspend fun replaceTrade(current: LedgerEntry, trade: ValidTrade, at: Instant): EntryRef
+    suspend fun replaceEntry(current: LedgerEntry, values: EntryValues, at: Instant): EntryRef
 
     /** Marks [current] VOIDED ("Deleted"): kept, labelled, excluded from every figure (FR-034). */
     suspend fun voidEntry(current: LedgerEntry, reason: String?, at: Instant)

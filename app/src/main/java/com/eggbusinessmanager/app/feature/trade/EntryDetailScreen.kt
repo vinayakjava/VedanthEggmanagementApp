@@ -26,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.eggbusinessmanager.app.R
+import com.eggbusinessmanager.app.feature.payment.modeLabel
 import com.eggbusinessmanager.app.feature.settings.SettingsRow
 import com.eggbusinessmanager.app.navigation.EntryDetailRoute
 import com.eggbusinessmanager.app.ui.components.EmptyState
@@ -148,7 +149,7 @@ fun EntryDetailScreen(
                     )
                 }
                 message?.let { ErrorBanner(it.asString(), onDismiss = viewModel::dismissMessage) }
-                val editable = entry.status == EntryStatus.ACTIVE && entry.trade != null
+                val editable = entry.status == EntryStatus.ACTIVE && (entry.trade != null || entry.payment != null)
                 if (editable) {
                     SettingsRow(
                         R.drawable.ic_edit, stringResource(R.string.entry_edit), null,
@@ -219,6 +220,13 @@ private fun SummaryCard(entry: LedgerEntry, state: EntryDetailViewModel.UiState)
                 )
                 Text(
                     stringResource(R.string.entry_price_line, IndianFormatters.money(line.pricePerUnit), unitName),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            entry.payment?.let { payment ->
+                val mode = stringResource(modeLabel(payment.mode))
+                Text(
+                    payment.reference?.let { stringResource(R.string.entry_payment_line, mode, it) } ?: mode,
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }

@@ -143,8 +143,12 @@ fun TradeEditorScreen(
     }
 
     if (pickerOpen) {
+        val results by viewModel.pickerResults.collectAsStateWithLifecycle()
+        val text by viewModel.pickerText.collectAsStateWithLifecycle()
         CustomerPicker(
-            viewModel = viewModel,
+            results = results,
+            text = text,
+            onSearch = viewModel::onPickerSearch,
             onPick = {
                 viewModel.onCustomerPicked(it)
                 pickerOpen = false
@@ -198,21 +202,6 @@ private fun TypeSwitch(selected: EntryType, onSelect: (EntryType) -> Unit) {
     }
 }
 
-/** Looks like a field; opens the customer picker. */
-@Composable
-private fun CustomerField(name: String, error: String?, onClick: () -> Unit) {
-    OutlinedCard(onClick = onClick, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).testTag(CUSTOMER_FIELD_TAG)) {
-        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f)) {
-                Text(stringResource(R.string.label_customer), style = MaterialTheme.typography.labelMedium)
-                Text(name.ifEmpty { stringResource(R.string.trade_choose_customer) }, style = MaterialTheme.typography.bodyLarge)
-            }
-            Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null)
-        }
-    }
-    error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
-}
-
 @Composable
 private fun TotalCard(total: Money?, pieces: Long?, error: String?) {
     Card(
@@ -250,48 +239,6 @@ private fun ImpactCard(impact: List<Pair<String, Money>>) {
                     Balance.Settled -> balanceLabel(direction)
                 }
                 Text(stringResource(R.string.trade_impact_line, name, text), style = MaterialTheme.typography.bodyMedium)
-            }
-        }
-    }
-}
-
-/**
- * Searchable list of active customers, recent first, with "Add new customer" (US3-9). A plain
- * Dialog, not AlertDialog: AlertDialog measures its content intrinsically, which lazy lists do not support.
- */
-@Composable
-private fun CustomerPicker(viewModel: TradeEditorViewModel, onPick: (Long) -> Unit, onAddNew: (String) -> Unit, onDismiss: () -> Unit) {
-    val results by viewModel.pickerResults.collectAsStateWithLifecycle()
-    val text by viewModel.pickerText.collectAsStateWithLifecycle()
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(shape = MaterialTheme.shapes.extraLarge, tonalElevation = 6.dp) {
-            Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(stringResource(R.string.trade_choose_customer), style = MaterialTheme.typography.titleLarge)
-                OutlinedTextField(
-                    value = text,
-                    onValueChange = viewModel::onPickerSearch,
-                    placeholder = { Text(stringResource(R.string.trade_customer_search)) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                OutlinedButton(onClick = { onAddNew(text.trim()) }, modifier = Modifier.fillMaxWidth()) {
-                    Icon(painterResource(R.drawable.ic_person_add), contentDescription = null)
-                    Text(stringResource(R.string.trade_add_new_customer), modifier = Modifier.padding(start = 8.dp))
-                }
-                if (results.isEmpty()) {
-                    Text(stringResource(R.string.trade_no_customers), style = MaterialTheme.typography.bodyMedium)
-                }
-                LazyColumn(Modifier.heightIn(max = 320.dp)) {
-                    items(results, key = { it.customer.id }) { summary ->
-                        ListItem(
-                            headlineContent = { Text(summary.customer.name) },
-                            supportingContent = { Text(balanceLabel(summary.balance)) },
-                            modifier = Modifier.fillMaxWidth().clickable { onPick(summary.customer.id) },
-                        )
-                        HorizontalDivider()
-                    }
-                }
-                TextButton(onClick = onDismiss, modifier = Modifier.align(Alignment.End)) { Text(stringResource(R.string.action_cancel)) }
             }
         }
     }

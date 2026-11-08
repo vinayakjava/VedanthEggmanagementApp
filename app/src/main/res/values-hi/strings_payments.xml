@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="payment_receive_title">भुगतान प्राप्त करें</string>
+    <string name="payment_pay_title">ग्राहक को भुगतान करें</string>
+    <string name="payment_edit_title">भुगतान बदलें</string>
+    <string name="label_amount">राशि</string>
+    <string name="label_payment_mode">भुगतान का तरीका</string>
+    <string name="label_payment_reference">संदर्भ संख्या</string>
+    <string name="payment_reference_hint">UPI लेन-देन आईडी, चेक नंबर आदि</string>
+    <string name="payment_mode_cash">नकद</string>
+    <string name="payment_mode_upi">UPI</string>
+    <string name="payment_mode_bank">बैंक ट्रांसफ़र</string>
+    <string name="payment_mode_cheque">चेक</string>
+    <string name="payment_mode_other">अन्य</string>
+    <string name="payment_full_amount">पूरी राशि (%1$s)</string>
+    <string name="payment_customer_owes">ग्राहक को आपको देना है</string>
+    <string name="payment_shop_owes">आपको ग्राहक को देना है</string>
+    <string name="payment_advance">अग्रिम</string>
+    <string name="payment_balance_after">सहेजने के बाद बकाया</string>
+    <string name="payment_advance_title">अग्रिम दर्ज करें?</string>
+    <string name="payment_advance_received_body">यह %2$s के बकाये से %1$s ज़्यादा है। अतिरिक्त राशि अग्रिम रहेगी: आगे की बिक्री में समायोजित होने तक यह आप पर बकाया रहेगी।</string>
+    <string name="payment_advance_made_body">यह %2$s को देय राशि से %1$s ज़्यादा है। अतिरिक्त राशि अग्रिम है: आगे की ख़रीद में समायोजित होने तक यह उन पर बकाया रहेगी।</string>
+    <string name="payment_advance_confirm">अग्रिम के साथ सहेजें</string>
+    <string name="v_amount_positive">0 से ज़्यादा राशि दर्ज करें</string>
+    <string name="v_amount_format">अधिकतम 2 दशमलव तक राशि दर्ज करें</string>
+    <string name="v_amount_too_large">राशि ₹99,99,99,999.99 से ज़्यादा नहीं हो सकती</string>
+    <string name="v_payment_reference_too_long">संदर्भ अधिकतम 50 अक्षरों का हो सकता है</string>
+    <string name="customer_receive">भुगतान प्राप्त करें</string>
+    <string name="customer_pay">ग्राहक को भुगतान करें</string>
+    <string name="ledger_opening">प्रारंभिक शेष</string>
+    <string name="ledger_sales">बिक्री</string>
+    <string name="ledger_purchases">ख़रीद</string>
+    <string name="ledger_received">प्राप्त भुगतान</string>
+    <string name="ledger_paid">किए गए भुगतान</string>
+    <string name="ledger_closing">अंतिम शेष</string>
+    <string name="ledger_filter_all">सभी</string>
+    <string name="ledger_filter_payments">भुगतान</string>
+    <string name="ledger_no_payments">इस ग्राहक के साथ अभी तक कोई भुगतान नहीं।</string>
+    <string name="entry_payment_line">%1$s · संदर्भ %2$s</string>
+</resources>

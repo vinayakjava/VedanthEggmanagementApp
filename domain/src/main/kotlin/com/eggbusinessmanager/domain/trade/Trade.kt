@@ -8,6 +8,8 @@ import com.eggbusinessmanager.domain.error.Field
 import com.eggbusinessmanager.domain.error.ValidationCode
 import com.eggbusinessmanager.domain.error.ValidationErrors
 import com.eggbusinessmanager.domain.ledger.EntryType
+import com.eggbusinessmanager.domain.ledger.EntryValues
+import com.eggbusinessmanager.domain.ledger.TradeLine
 import com.eggbusinessmanager.domain.money.Money
 import com.eggbusinessmanager.domain.money.MoneyParser
 import com.eggbusinessmanager.domain.money.QuantityMilli
@@ -45,6 +47,16 @@ data class ValidTrade(
     val pricePerUnit: Money,
     val total: Money,
     val remarks: String?,
+)
+
+/** The values a trade is stored with. */
+fun ValidTrade.toValues() = EntryValues(
+    type = type,
+    customerId = customerId,
+    date = date,
+    amount = total,
+    trade = TradeLine(varietyId, unitId, quantity, piecesPerUnit, pieces, pricePerUnit),
+    remarks = remarks,
 )
 
 /** Live total and pieces for the editor (FR-021): null parts until the inputs make sense. */

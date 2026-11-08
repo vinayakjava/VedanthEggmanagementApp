@@ -19,7 +19,7 @@ import com.eggbusinessmanager.domain.ledger.LedgerEntry
 import com.eggbusinessmanager.domain.money.Money
 import com.eggbusinessmanager.domain.repository.AuditRepository
 import com.eggbusinessmanager.domain.repository.EntryRef
-import com.eggbusinessmanager.domain.trade.ValidTrade
+import com.eggbusinessmanager.domain.ledger.EntryValues
 import com.eggbusinessmanager.domain.repository.CustomerRepository
 import com.eggbusinessmanager.domain.repository.LedgerRepository
 import com.eggbusinessmanager.domain.validation.SearchKey
@@ -100,22 +100,22 @@ class RoomLedgerRepository @Inject constructor(
         dao.byClientRequest(clientRequestId)?.let { EntryRef(it.rootEntryId, it.referenceNo) }
     }
 
-    override suspend fun insertTrade(trade: ValidTrade, clientRequestId: String?, at: Instant): EntryRef = withContext(io) {
-        val reference = nextReference(trade.type)
-        val id = dao.insert(trade.toEntity(rootId = 0, reference = reference, clientRequestId = clientRequestId, at = at))
+    override suspend fun insertEntry(values: EntryValues, clientRequestId: String?, at: Instant): EntryRef = withContext(io) {
+        val reference = nextReference(values.type)
+        val id = dao.insert(values.toEntity(rootId = 0, reference = reference, clientRequestId = clientRequestId, at = at))
         dao.makeOwnRoot(id)
         EntryRef(id, reference)
     }
 
-    override suspend fun reviseTrade(current: LedgerEntry, trade: ValidTrade, at: Instant) = withContext(io) {
+    override suspend fun reviseEntry(current: LedgerEntry, values: EntryValues, at: Instant) = withContext(io) {
         check(dao.supersede(current.id) == 1) { "Entry ${current.id} is no longer active" }
-        dao.insert(trade.toEntity(current.rootId, current.reference, clientRequestId = null, at = at).copy(supersedesEntryId = current.id))
+        dao.insert(values.toEntity(current.rootId, current.reference, clientRequestId = null, at = at).copy(supersedesEntryId = current.id))
         Unit
     }
 
-    override suspend fun replaceTrade(current: LedgerEntry, trade: ValidTrade, at: Instant): EntryRef = withContext(io) {
-        val reference = nextReference(trade.type)
-        val id = dao.insert(trade.toEntity(rootId = 0, reference = reference, clientRequestId = null, at = at))
+    override suspend fun replaceEntry(current: LedgerEntry, values: EntryValues, at: Instant): EntryRef = withContext(io) {
+        val reference = nextReference(values.type)
+        val id = dao.insert(values.toEntity(rootId = 0, reference = reference, clientRequestId = null, at = at))
         dao.makeOwnRoot(id)
         check(dao.markReplaced(current.id, id) == 1) { "Entry ${current.id} is no longer active" }
         EntryRef(id, reference)

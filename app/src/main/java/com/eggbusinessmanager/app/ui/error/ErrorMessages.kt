@@ -112,6 +112,12 @@ object ErrorMessages {
         Field.UNIT_NAME -> if (code == ValidationCode.DUPLICATE) R.string.v_unit_name_duplicate else R.string.v_unit_name
         Field.UNIT_PIECES -> R.string.v_unit_pieces
         Field.VARIETY_NAME -> if (code == ValidationCode.DUPLICATE) R.string.v_variety_name_duplicate else R.string.v_variety_name
+        Field.AMOUNT -> when (code) {
+            ValidationCode.INVALID_FORMAT -> R.string.v_amount_format
+            ValidationCode.OUT_OF_RANGE -> R.string.v_amount_too_large
+            else -> R.string.v_amount_positive
+        }
+        Field.PAYMENT_REFERENCE -> R.string.v_payment_reference_too_long
         else -> R.string.error_validation
     }
 

@@ -8,6 +8,7 @@ import com.eggbusinessmanager.data.db.dao.AuditLogDao
 import com.eggbusinessmanager.data.db.dao.CatalogDao
 import com.eggbusinessmanager.data.db.dao.CustomerDao
 import com.eggbusinessmanager.data.db.dao.LedgerEntryDao
+import com.eggbusinessmanager.data.db.dao.ReportDao
 import com.eggbusinessmanager.data.db.entity.AppSettingEntity
 import com.eggbusinessmanager.data.db.entity.AuditLogEntity
 import com.eggbusinessmanager.data.db.entity.CustomerEntity
@@ -53,6 +54,7 @@ abstract class EggBusinessDatabase : RoomDatabase() {
     abstract fun ledgerEntryDao(): LedgerEntryDao
     abstract fun auditLogDao(): AuditLogDao
     abstract fun catalogDao(): CatalogDao
+    abstract fun reportDao(): ReportDao
 
     companion object {
         const val VERSION = 1

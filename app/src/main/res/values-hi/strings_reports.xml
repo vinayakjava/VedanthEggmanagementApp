@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dash_today">आज</string>
+    <string name="dash_today_sales">आज की बिक्री</string>
+    <string name="dash_today_purchases">आज की ख़रीद</string>
+    <string name="dash_dues">बकाया</string>
+    <string name="dash_receivables">लेना है</string>
+    <string name="dash_payables">देना है</string>
+    <string name="dash_all_time">अब तक</string>
+    <string name="dash_total_sales">कुल बिक्री</string>
+    <string name="dash_total_purchases">कुल ख़रीद</string>
+    <string name="dash_total_customers">कुल ग्राहक</string>
+    <string name="dash_active_customers">%1$s सक्रिय</string>
+    <string name="dash_trade_detail">%1$s प्रविष्टियाँ · %2$s अंडे</string>
+    <string name="dash_customers_count">%1$s ग्राहकों से</string>
+    <string name="dash_recent">हाल के लेन-देन</string>
+    <string name="dash_see_all">सभी देखें</string>
+    <string name="dash_no_recent">अभी कोई लेन-देन नहीं। बिक्री, ख़रीद या भुगतान दर्ज करें, वह यहाँ दिखेगा।</string>
+    <string name="tx_search_hint">ग्राहक का नाम या मोबाइल खोजें</string>
+    <string name="tx_from">%1$s से</string>
+    <string name="tx_to">%1$s तक</string>
+    <string name="tx_from_any">से: कोई भी तारीख़</string>
+    <string name="tx_to_any">तक: कोई भी तारीख़</string>
+    <string name="tx_clear">हटाएँ</string>
+    <string name="tx_all_customers">सभी ग्राहक</string>
+    <string name="tx_type_sell">बिक्री</string>
+    <string name="tx_type_buy">ख़रीद</string>
+    <string name="tx_type_receive">प्राप्त</string>
+    <string name="tx_type_pay">भुगतान</string>
+    <string name="tx_sort_newest">नए पहले</string>
+    <string name="tx_sort_oldest">पुराने पहले</string>
+    <string name="tx_sort_amount_high">सबसे ज़्यादा राशि</string>
+    <string name="tx_sort_amount_low">सबसे कम राशि</string>
+    <string name="tx_sort_customer">ग्राहक अ–ज़</string>
+    <string name="tx_count">%1$s लेन-देन</string>
+    <string name="tx_empty_title">कोई लेन-देन नहीं मिला</string>
+    <string name="tx_empty_body">ज़्यादा देखने के लिए तारीख़, प्रकार या खोज बदलें।</string>
+    <string name="tx_reset">फ़िल्टर हटाएँ</string>
+</resources>

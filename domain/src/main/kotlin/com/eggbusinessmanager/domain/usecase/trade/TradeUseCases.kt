@@ -24,6 +24,9 @@ import com.eggbusinessmanager.domain.trade.TradeContext
 import com.eggbusinessmanager.domain.trade.TradeDraft
 import com.eggbusinessmanager.domain.trade.TradeValidator
 import com.eggbusinessmanager.domain.trade.ValidTrade
+import com.eggbusinessmanager.domain.trade.toValues
+import com.eggbusinessmanager.domain.usecase.entry.EntryWriter
+import com.eggbusinessmanager.domain.usecase.entry.snapshot
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -50,35 +53,20 @@ class TradeChecks @Inject constructor(
 }
 
 /**
- * Saves a SELL or BUY (US3): validated, numbered in its own series (S-/B-), its balance effect computed
- * by [BalanceEffect], audited, all in one transaction. A repeated save with the same
- * [clientRequestId] returns the first entry instead of creating a second one (US3-8).
+ * Saves a SELL or BUY (US3): validated, numbered in its own series (S-/B-), stored and audited in one
+ * transaction by [EntryWriter]. A repeated save with the same [clientRequestId] returns the first
+ * entry instead of creating a second one (US3-8).
  */
 class RecordTradeUseCase @Inject constructor(
     private val checks: TradeChecks,
-    private val ledger: LedgerRepository,
-    private val audit: AuditRepository,
-    private val transactions: TransactionRunner,
-    private val clock: Clock,
+    private val writer: EntryWriter,
 ) {
     suspend operator fun invoke(draft: TradeDraft, clientRequestId: String): DomainResult<EntryRef> = catchingResult {
-        ledger.findByClientRequest(clientRequestId)?.let { return DomainResult.Ok(it) }
-        val trade = when (val result = checks.check(draft)) {
-            is DomainResult.Err -> return result
-            is DomainResult.Ok -> result.value
+        writer.existing(clientRequestId)?.let { return DomainResult.Ok(it) }
+        when (val result = checks.check(draft)) {
+            is DomainResult.Err -> result
+            is DomainResult.Ok -> DomainResult.Ok(writer.record(result.value.toValues(), clientRequestId))
         }
-        val now = clock.now()
-        val ref = transactions.inTransaction {
-            ledger.findByClientRequest(clientRequestId) ?: ledger.insertTrade(trade, clientRequestId, now).also { ref ->
-                audit.append(
-                    AuditEvent(
-                        AuditEvent.ENTITY_LEDGER_ENTRY, ref.rootId, trade.customerId, AuditEvent.ACTION_CREATE,
-                        after = trade.snapshot(), at = now,
-                    ),
-                )
-            }
-        }
-        DomainResult.Ok(ref)
     }
 }
 
@@ -90,9 +78,7 @@ class RecordTradeUseCase @Inject constructor(
 class EditTradeUseCase @Inject constructor(
     private val checks: TradeChecks,
     private val ledger: LedgerRepository,
-    private val audit: AuditRepository,
-    private val transactions: TransactionRunner,
-    private val clock: Clock,
+    private val writer: EntryWriter,
 ) {
     suspend operator fun invoke(rootId: Long, draft: TradeDraft, reason: String = ""): DomainResult<EntryRef> = catchingResult {
         val current = ledger.currentRevision(rootId)
@@ -101,46 +87,10 @@ class EditTradeUseCase @Inject constructor(
         }
         if (reason.trim().length > REASON_MAX) return DomainResult.Err(DomainError.Validation(Field.REASON, ValidationCode.TOO_LONG))
         val keep = TradeContext.KeepIds(current.customerId, current.trade.varietyId, current.trade.unitId, current.trade.piecesPerUnit)
-        val trade = when (val result = checks.check(draft, keep)) {
-            is DomainResult.Err -> return result
-            is DomainResult.Ok -> result.value
+        when (val result = checks.check(draft, keep)) {
+            is DomainResult.Err -> result
+            is DomainResult.Ok -> DomainResult.Ok(writer.edit(current, result.value.toValues(), reason.trim().ifEmpty { null }))
         }
-        if (current.sameAs(trade)) return DomainResult.Ok(EntryRef(current.rootId, current.reference))
-
-        val now = clock.now()
-        val why = reason.trim().ifEmpty { null }
-        val ref = transactions.inTransaction {
-            val typeChanged = trade.type != current.type
-            val ref = if (typeChanged) {
-                ledger.replaceTrade(current, trade, now)
-            } else {
-                ledger.reviseTrade(current, trade, now)
-                EntryRef(current.rootId, current.reference)
-            }
-            val action = when {
-                typeChanged -> AuditEvent.ACTION_TYPE_CHANGE
-                trade.customerId != current.customerId -> AuditEvent.ACTION_CUSTOMER_CHANGE
-                else -> AuditEvent.ACTION_EDIT
-            }
-            // Both customers get an audit row when the customer changes, so both histories show it.
-            setOf(current.customerId, trade.customerId).forEach { customerId ->
-                audit.append(
-                    AuditEvent(
-                        AuditEvent.ENTITY_LEDGER_ENTRY, current.rootId, customerId, action,
-                        current.snapshot(), trade.snapshot(), why, now,
-                    ),
-                )
-            }
-            ref
-        }
-        DomainResult.Ok(ref)
-    }
-
-    private fun LedgerEntry.sameAs(trade: ValidTrade): Boolean {
-        val line = this.trade ?: return false
-        return type == trade.type && customerId == trade.customerId && date == trade.date &&
-            line.varietyId == trade.varietyId && line.unitId == trade.unitId && line.quantity == trade.quantity &&
-            line.piecesPerUnit == trade.piecesPerUnit && line.pricePerUnit == trade.pricePerUnit && remarks == trade.remarks
     }
 
     private companion object {
@@ -237,30 +187,3 @@ object EditImpact {
         return changes.filterValues { !it.isZero }
     }
 }
-
-private fun ValidTrade.snapshot(): Map<String, String?> = mapOf(
-    "type" to type.name,
-    "customer_id" to customerId.toString(),
-    "date" to date.toString(),
-    "variety_id" to varietyId.toString(),
-    "unit_id" to unitId.toString(),
-    "pieces_per_unit" to piecesPerUnit.toString(),
-    "quantity_milli" to quantity.value.toString(),
-    "price_paise" to pricePerUnit.paise.toString(),
-    "amount_paise" to total.paise.toString(),
-    "remarks" to remarks,
-)
-
-private fun LedgerEntry.snapshot(): Map<String, String?> = mapOf(
-    "type" to type.name,
-    "reference" to reference,
-    "customer_id" to customerId.toString(),
-    "date" to date.toString(),
-    "variety_id" to trade?.varietyId?.toString(),
-    "unit_id" to trade?.unitId?.toString(),
-    "pieces_per_unit" to trade?.piecesPerUnit?.toString(),
-    "quantity_milli" to trade?.quantity?.value?.toString(),
-    "price_paise" to trade?.pricePerUnit?.paise?.toString(),
-    "amount_paise" to amount.paise.toString(),
-    "remarks" to remarks,
-)

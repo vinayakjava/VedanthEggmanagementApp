@@ -14,7 +14,9 @@ import com.eggbusinessmanager.domain.ledger.OpeningDirection
 import com.eggbusinessmanager.domain.ledger.TradeLine
 import com.eggbusinessmanager.domain.money.Money
 import com.eggbusinessmanager.domain.money.QuantityMilli
-import com.eggbusinessmanager.domain.trade.ValidTrade
+import com.eggbusinessmanager.domain.ledger.EntryValues
+import com.eggbusinessmanager.domain.ledger.PaymentLine
+import com.eggbusinessmanager.domain.ledger.PaymentMode
 import com.eggbusinessmanager.domain.validation.SearchKey
 import java.time.Instant
 import java.time.LocalDate
@@ -60,6 +62,7 @@ internal fun LedgerEntryEntity.toDomain() = LedgerEntry(
     remarks = remarks,
     createdAt = Instant.ofEpochMilli(createdAt),
     trade = tradeLine(),
+    payment = paymentMode?.let { PaymentLine(PaymentMode.valueOf(it), paymentReference) },
     supersedesId = supersedesEntryId,
     replacedByRootId = replacedByRootId,
     voidReason = voidReason,
@@ -79,21 +82,23 @@ private fun LedgerEntryEntity.tradeLine(): TradeLine? {
     )
 }
 
-internal fun ValidTrade.toEntity(rootId: Long, reference: String, clientRequestId: String?, at: Instant) = LedgerEntryEntity(
+internal fun EntryValues.toEntity(rootId: Long, reference: String, clientRequestId: String?, at: Instant) = LedgerEntryEntity(
     rootEntryId = rootId,
     entryType = type.name,
     referenceNo = reference,
     status = EntryStatus.ACTIVE.name,
     customerId = customerId,
     entryDate = date.toEpochDay(),
-    amountPaise = total.paise,
-    balanceEffectPaise = BalanceEffect.of(type, total).paise,
-    varietyId = varietyId,
-    unitId = unitId,
-    quantityMilli = quantity.value,
-    piecesPerUnitSnapshot = piecesPerUnit,
-    pieces = pieces,
-    pricePerUnitPaise = pricePerUnit.paise,
+    amountPaise = amount.paise,
+    balanceEffectPaise = BalanceEffect.of(type, amount).paise,
+    varietyId = trade?.varietyId,
+    unitId = trade?.unitId,
+    quantityMilli = trade?.quantity?.value,
+    piecesPerUnitSnapshot = trade?.piecesPerUnit,
+    pieces = trade?.pieces,
+    pricePerUnitPaise = trade?.pricePerUnit?.paise,
+    paymentMode = payment?.mode?.name,
+    paymentReference = payment?.reference,
     remarks = remarks,
     clientRequestId = clientRequestId,
     createdAt = at.toEpochMilli(),

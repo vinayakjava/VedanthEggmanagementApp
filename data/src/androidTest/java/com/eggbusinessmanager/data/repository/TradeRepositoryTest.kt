@@ -24,6 +24,7 @@ import com.eggbusinessmanager.domain.usecase.catalog.SetVarietyActiveUseCase
 import com.eggbusinessmanager.domain.usecase.customer.CreateCustomerUseCase
 import com.eggbusinessmanager.domain.usecase.customer.CustomerChecks
 import com.eggbusinessmanager.domain.usecase.customer.DeleteCustomerUseCase
+import com.eggbusinessmanager.domain.usecase.entry.EntryWriter
 import com.eggbusinessmanager.domain.usecase.trade.DeleteEntryUseCase
 import com.eggbusinessmanager.domain.usecase.trade.EditTradeUseCase
 import com.eggbusinessmanager.domain.usecase.trade.RecordTradeUseCase
@@ -84,8 +85,9 @@ class TradeRepositoryTest {
         val audit = RoomAuditRepository(provider, Dispatchers.IO)
         val tx = RoomTransactionRunner(provider)
         val checks = TradeChecks(customers, catalog, clock)
-        record = RecordTradeUseCase(checks, ledger, audit, tx, clock)
-        edit = EditTradeUseCase(checks, ledger, audit, tx, clock)
+        val writer = EntryWriter(ledger, audit, tx, clock)
+        record = RecordTradeUseCase(checks, writer)
+        edit = EditTradeUseCase(checks, ledger, writer)
         delete = DeleteEntryUseCase(ledger, audit, tx, clock)
         createCustomer = CreateCustomerUseCase(CustomerChecks(customers, clock), customers, ledger, audit, tx, clock)
         deleteCustomer = DeleteCustomerUseCase(customers, ledger, audit, tx, clock)

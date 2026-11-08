@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dashboard (Phase 6) -->
+    <string name="dash_today">Today</string>
+    <string name="dash_today_sales">Today\'s sales</string>
+    <string name="dash_today_purchases">Today\'s purchases</string>
+    <string name="dash_dues">Dues</string>
+    <string name="dash_receivables">To receive</string>
+    <string name="dash_payables">To pay</string>
+    <string name="dash_all_time">All time</string>
+    <string name="dash_total_sales">Total sales</string>
+    <string name="dash_total_purchases">Total purchases</string>
+    <string name="dash_total_customers">Total customers</string>
+    <string name="dash_active_customers">%1$s active</string>
+    <string name="dash_trade_detail">%1$s entries · %2$s eggs</string>
+    <string name="dash_customers_count">from %1$s customers</string>
+    <string name="dash_recent">Recent transactions</string>
+    <string name="dash_see_all">See all</string>
+    <string name="dash_no_recent">No transactions yet. Record a sale, purchase or payment to see it here.</string>
+    <!-- Transactions (Phase 6) -->
+    <string name="tx_search_hint">Search customer name or mobile</string>
+    <string name="tx_from">From %1$s</string>
+    <string name="tx_to">To %1$s</string>
+    <string name="tx_from_any">From: any date</string>
+    <string name="tx_to_any">To: any date</string>
+    <string name="tx_clear">Clear</string>
+    <string name="tx_all_customers">All customers</string>
+    <string name="tx_type_sell">Sell</string>
+    <string name="tx_type_buy">Buy</string>
+    <string name="tx_type_receive">Receive</string>
+    <string name="tx_type_pay">Pay</string>
+    <string name="tx_sort_newest">Newest first</string>
+    <string name="tx_sort_oldest">Oldest first</string>
+    <string name="tx_sort_amount_high">Highest amount</string>
+    <string name="tx_sort_amount_low">Lowest amount</string>
+    <string name="tx_sort_customer">Customer A–Z</string>
+    <string name="tx_count">%1$s transactions</string>
+    <string name="tx_empty_title">No transactions found</string>
+    <string name="tx_empty_body">Change the dates, types or search to see more.</string>
+    <string name="tx_reset">Reset filters</string>
+</resources>

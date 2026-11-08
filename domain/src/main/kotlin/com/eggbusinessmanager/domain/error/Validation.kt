@@ -36,6 +36,8 @@ enum class Field {
     UNIT_NAME,
     UNIT_PIECES,
     VARIETY_NAME,
+    AMOUNT,
+    PAYMENT_REFERENCE,
     ;
 
     companion object {

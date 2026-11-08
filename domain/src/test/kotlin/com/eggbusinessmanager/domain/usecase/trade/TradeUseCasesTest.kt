@@ -19,6 +19,7 @@ import com.eggbusinessmanager.domain.usecase.customer.CreateCustomerUseCase
 import com.eggbusinessmanager.domain.usecase.customer.CustomerActivation
 import com.eggbusinessmanager.domain.usecase.customer.CustomerChecks
 import com.eggbusinessmanager.domain.usecase.customer.ObserveCustomerLedgerUseCase
+import com.eggbusinessmanager.domain.usecase.entry.EntryWriter
 import com.eggbusinessmanager.testing.FakeAuditRepository
 import com.eggbusinessmanager.testing.FakeCatalogRepository
 import com.eggbusinessmanager.testing.FakeCatalogRepository.Companion.BOX
@@ -47,8 +48,9 @@ class TradeUseCasesTest {
     private val tx = ImmediateTransactionRunner
     private val checks = TradeChecks(customers, catalog, clock)
 
-    private val record = RecordTradeUseCase(checks, ledger, audit, tx, clock)
-    private val edit = EditTradeUseCase(checks, ledger, audit, tx, clock)
+    private val writer = EntryWriter(ledger, audit, tx, clock)
+    private val record = RecordTradeUseCase(checks, writer)
+    private val edit = EditTradeUseCase(checks, ledger, writer)
     private val delete = DeleteEntryUseCase(ledger, audit, tx, clock)
     private val observe = ObserveEntryUseCase(ledger)
     private val draftOf = GetTradeDraftUseCase(ledger)

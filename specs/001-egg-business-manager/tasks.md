@@ -249,20 +249,20 @@ running balances 5,000 / 3,000 / 1,500 / 2,000; advance scenario 3a
 
 ### Tests for User Story 4
 
-- [ ] T104 [P] [US4] Unit tests for `EntryValidator` payment rules and `PreviewPaymentEffectUseCase` (advance amount and resulting balance for both directions, settled customer advance) in `{domainTest}/usecase/entry/PaymentUseCasesTest.kt`
-- [ ] T105 [P] [US4] Integration tests: ledger running balance via SQL window function equals `LedgerCalculator` on 500 generated random entries incl. back-dated ones; per-type totals; balance query == customer list balance; in `{dataIt}/db/LedgerQueriesTest.kt`
-- [ ] T106 [P] [US4] Compose UI test: record payment with "Full amount" ⇒ Settled; advance notice shown and confirmed; ledger shows correct running balances; in `{appUiTest}/ledger/PaymentAndLedgerFlowTest.kt`
+- [X] T104 [P] [US4] Unit tests for `EntryValidator` payment rules and `PreviewPaymentEffectUseCase` (advance amount and resulting balance for both directions, settled customer advance) in `{domainTest}/usecase/entry/PaymentUseCasesTest.kt` — *As `{domainTest}/payment/PaymentRulesTest.kt` (`PaymentValidator`, `PaymentImpact`) and `{domainTest}/usecase/payment/LedgerScenariosTest.kt` (positive, negative, zero, advance, spec example, edits/deletes of historical entries, 40 random histories).*
+- [ ] T105 [P] [US4] Integration tests: ledger running balance via SQL window function equals `LedgerCalculator` on 500 generated random entries incl. back-dated ones; per-type totals; balance query == customer list balance; in `{dataIt}/db/LedgerQueriesTest.kt` — *Partial (2026-11-08): `{dataIt}/repository/PaymentRepositoryTest.kt`: spec example, all balance directions, edit/delete recalculation, SQL list balance = LedgerCalculator, payment triggers; running balance is computed in `LedgerCalculator` (no SQL window query yet), so the 500-row SQL comparison is pending.*
+- [X] T106 [P] [US4] Compose UI test: record payment with "Full amount" ⇒ Settled; advance notice shown and confirmed; ledger shows correct running balances; in `{appUiTest}/ledger/PaymentAndLedgerFlowTest.kt` — *As `{appUiTest}/payment/PaymentFlowsTest.kt`: advance confirmed, "Full amount" ⇒ Settled, totals, payments filter, correction.*
 
 ### Implementation for User Story 4
 
-- [ ] T107 [P] [US4] Extend `EntryValidator` with payment rules in `{domain}/validation/EntryValidator.kt`
-- [ ] T108 [P] [US4] Create ledger read queries (`ledgerLines` with `SUM() OVER`, per-type totals, balance by customer) in `{data}/db/dao/LedgerQueryDao.kt`
-- [ ] T109 [US4] Implement `RoomLedgerRepository.ledger` and `balance` flows in `{data}/repository/RoomLedgerRepository.kt`
-- [ ] T110 [US4] Implement `RecordPaymentReceivedUseCase`, `RecordPaymentMadeUseCase`, `PreviewPaymentEffectUseCase`, `ObserveCustomerLedgerUseCase`, `ObserveCustomerBalanceUseCase` in `{domain}/usecase/entry/` and `{domain}/usecase/ledger/`
-- [ ] T111 [US4] Extend `EntryEditorScreen`/`EntryEditorViewModel` with payment mode (amount, mode default Cash, reference, current balance, "Full amount", advance confirmation dialog) in `{app}/feature/entries/editor/`
-- [ ] T112 [US4] Implement `LedgerScreen` (balance at top, per-type totals, lines with date, reference, type, qty/unit, debit/credit, running balance, remarks; paged) + `LedgerViewModel` in `{app}/feature/ledger/`
-- [ ] T113 [US4] Wire Receive/Pay quick actions and the "View ledger" action on `CustomerDetailScreen` in `{app}/feature/customers/detail/CustomerDetailScreen.kt`
-- [ ] T114 [US4] Add US4 strings in English and Hindi to `{appRes}/values/strings.xml` and `{appRes}/values-hi/strings.xml`
+- [X] T107 [P] [US4] Extend `EntryValidator` with payment rules in `{domain}/validation/EntryValidator.kt` — *As `PaymentValidator` in `{domain}/payment/Payment.kt`.*
+- [ ] T108 [P] [US4] Create ledger read queries (`ledgerLines` with `SUM() OVER`, per-type totals, balance by customer) in `{data}/db/dao/LedgerQueryDao.kt` — *Partial (2026-11-08): Per-type totals and running balance computed by `LedgerCalculator` from the entries flow; SQL window-function queries deferred until paging is needed.*
+- [X] T109 [US4] Implement `RoomLedgerRepository.ledger` and `balance` flows in `{data}/repository/RoomLedgerRepository.kt` — *`observeEntries` + SQL balance aggregate; generic `insertEntry`/`reviseEntry`/`replaceEntry` shared by trades and payments.*
+- [X] T110 [US4] Implement `RecordPaymentReceivedUseCase`, `RecordPaymentMadeUseCase`, `PreviewPaymentEffectUseCase`, `ObserveCustomerLedgerUseCase`, `ObserveCustomerBalanceUseCase` in `{domain}/usecase/entry/` and `{domain}/usecase/ledger/` — *As `RecordPaymentUseCase` (both directions), `EditPaymentUseCase`, `GetPaymentDraftUseCase`, `PreviewPaymentUseCase` in `{domain}/usecase/payment/`; all writes go through `EntryWriter`.*
+- [X] T111 [US4] Extend `EntryEditorScreen`/`EntryEditorViewModel` with payment mode (amount, mode default Cash, reference, current balance, "Full amount", advance confirmation dialog) in `{app}/feature/entries/editor/` — *As `PaymentEditorScreen`/`PaymentEditorViewModel` in `{app}/feature/payment/`.*
+- [ ] T112 [US4] Implement `LedgerScreen` (balance at top, per-type totals, lines with date, reference, type, qty/unit, debit/credit, running balance, remarks; paged) + `LedgerViewModel` in `{app}/feature/ledger/` — *Partial (2026-11-08): `CustomerHistoryScreen` shows closing balance, per-type totals, running balance per line, payment mode and an All/Payments filter; not paged yet.*
+- [X] T113 [US4] Wire Receive/Pay quick actions and the "View ledger" action on `CustomerDetailScreen` in `{app}/feature/customers/detail/CustomerDetailScreen.kt` — *Receive/Pay on customer detail and dashboard; "Transactions" opens the ledger.*
+- [X] T114 [US4] Add US4 strings in English and Hindi to `{appRes}/values/strings.xml` and `{appRes}/values-hi/strings.xml` — *In `strings_payments.xml` (English and Hindi).*
 
 **Checkpoint**: MVP complete — accounts, customers, trades, payments and exact ledgers (US1–US4)
 
@@ -282,19 +282,19 @@ totals; change customer A→C; change SELL→BUY; void; history shows every chan
 - [ ] T116 [P] [US5] Unit tests for `ChangeEntryTypeUseCase` (new root and reference in the new series, `replaced_by_root_id`, trade↔payment field rules, linked-payment convert-or-void) and `PreviewEditEffectUseCase` in `{domainTest}/usecase/entry/ChangeEntryTypeUseCaseTest.kt`
 - [ ] T117 [P] [US5] Unit tests for `VoidEntryUseCase` (excluded from balances, linked payment optional void, terminal state) in `{domainTest}/usecase/entry/VoidEntryUseCaseTest.kt`
 - [ ] T118 [P] [US5] Property tests: random sequences of create/edit/type-change/customer-change/void keep Σ balances = Σ active effects, and exactly one ACTIVE row per live root, in `{domainTest}/ledger/RevisionPropertiesTest.kt`
-- [ ] T119 [P] [US5] Integration tests: `EntryFilter` query combinations (dates, multi-type, multi-customer, variety, unit, mode, amount range, status, text on remarks/reference) and summary totals, plus atomic revise/changeType, in `{dataIt}/repository/LedgerRepositoryRevisionTest.kt`
+- [ ] T119 [P] [US5] Integration tests: `EntryFilter` query combinations (dates, multi-type, multi-customer, variety, unit, mode, amount range, status, text on remarks/reference) and summary totals, plus atomic revise/changeType, in `{dataIt}/repository/LedgerRepositoryRevisionTest.kt` — *Partial (2026-11-08): Phase 6 (Dashboard and Transactions): `{dataIt}/repository/ReportRepositoryTest.kt` checks date range, multi-type, customer and name/mobile search (incl. LIKE escaping) against `TransactionFilter.matches` on random data; variety/unit/mode/amount/remarks filters pending.*
 - [ ] T120 [P] [US5] Compose UI test: filter chips + clear all; edit customer with balance-effect preview; change type shows "Changed to B-…"; void shows the label, in `{appUiTest}/history/HistoryAndCorrectionsTest.kt`
 
 ### Implementation for User Story 5
 
-- [ ] T121 [P] [US5] Define the `EntryFilter`/`EntrySort` models in `{domain}/model/EntryFilter.kt`
-- [ ] T122 [US5] Implement `RoomLedgerRepository.revise`, `changeType`, `void`, `entry`, `history`, `query` (Paging 3 `PagingSource` + summary aggregate) in `{data}/repository/RoomLedgerRepository.kt` and `{data}/db/dao/LedgerQueryDao.kt`
+- [ ] T121 [P] [US5] Define the `EntryFilter`/`EntrySort` models in `{domain}/model/EntryFilter.kt` — *Partial (2026-11-08): Phase 6 (Dashboard and Transactions): `TransactionFilter`/`TransactionSort` in `{domain}/report/Reports.kt` (dates, customer, types, name/mobile search, 5 sorts).*
+- [ ] T122 [US5] Implement `RoomLedgerRepository.revise`, `changeType`, `void`, `entry`, `history`, `query` (Paging 3 `PagingSource` + summary aggregate) in `{data}/repository/RoomLedgerRepository.kt` and `{data}/db/dao/LedgerQueryDao.kt` — *Partial (2026-11-08): Phase 6 (Dashboard and Transactions): filtered query in `ReportDao.transactions`, totals in the domain; not paged yet.*
 - [ ] T123 [US5] Implement `EditEntryUseCase`, `ChangeEntryTypeUseCase`, `PreviewEditEffectUseCase`, `VoidEntryUseCase`, `GetEntryDetailUseCase`, `GetEntryHistoryUseCase`, `QueryEntriesUseCase` in `{domain}/usecase/entry/` and `{domain}/usecase/history/`
-- [ ] T124 [US5] Implement `HistoryScreen` (grouped by date, summary bar, filter bottom sheet, chips, sort, list-detail on expanded width) + `HistoryViewModel` in `{app}/feature/history/`
+- [ ] T124 [US5] Implement `HistoryScreen` (grouped by date, summary bar, filter bottom sheet, chips, sort, list-detail on expanded width) + `HistoryViewModel` in `{app}/feature/history/` — *Partial (2026-11-08): Phase 6 (Dashboard and Transactions): Transactions tab (`{app}/feature/transactions/`) with date range, customer, Sell/Buy/Receive/Pay multi-select, search, sort and filtered totals; no date grouping or list-detail yet.*
 - [ ] T125 [US5] Implement `EntryDetailScreen` (all fields, status labels Revised/Voided/"Changed to", Edit, Void with reason and linked prompt) + `EntryDetailViewModel` in `{app}/feature/entries/detail/`
 - [ ] T126 [US5] Extend `EntryEditorScreen` for edit mode (prefill from `editRootId`, type switcher, customer change, balance-effect preview dialog, reason field, linked-payment choice) in `{app}/feature/entries/editor/`
 - [ ] T127 [US5] Implement `EntryRevisionHistoryScreen` (old → new values, time, reason) in `{app}/feature/entries/revisions/`
-- [ ] T128 [US5] Add US5 strings in English and Hindi to `{appRes}/values/strings.xml` and `{appRes}/values-hi/strings.xml`
+- [X] T128 [US5] Add US5 strings in English and Hindi to `{appRes}/values/strings.xml` and `{appRes}/values-hi/strings.xml` — *Transactions strings in `strings_reports.xml` (English and Hindi).*
 
 **Checkpoint**: mistakes can be found and corrected with a full audit trail
 
@@ -310,17 +310,17 @@ fixed clock past midnight ⇒ "Today" resets
 
 ### Tests for User Story 6
 
-- [ ] T129 [P] [US6] Unit tests for `ObserveDashboardUseCase` (Today/Week/Month/Custom periods, net cash, midnight ticker using `FixedClock`), `ObserveDuesUseCase` (receivable/payable not netted, counts, top 5) and `ObserveBackupReminderUseCase` (7-day rule) in `{domainTest}/usecase/dashboard/DashboardUseCasesTest.kt`
-- [ ] T130 [P] [US6] Integration tests for dashboard aggregate queries vs `LedgerCalculator` on generated data in `{dataIt}/db/DashboardQueriesTest.kt`
-- [ ] T131 [P] [US6] Compose UI test: empty-state guide on a new account; quick actions open the right editors; backup banner visible without a backup, in `{appUiTest}/dashboard/DashboardTest.kt`
+- [ ] T129 [P] [US6] Unit tests for `ObserveDashboardUseCase` (Today/Week/Month/Custom periods, net cash, midnight ticker using `FixedClock`), `ObserveDuesUseCase` (receivable/payable not netted, counts, top 5) and `ObserveBackupReminderUseCase` (7-day rule) in `{domainTest}/usecase/dashboard/DashboardUseCasesTest.kt` — *Partial (2026-11-08): Phase 6 (Dashboard and Transactions): `{domainTest}/usecase/report/ReportUseCasesTest.kt` (totals, today, dues not netted, advances, recent, edits/deletes); period selector, top 5 and backup reminder pending.*
+- [X] T130 [P] [US6] Integration tests for dashboard aggregate queries vs `LedgerCalculator` on generated data in `{dataIt}/db/DashboardQueriesTest.kt` — *As `{dataIt}/repository/ReportRepositoryTest.kt`: SQL dashboard = `DashboardCalculator` on random data, dues = customer balances, live updates.*
+- [ ] T131 [P] [US6] Compose UI test: empty-state guide on a new account; quick actions open the right editors; backup banner visible without a backup, in `{appUiTest}/dashboard/DashboardTest.kt` — *Partial (2026-11-08): Phase 6 (Dashboard and Transactions): `{appUiTest}/reports/DashboardAndTransactionsTest.kt` (zeros on a new account, figures follow entries, Transactions filters); backup banner pending.*
 
 ### Implementation for User Story 6
 
-- [ ] T132 [P] [US6] Create `ReportDao` dashboard and dues aggregate queries in `{data}/db/dao/ReportDao.kt`
-- [ ] T133 [US6] Implement `RoomReportRepository.dashboard` and `dues` in `{data}/repository/RoomReportRepository.kt`
-- [ ] T134 [US6] Implement `ObserveDashboardUseCase`, `ObserveDuesUseCase`, `ObserveBackupReminderUseCase` in `{domain}/usecase/dashboard/`
-- [ ] T135 [US6] Implement `DashboardScreen` (period selector, stat cards in pieces and display unit, dues cards, top-5 list, quick actions Sell/Buy/Receive/Pay/Add customer, recent 10, backup banner) + `DashboardViewModel` in `{app}/feature/dashboard/`; replace the temporary FAB from T102 with the type-chooser FAB in `{app}/navigation/MainScaffold.kt`
-- [ ] T136 [US6] Add US6 strings in English and Hindi to `{appRes}/values/strings.xml` and `{appRes}/values-hi/strings.xml`
+- [X] T132 [P] [US6] Create `ReportDao` dashboard and dues aggregate queries in `{data}/db/dao/ReportDao.kt` — *Customer counts, trade totals (all time and today), dues and recent queries.*
+- [X] T133 [US6] Implement `RoomReportRepository.dashboard` and `dues` in `{data}/repository/RoomReportRepository.kt` — *`observeDashboard` combines the aggregates; `observeTransactions` for the Transactions tab.*
+- [ ] T134 [US6] Implement `ObserveDashboardUseCase`, `ObserveDuesUseCase`, `ObserveBackupReminderUseCase` in `{domain}/usecase/dashboard/` — *Partial (2026-11-08): Phase 6 (Dashboard and Transactions): `ObserveDashboardUseCase` and `ObserveTransactionsUseCase` in `{domain}/usecase/report/`; dues are part of the dashboard; backup reminder pending.*
+- [ ] T135 [US6] Implement `DashboardScreen` (period selector, stat cards in pieces and display unit, dues cards, top-5 list, quick actions Sell/Buy/Receive/Pay/Add customer, recent 10, backup banner) + `DashboardViewModel` in `{app}/feature/dashboard/`; replace the temporary FAB from T102 with the type-chooser FAB in `{app}/navigation/MainScaffold.kt` — *Partial (2026-11-08): Phase 6 (Dashboard and Transactions): quick actions Sell/Buy/Receive/Pay; today's sales and purchases, receivables/payables with customer counts, all-time sales and purchases (count, eggs, value), customers (total/active), recent 10 with "See all"; period selector, top 5 and backup banner pending.*
+- [X] T136 [US6] Add US6 strings in English and Hindi to `{appRes}/values/strings.xml` and `{appRes}/values-hi/strings.xml` — *In `strings_reports.xml` (English and Hindi).*
 
 **Checkpoint**: the owner sees the business state on opening the app
 

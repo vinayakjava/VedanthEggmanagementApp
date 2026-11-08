@@ -13,6 +13,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -44,6 +45,7 @@ fun CustomerDetailScreen(
     onEdit: (Long) -> Unit,
     onHistory: (Long) -> Unit,
     onTrade: (customerId: Long, type: EntryType) -> Unit,
+    onPayment: (customerId: Long, type: EntryType) -> Unit,
     onBack: () -> Unit,
     viewModel: CustomerDetailViewModel = hiltViewModel(),
 ) {
@@ -71,6 +73,14 @@ fun CustomerDetailScreen(
                         }
                         FilledTonalButton(onClick = { onTrade(customer.id, EntryType.BUY) }, modifier = Modifier.weight(1f)) {
                             Text(stringResource(R.string.customer_buy))
+                        }
+                    }
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        OutlinedButton(onClick = { onPayment(customer.id, EntryType.PAYMENT_RECEIVED) }, modifier = Modifier.weight(1f)) {
+                            Text(stringResource(R.string.customer_receive))
+                        }
+                        OutlinedButton(onClick = { onPayment(customer.id, EntryType.PAYMENT_MADE) }, modifier = Modifier.weight(1f)) {
+                            Text(stringResource(R.string.customer_pay))
                         }
                     }
                 }

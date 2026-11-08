@@ -6,13 +6,16 @@ import com.eggbusinessmanager.domain.customer.OpeningBalance
 import com.eggbusinessmanager.domain.ledger.BalanceEffect
 import com.eggbusinessmanager.domain.ledger.EntryStatus
 import com.eggbusinessmanager.domain.ledger.EntryType
+import com.eggbusinessmanager.domain.ledger.EntryValues
 import com.eggbusinessmanager.domain.ledger.LedgerEntry
+import com.eggbusinessmanager.domain.ledger.PaymentLine
+import com.eggbusinessmanager.domain.ledger.PaymentMode
 import com.eggbusinessmanager.domain.ledger.TradeLine
 import com.eggbusinessmanager.domain.money.Money
+import com.eggbusinessmanager.domain.money.QuantityMilli
 import com.eggbusinessmanager.domain.repository.CatalogRepository
 import com.eggbusinessmanager.domain.repository.EntryRef
 import com.eggbusinessmanager.domain.repository.LedgerRepository
-import com.eggbusinessmanager.domain.trade.ValidTrade
 import com.eggbusinessmanager.domain.validation.SearchKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,26 +48,26 @@ class FakeLedgerRepository : LedgerRepository {
 
     override suspend fun findByClientRequest(clientRequestId: String): EntryRef? = clientRequests[clientRequestId]
 
-    override suspend fun insertTrade(trade: ValidTrade, clientRequestId: String?, at: Instant): EntryRef {
+    override suspend fun insertEntry(values: EntryValues, clientRequestId: String?, at: Instant): EntryRef {
         val id = nextId++
-        val ref = EntryRef(id, reference(trade.type))
-        rows.value += trade.toEntry(id, id, ref.reference, at)
+        val ref = EntryRef(id, reference(values.type))
+        rows.value += values.toEntry(id, id, ref.reference, at)
         if (clientRequestId != null) clientRequests[clientRequestId] = ref
         return ref
     }
 
-    override suspend fun reviseTrade(current: LedgerEntry, trade: ValidTrade, at: Instant) {
+    override suspend fun reviseEntry(current: LedgerEntry, values: EntryValues, at: Instant) {
         val id = nextId++
         supersede(current.id)
-        rows.value += trade.toEntry(id, current.rootId, current.reference, at).copy(supersedesId = current.id)
+        rows.value += values.toEntry(id, current.rootId, current.reference, at).copy(supersedesId = current.id)
     }
 
-    override suspend fun replaceTrade(current: LedgerEntry, trade: ValidTrade, at: Instant): EntryRef {
+    override suspend fun replaceEntry(current: LedgerEntry, values: EntryValues, at: Instant): EntryRef {
         val id = nextId++
-        val ref = EntryRef(id, reference(trade.type))
+        val ref = EntryRef(id, reference(values.type))
         rows.value = rows.value.map {
             if (it.id == current.id) it.copy(status = EntryStatus.SUPERSEDED, replacedByRootId = id) else it
-        } + trade.toEntry(id, id, ref.reference, at)
+        } + values.toEntry(id, id, ref.reference, at)
         return ref
     }
 
@@ -97,12 +100,15 @@ class FakeLedgerRepository : LedgerRepository {
         rows.value += openingEntry(id, current.rootId, current.reference, current.customerId, opening, at).copy(supersedesId = current.id)
     }
 
-    /** Adds any other entry type directly (payments arrive with a later story). */
+    /** Adds an entry directly, bypassing use cases (for read-side tests). */
     fun addEntry(customerId: Long, type: EntryType, amount: Money, date: LocalDate, at: Instant) {
         val id = nextId++
+        val isPayment = type == EntryType.PAYMENT_RECEIVED || type == EntryType.PAYMENT_MADE
+        val payment = if (isPayment) PaymentLine(PaymentMode.CASH, null) else null
+        val trade = if (type == EntryType.SELL || type == EntryType.BUY) TradeLine(1, 1, QuantityMilli(1_000), 1, 1, amount) else null
         rows.value += LedgerEntry(
             id, id, reference(type), type, EntryStatus.ACTIVE, customerId, date, amount,
-            BalanceEffect.of(type, amount), null, null, at,
+            BalanceEffect.of(type, amount), null, null, at, trade = trade, payment = payment,
         )
     }
 
@@ -110,11 +116,10 @@ class FakeLedgerRepository : LedgerRepository {
         rows.value = rows.value.map { if (it.id == id) it.copy(status = EntryStatus.SUPERSEDED) else it }
     }
 
-    private fun ValidTrade.toEntry(id: Long, root: Long, reference: String, at: Instant) = LedgerEntry(
+    private fun EntryValues.toEntry(id: Long, root: Long, reference: String, at: Instant) = LedgerEntry(
         id = id, rootId = root, reference = reference, type = type, status = EntryStatus.ACTIVE, customerId = customerId,
-        date = date, amount = total, balanceEffect = BalanceEffect.of(type, total), openingDirection = null,
-        remarks = remarks, createdAt = at,
-        trade = TradeLine(varietyId, unitId, quantity, piecesPerUnit, pieces, pricePerUnit),
+        date = date, amount = amount, balanceEffect = BalanceEffect.of(type, amount), openingDirection = null,
+        remarks = remarks, createdAt = at, trade = trade, payment = payment,
     )
 
     private fun openingEntry(id: Long, root: Long, reference: String, customerId: Long, opening: OpeningBalance, at: Instant) =

@@ -19,6 +19,9 @@ enum class EntryStatus { ACTIVE, SUPERSEDED, VOIDED }
 /** Direction of an opening balance carried over from paper records. */
 enum class OpeningDirection { CUSTOMER_OWES, SHOP_OWES }
 
+/** How a payment was made (FR-028). Stable names; stored as TEXT. */
+enum class PaymentMode { CASH, UPI, BANK_TRANSFER, CHEQUE, OTHER }
+
 /** Balance with direction, as shown to the owner (spec § Balance convention). */
 sealed interface Balance {
     data class ToReceive(val amount: Money) : Balance
@@ -63,7 +66,33 @@ data class TradeLine(
     val pricePerUnit: Money,
 )
 
-/** One stored revision of a ledger entry. Payment details arrive with US4. */
+/** The payment part of a RECEIVE PAYMENT / PAY CUSTOMER entry. */
+data class PaymentLine(val mode: PaymentMode, val reference: String?)
+
+/**
+ * The business values of one entry, as every ledger write takes them. The balance effect is never
+ * passed in: the repository always derives it with [BalanceEffect], the single sign rule.
+ */
+data class EntryValues(
+    val type: EntryType,
+    val customerId: Long,
+    val date: LocalDate,
+    val amount: Money,
+    val trade: TradeLine? = null,
+    val payment: PaymentLine? = null,
+    val remarks: String? = null,
+) {
+    init {
+        val isTrade = type == EntryType.SELL || type == EntryType.BUY
+        val isPayment = type == EntryType.PAYMENT_RECEIVED || type == EntryType.PAYMENT_MADE
+        require(isTrade == (trade != null)) { "Trade details are required exactly for SELL/BUY" }
+        require(isPayment == (payment != null)) { "Payment details are required exactly for payments" }
+    }
+
+    val balanceEffect: Money get() = BalanceEffect.of(type, amount)
+}
+
+/** One stored revision of a ledger entry. */
 data class LedgerEntry(
     val id: Long,
     val rootId: Long,
@@ -78,6 +107,7 @@ data class LedgerEntry(
     val remarks: String?,
     val createdAt: Instant,
     val trade: TradeLine? = null,
+    val payment: PaymentLine? = null,
     /** The revision this one corrected, if any. */
     val supersedesId: Long? = null,
     /** Set on the last revision of an entry whose type was changed: the new entry's root (FR-033b). */
@@ -90,14 +120,34 @@ data class LedgerEntry(
 data class LedgerLine(val entry: LedgerEntry, val runningBalance: Money)
 
 /**
- * A customer's full ledger: active lines oldest first with running balances, the current balance, and
- * deleted (voided) entries, which stay visible but never count (FR-034).
+ * Per-type totals of a customer's active entries (US4-5, FR-031). [opening] is signed like a balance
+ * (positive = customer owes). They always satisfy the balance formula:
+ * balance = opening + sales − purchases − received + paid.
+ */
+data class LedgerTotals(
+    val opening: Money = Money.ZERO,
+    val sales: Money = Money.ZERO,
+    val purchases: Money = Money.ZERO,
+    val received: Money = Money.ZERO,
+    val paid: Money = Money.ZERO,
+) {
+    /** The balance formula from the spec Overview, written out literally. */
+    val balance: Money get() = sales - purchases - received + paid + opening
+}
+
+/**
+ * A customer's full ledger: active lines oldest first with running balances, the closing (current)
+ * balance, per-type totals, and deleted (voided) entries, which stay visible but never count (FR-034).
  */
 data class CustomerLedger(
     val lines: List<LedgerLine>,
     val balance: Money,
     val deleted: List<LedgerEntry> = emptyList(),
-)
+    val totals: LedgerTotals = LedgerTotals(),
+) {
+    /** The balance after the last line; equal to [balance] by construction. */
+    val closingBalance: Money get() = balance
+}
 
 /**
  * Pure recomputation of balances (contracts/domain-interfaces.md). Must equal the SQL aggregates;
@@ -127,6 +177,19 @@ object LedgerCalculator {
             lines = lines,
             balance = lines.lastOrNull()?.runningBalance ?: Money.ZERO,
             deleted = entries.filter { it.status == EntryStatus.VOIDED }.sortedWith(LEDGER_ORDER),
+            totals = totals(entries),
         )
     }
+
+    /** Per-type totals of active entries. Payments and trades are counted as positive amounts. */
+    fun totals(entries: List<LedgerEntry>): LedgerTotals = entries.filter { it.status == EntryStatus.ACTIVE }
+        .fold(LedgerTotals()) { t, e ->
+            when (e.type) {
+                EntryType.OPENING_BALANCE -> t.copy(opening = t.opening + e.balanceEffect)
+                EntryType.SELL -> t.copy(sales = t.sales + e.amount)
+                EntryType.BUY -> t.copy(purchases = t.purchases + e.amount)
+                EntryType.PAYMENT_RECEIVED -> t.copy(received = t.received + e.amount)
+                EntryType.PAYMENT_MADE -> t.copy(paid = t.paid + e.amount)
+            }
+        }
 }

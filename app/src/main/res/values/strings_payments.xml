@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Payments (US4) -->
+    <string name="payment_receive_title">Receive payment</string>
+    <string name="payment_pay_title">Pay customer</string>
+    <string name="payment_edit_title">Edit payment</string>
+    <string name="label_amount">Amount</string>
+    <string name="label_payment_mode">Payment mode</string>
+    <string name="label_payment_reference">Reference no.</string>
+    <string name="payment_reference_hint">UPI transaction id, cheque number, etc.</string>
+    <string name="payment_mode_cash">Cash</string>
+    <string name="payment_mode_upi">UPI</string>
+    <string name="payment_mode_bank">Bank transfer</string>
+    <string name="payment_mode_cheque">Cheque</string>
+    <string name="payment_mode_other">Other</string>
+    <string name="payment_full_amount">Full amount (%1$s)</string>
+    <string name="payment_customer_owes">Customer owes you</string>
+    <string name="payment_shop_owes">You owe the customer</string>
+    <string name="payment_advance">Advance</string>
+    <string name="payment_balance_after">Balance after saving</string>
+    <string name="payment_advance_title">Record an advance?</string>
+    <string name="payment_advance_received_body">This is %1$s more than %2$s owes. The extra is kept as an advance: you will owe it to them until later sales use it up.</string>
+    <string name="payment_advance_made_body">This is %1$s more than you owe %2$s. The extra is an advance: they will owe it to you until later purchases use it up.</string>
+    <string name="payment_advance_confirm">Save with advance</string>
+    <string name="v_amount_positive">Enter an amount greater than 0</string>
+    <string name="v_amount_format">Enter an amount with up to 2 decimals</string>
+    <string name="v_amount_too_large">Amount cannot exceed ₹99,99,99,999.99</string>
+    <string name="v_payment_reference_too_long">Reference can be at most 50 characters</string>
+    <string name="customer_receive">Receive payment</string>
+    <string name="customer_pay">Pay customer</string>
+    <!-- Ledger (US4-5) -->
+    <string name="ledger_opening">Opening balance</string>
+    <string name="ledger_sales">Sales</string>
+    <string name="ledger_purchases">Purchases</string>
+    <string name="ledger_received">Payments received</string>
+    <string name="ledger_paid">Payments made</string>
+    <string name="ledger_closing">Closing balance</string>
+    <string name="ledger_filter_all">All</string>
+    <string name="ledger_filter_payments">Payments</string>
+    <string name="ledger_no_payments">No payments with this customer yet.</string>
+    <string name="entry_payment_line">%1$s · Ref. %2$s</string>
+</resources>
