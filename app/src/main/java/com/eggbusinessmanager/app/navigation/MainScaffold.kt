@@ -27,6 +27,10 @@ import com.eggbusinessmanager.app.feature.settings.catalog.UnitsScreen
 import com.eggbusinessmanager.app.feature.settings.catalog.VarietiesScreen
 import com.eggbusinessmanager.app.feature.trade.EntryDetailScreen
 import com.eggbusinessmanager.app.feature.backup.BackupScreen
+import com.eggbusinessmanager.app.feature.settings.AboutScreen
+import com.eggbusinessmanager.app.feature.settings.preferences.PreferencesScreen
+import com.eggbusinessmanager.app.feature.settings.profile.OwnerProfileScreen
+import com.eggbusinessmanager.app.feature.settings.profile.ShopProfileScreen
 import com.eggbusinessmanager.app.feature.backup.RestoreOutcomeDialog
 import com.eggbusinessmanager.app.feature.payment.PaymentEditorScreen
 import com.eggbusinessmanager.app.feature.reports.ReportViewerScreen
@@ -165,11 +169,19 @@ fun MainScaffold(
             composable<UnitsRoute> { UnitsScreen(onBack = navController::popBackStack) }
             composable<VarietiesRoute> { VarietiesScreen(onBack = navController::popBackStack) }
             composable<BackupRoute> { BackupScreen(onBack = navController::popBackStack) }
+            composable<ShopProfileRoute> { ShopProfileScreen(onBack = navController::popBackStack) }
+            composable<OwnerProfileRoute> { OwnerProfileScreen(onBack = navController::popBackStack) }
+            composable<PreferencesRoute> { PreferencesScreen(onBack = navController::popBackStack) }
+            composable<AboutRoute> { AboutScreen(onBack = navController::popBackStack) }
             composable<TransactionsRoute> { TransactionsScreen(onOpenEntry = { navController.navigate(EntryDetailRoute(it)) }) }
             composable<ReportsRoute> { ReportsScreen(onOpen = { navController.navigate(ReportViewerRoute(it.name)) }) }
             composable<ReportViewerRoute> { ReportViewerScreen(onBack = navController::popBackStack) }
             composable<MoreRoute> {
                 MoreScreen(
+                    onShopProfile = { navController.navigate(ShopProfileRoute) },
+                    onOwnerProfile = { navController.navigate(OwnerProfileRoute) },
+                    onPreferences = { navController.navigate(PreferencesRoute) },
+                    onAbout = { navController.navigate(AboutRoute) },
                     onSecurity = { navController.navigate(SecurityRoute) },
                     onUnits = { navController.navigate(UnitsRoute) },
                     onVarieties = { navController.navigate(VarietiesRoute) },

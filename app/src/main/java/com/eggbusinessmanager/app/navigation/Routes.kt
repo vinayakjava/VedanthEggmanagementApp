@@ -51,3 +51,7 @@ import kotlinx.serialization.Serializable
 @Serializable data object UnitsRoute
 @Serializable data object VarietiesRoute
 @Serializable data object BackupRoute
+@Serializable data object ShopProfileRoute
+@Serializable data object OwnerProfileRoute
+@Serializable data object PreferencesRoute
+@Serializable data object AboutRoute

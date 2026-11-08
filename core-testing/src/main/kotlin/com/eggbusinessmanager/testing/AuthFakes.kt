@@ -81,6 +81,8 @@ class FakeAccountRepository : AccountRepository {
     override suspend fun replaceSecurityAnswers(answers: List<StoredSecurityAnswer>, at: Instant) =
         update(at) { it.copy(securityAnswers = answers) }
 
+    fun changeContact(mobile: String, email: String?, at: Instant) = update(at) { it.copy(mobile = mobile, email = email) }
+
     private fun update(at: Instant? = null, transform: (AccountCredentials) -> AccountCredentials) {
         stored.value = transform(checkNotNull(stored.value) { "No account" })
         if (at != null) lastChangeAt = at
@@ -90,6 +92,18 @@ class FakeAccountRepository : AccountRepository {
 class FakeBusinessProfileRepository(initial: BusinessProfile? = null) : BusinessProfileRepository {
     val profile = MutableStateFlow(initial)
     override fun observe(): Flow<BusinessProfile?> = profile
+}
+
+/** Profile writes against the fakes above. */
+class FakeProfileRepository(
+    private val profiles: FakeBusinessProfileRepository,
+    private val accounts: FakeAccountRepository,
+) : com.eggbusinessmanager.domain.settings.ProfileRepository {
+    override suspend fun updateShop(profile: BusinessProfile, at: Instant) {
+        profiles.profile.value = profile
+    }
+
+    override suspend fun updateContact(mobile: String, email: String?, at: Instant) = accounts.changeContact(mobile, email, at)
 }
 
 /** Session state machine without timers; tests drive it directly. */

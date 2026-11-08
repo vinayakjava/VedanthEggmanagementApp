@@ -19,6 +19,7 @@ import com.eggbusinessmanager.domain.ledger.LedgerEntry
 import com.eggbusinessmanager.domain.money.Money
 import com.eggbusinessmanager.domain.money.MoneyParser
 import com.eggbusinessmanager.domain.repository.Clock
+import com.eggbusinessmanager.domain.settings.ObservePreferencesUseCase
 import com.eggbusinessmanager.domain.repository.EntryRef
 import com.eggbusinessmanager.domain.repository.IdGenerator
 import com.eggbusinessmanager.domain.trade.TradeDraft
@@ -62,9 +63,10 @@ class TradeEditorViewModel @Inject constructor(
     private val suggestPrice: SuggestPriceUseCase,
     private val observeCustomer: ObserveCustomerUseCase,
     observeEntry: ObserveEntryUseCase,
-    observeUnits: ObserveUnitsUseCase,
+    private val observeUnits: ObserveUnitsUseCase,
     observeVarieties: ObserveVarietiesUseCase,
     private val searchCustomers: SearchCustomersUseCase,
+    private val observePreferences: ObservePreferencesUseCase,
     clock: Clock,
     private val ids: IdGenerator,
 ) : ViewModel() {
@@ -143,10 +145,14 @@ class TradeEditorViewModel @Inject constructor(
             }
         } else {
             route.customerId.takeIf { it > 0 }?.let { id -> viewModelScope.launch { onCustomerPicked(id) } }
-            // The default variety is pre-selected (FR-020).
+            // The default variety (FR-020) and the owner's default unit (if still active) are pre-selected.
             viewModelScope.launch {
                 val default = observeVarieties().first().firstOrNull { it.isDefault }
-                _state.update { s -> if (s.draft.varietyId == null) s.copy(draft = s.draft.copy(varietyId = default?.id)) else s }
+                val unitId = observePreferences().first().defaultUnitId
+                val unit = unitId?.let { id -> observeUnits(includeInactive = false).first().firstOrNull { it.id == id } }
+                _state.update { s ->
+                    s.copy(draft = s.draft.copy(varietyId = s.draft.varietyId ?: default?.id, unitId = s.draft.unitId ?: unit?.id))
+                }
             }
         }
     }

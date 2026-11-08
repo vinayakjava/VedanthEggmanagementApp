@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.eggbusinessmanager.domain.logging.AppLogger
 import com.eggbusinessmanager.domain.model.StartupState
 import com.eggbusinessmanager.domain.model.ThemeMode
+import com.eggbusinessmanager.domain.settings.AppPreferences
+import com.eggbusinessmanager.domain.settings.ObservePreferencesUseCase
 import com.eggbusinessmanager.domain.usecase.settings.ObserveThemeModeUseCase
 import com.eggbusinessmanager.domain.usecase.startup.PrepareAppUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +27,7 @@ import javax.inject.Inject
 class AppViewModel @Inject constructor(
     private val prepareApp: PrepareAppUseCase,
     observeThemeMode: ObserveThemeModeUseCase,
+    observePreferences: ObservePreferencesUseCase,
     private val logger: AppLogger,
 ) : ViewModel() {
 
@@ -47,6 +50,18 @@ class AppViewModel @Inject constructor(
             emit(ThemeMode.SYSTEM)
         }
         .stateIn(viewModelScope, SharingStarted.Eagerly, ThemeMode.SYSTEM)
+
+    /** Display preferences; null until storage is ready and they are read (the splash stays meanwhile). */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val preferences: StateFlow<AppPreferences?> = uiState
+        .flatMapLatest { state ->
+            if (state is UiState.Done && state.startup == StartupState.Ready) observePreferences() else flowOf(null)
+        }
+        .catch { error ->
+            logger.warn(TAG, error) { "Preferences unavailable; using defaults" }
+            emit(AppPreferences())
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     init {
         prepare()

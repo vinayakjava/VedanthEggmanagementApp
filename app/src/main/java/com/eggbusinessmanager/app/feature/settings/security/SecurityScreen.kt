@@ -10,6 +10,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.eggbusinessmanager.app.R
+import com.eggbusinessmanager.domain.repository.SettingsRepository
+import com.eggbusinessmanager.domain.settings.SetAutoLockMinutesUseCase
+import com.eggbusinessmanager.app.ui.components.DropdownField
 import com.eggbusinessmanager.app.feature.auth.biometric.BiometricCoordinator
 import com.eggbusinessmanager.app.feature.auth.biometric.rememberBiometricPromptLauncher
 import com.eggbusinessmanager.app.feature.settings.SettingsRow
@@ -31,7 +34,17 @@ import javax.inject.Inject
 class SecurityViewModel @Inject constructor(
     private val biometric: BiometricCoordinator,
     private val lockApp: LockAppUseCase,
+    settings: SettingsRepository,
+    private val setAutoLock: SetAutoLockMinutesUseCase,
 ) : ViewModel() {
+    /** FR-007: lock after this many minutes in the background or idle. */
+    val autoLockMinutes: StateFlow<Int> = settings.observeAutoLockMinutes()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_MS), SettingsRepository.DEFAULT_AUTO_LOCK_MINUTES)
+
+    fun onAutoLock(minutes: Int) {
+        viewModelScope.launch { setAutoLock(minutes) }
+    }
+
     val biometricEnabled: StateFlow<Boolean> = biometric.enabled.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_MS), false)
 
     private val _message = MutableStateFlow<UiText?>(null)
@@ -101,6 +114,14 @@ fun SecurityScreen(
             trailing = { Switch(checked = enabled, onCheckedChange = { toggleBiometric() }) },
         )
         message?.let { ErrorBanner(it.asString(), onDismiss = { viewModel.showMessage(null) }) }
+        val autoLock by viewModel.autoLockMinutes.collectAsStateWithLifecycle()
+        DropdownField(
+            label = stringResource(R.string.security_auto_lock),
+            options = SettingsRepository.AUTO_LOCK_CHOICES,
+            selected = autoLock,
+            optionLabel = { stringResource(R.string.security_auto_lock_option, it) },
+            onSelect = viewModel::onAutoLock,
+        )
         SettingsRow(R.drawable.ic_lock, stringResource(R.string.security_lock_now), null, viewModel::lockNow)
     }
 }

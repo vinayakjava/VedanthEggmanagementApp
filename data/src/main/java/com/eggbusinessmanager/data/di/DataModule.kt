@@ -12,6 +12,7 @@ import com.eggbusinessmanager.data.repository.RoomAccountRepository
 import com.eggbusinessmanager.data.repository.RoomAuditRepository
 import com.eggbusinessmanager.data.repository.RoomBusinessProfileRepository
 import com.eggbusinessmanager.data.repository.RoomCatalogRepository
+import com.eggbusinessmanager.data.repository.RoomProfileRepository
 import com.eggbusinessmanager.data.repository.RoomReportRepository
 import com.eggbusinessmanager.data.backup.RoomBackupHistory
 import com.eggbusinessmanager.data.settings.DataStoreAutoBackupSettings
@@ -25,6 +26,8 @@ import com.eggbusinessmanager.domain.backup.BackupHistory
 import com.eggbusinessmanager.domain.backup.DeviceBackupStore
 import com.eggbusinessmanager.domain.backup.DriveBackupStore
 import com.eggbusinessmanager.domain.export.ReportExporter
+import com.eggbusinessmanager.domain.settings.AppPreferencesRepository
+import com.eggbusinessmanager.domain.settings.ProfileRepository
 import com.eggbusinessmanager.data.repository.RoomCustomerRepository
 import com.eggbusinessmanager.data.repository.RoomLedgerRepository
 import com.eggbusinessmanager.data.repository.RoomSettingsRepository
@@ -132,6 +135,17 @@ abstract class BusinessDataBindingsModule {
 
     @Binds
     abstract fun bindReportExporter(impl: FileReportExporter): ReportExporter
+}
+
+/** Profile editing and app preferences (Phase 11). */
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class SettingsDataBindingsModule {
+    @Binds
+    abstract fun bindProfileRepository(impl: RoomProfileRepository): ProfileRepository
+
+    @Binds
+    abstract fun bindAppPreferences(impl: RoomSettingsRepository): AppPreferencesRepository
 }
 
 /** Backup and restore: snapshots, history, phone and Google Drive storage, automatic backup settings. */

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="more_shop_profile">दुकान की जानकारी</string>
+    <string name="more_shop_profile_summary">दुकान का नाम, पता, शहर, राज्य और पिन कोड</string>
+    <string name="more_owner_profile">मालिक की जानकारी</string>
+    <string name="more_owner_profile_summary">मालिक का नाम, मोबाइल नंबर और ईमेल</string>
+    <string name="more_preferences">दिखावट और पसंद</string>
+    <string name="more_preferences_summary">थीम, मुद्रा, तारीख़ का रूप और डिफ़ॉल्ट इकाई</string>
+    <string name="more_about">ऐप के बारे में</string>
+    <string name="more_about_summary">ऐप संस्करण और गोपनीयता</string>
+    <string name="profile_saved">सहेजा गया</string>
+    <string name="owner_password_note">आपका मोबाइल नंबर और ईमेल साइन इन के लिए हैं। इन्हें बदलने के लिए मौजूदा पासवर्ड लिखें।</string>
+    <string name="owner_current_password">मौजूदा पासवर्ड (केवल मोबाइल या ईमेल बदलने के लिए)</string>
+    <string name="pref_theme">थीम</string>
+    <string name="pref_theme_system">सिस्टम</string>
+    <string name="pref_theme_light">हल्की</string>
+    <string name="pref_theme_dark">गहरी</string>
+    <string name="pref_currency">मुद्रा चिह्न</string>
+    <string name="pref_grouping">अंकों का समूह</string>
+    <string name="pref_grouping_indian">भारतीय (1,00,000)</string>
+    <string name="pref_grouping_international">अंतरराष्ट्रीय (100,000)</string>
+    <string name="pref_example">उदाहरण: %1$s</string>
+    <string name="pref_date">तारीख़ का रूप</string>
+    <string name="pref_sell_buy">बिक्री और ख़रीद</string>
+    <string name="pref_default_unit">डिफ़ॉल्ट इकाई</string>
+    <string name="pref_default_unit_none">कोई नहीं (हर बार चुनें)</string>
+    <string name="pref_currency_note">राशि हमेशा रुपये और पैसे में ही रखी जाती है; इससे केवल दिखने और छपने का तरीका बदलता है।</string>
+    <string name="security_auto_lock">इतनी देर बाद अपने-आप लॉक</string>
+    <string name="security_auto_lock_option">%1$d मिनट</string>
+    <string name="about_title">ऐप के बारे में</string>
+    <string name="about_version">संस्करण %1$s (बिल्ड %2$d)</string>
+    <string name="about_description">आपकी दुकान के अंडों की बिक्री, ख़रीद, भुगतान और ग्राहकों का बकाया दर्ज करता है।</string>
+    <string name="about_privacy_title">आपका डेटा</string>
+    <string name="about_privacy_body">सब कुछ इसी फ़ोन पर एन्क्रिप्टेड डेटाबेस में रहता है। ऐप को इंटरनेट की ज़रूरत नहीं, कोई विज्ञापन नहीं और कोई एनालिटिक्स नहीं भेजा जाता। इंटरनेट तभी इस्तेमाल होता है जब आप Google Drive बैकअप चुनें, और तब भी केवल एन्क्रिप्टेड बैकअप फ़ाइलें एक छिपे फ़ोल्डर में भेजी जाती हैं।</string>
+    <string name="about_security_title">सुरक्षा</string>
+    <string name="about_security_body">आपका पासवर्ड कभी सहेजा नहीं जाता, केवल उसका मज़बूत हैश। बैकअप ऐसे पासफ़्रेज़ से एन्क्रिप्ट होते हैं जिसे सिर्फ़ आप जानते हैं।</string>
+    <string name="about_libraries_title">इनसे बना</string>
+    <string name="about_libraries_body">Kotlin, Jetpack Compose, Material 3, Room, SQLCipher, Hilt, WorkManager, DataStore, OkHttp और Google Identity Services।</string>
+</resources>

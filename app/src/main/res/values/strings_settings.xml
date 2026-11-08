@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings and final polish (Phase 11) -->
+    <string name="more_shop_profile">Shop profile</string>
+    <string name="more_shop_profile_summary">Shop name, address, city, state and PIN code</string>
+    <string name="more_owner_profile">Owner profile</string>
+    <string name="more_owner_profile_summary">Owner name, mobile number and email</string>
+    <string name="more_preferences">Display &amp; preferences</string>
+    <string name="more_preferences_summary">Theme, currency, date format and default unit</string>
+    <string name="more_about">About</string>
+    <string name="more_about_summary">App version and privacy</string>
+
+    <string name="profile_saved">Saved</string>
+    <string name="owner_password_note">Your mobile number and email are used to sign in. To change either, enter your current password.</string>
+    <string name="owner_current_password">Current password (only to change mobile or email)</string>
+
+    <string name="pref_theme">Theme</string>
+    <string name="pref_theme_system">System</string>
+    <string name="pref_theme_light">Light</string>
+    <string name="pref_theme_dark">Dark</string>
+    <string name="pref_currency">Currency symbol</string>
+    <string name="pref_grouping">Number grouping</string>
+    <string name="pref_grouping_indian">Indian (1,00,000)</string>
+    <string name="pref_grouping_international">International (100,000)</string>
+    <string name="pref_example">Example: %1$s</string>
+    <string name="pref_date">Date format</string>
+    <string name="pref_sell_buy">Sell and Buy</string>
+    <string name="pref_default_unit">Default unit</string>
+    <string name="pref_default_unit_none">None (choose each time)</string>
+    <string name="pref_currency_note">Amounts are always kept in rupees and paise; this only changes how they are shown and printed.</string>
+
+    <string name="security_auto_lock">Lock automatically after</string>
+    <string name="security_auto_lock_option">%1$d min</string>
+
+    <string name="about_title">About</string>
+    <string name="about_version">Version %1$s (build %2$d)</string>
+    <string name="about_description">Records egg sales, purchases, payments and customer balances for your shop.</string>
+    <string name="about_privacy_title">Your data</string>
+    <string name="about_privacy_body">Everything stays on this phone in an encrypted database. The app needs no internet connection, has no ads and sends no analytics. The internet is used only if you choose Google Drive backup, and then only encrypted backup files are sent, to a hidden folder only this app can see.</string>
+    <string name="about_security_title">Security</string>
+    <string name="about_security_body">Your password is never stored, only a strong hash of it. Backups are encrypted with a passphrase that only you know.</string>
+    <string name="about_libraries_title">Built with</string>
+    <string name="about_libraries_body">Kotlin, Jetpack Compose, Material 3, Room, SQLCipher, Hilt, WorkManager, DataStore, OkHttp and Google Identity Services.</string>
+</resources>

@@ -58,6 +58,23 @@ interface AccountDao {
     @Query("UPDATE owner_account SET updated_at = :at WHERE id = 1")
     suspend fun touchUpdatedAt(at: Long)
 
+    @Query("UPDATE owner_account SET mobile = :mobile, email = :email, updated_at = :at WHERE id = 1")
+    suspend fun updateContact(mobile: String, email: String?, at: Long)
+
+    @Query(
+        "UPDATE business_profile SET shop_name = :shopName, owner_name = :ownerName, address = :address, city = :city, " +
+            "state_code = :stateCode, pin_code = :pinCode, updated_at = :at WHERE id = 1",
+    )
+    suspend fun updateProfile(
+        shopName: String,
+        ownerName: String,
+        address: String?,
+        city: String,
+        stateCode: String,
+        pinCode: String,
+        at: Long,
+    )
+
     @Query("SELECT * FROM business_profile WHERE id = 1")
     fun observeProfile(): Flow<BusinessProfileEntity?>
 }

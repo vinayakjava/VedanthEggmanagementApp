@@ -65,8 +65,7 @@ class TradeFlowsTest {
         compose.onNodeWithTag(ADD_CUSTOMER_TAG).performClick()
         waitFor(s(R.string.editor_add_title))
         type(s(R.string.label_customer_name), "Ramesh Traders")
-        clickButton(s(R.string.action_save))
-        waitFor(s(R.string.customer_sell), 15_000)
+        advance(s(R.string.action_save), s(R.string.customer_sell), 15_000)
 
         // US3-1/2: 10 trays at ₹180 = ₹1,800.00 and 300 eggs, live; saved as S-000001.
         click(s(R.string.customer_sell))
@@ -77,8 +76,7 @@ class TradeFlowsTest {
         type(s(R.string.label_price_per_unit, "Tray"), "180")
         totalShows("₹1,800.00")
         assertThat(exists(s(R.string.trade_pieces, "300"))).isTrue()
-        clickButton(s(R.string.action_save))
-        waitFor(s(R.string.trade_saved_title, "S-000001"), 15_000)
+        advance(s(R.string.action_save), s(R.string.trade_saved_title, "S-000001"), 15_000)
         click(s(R.string.trade_done))
         waitFor(s(R.string.balance_to_receive, "₹1,800.00"), 10_000)
 
@@ -94,15 +92,13 @@ class TradeFlowsTest {
         click(s(R.string.trade_add_new_customer))
         waitFor(s(R.string.editor_add_title))
         type(s(R.string.label_customer_name), "Farm Fresh")
-        clickButton(s(R.string.action_save))
-        waitFor("Farm Fresh", 15_000)
+        advance(s(R.string.action_save), "Farm Fresh", 15_000)
         // The quantity typed before adding the customer is still there.
         assertThat(compose.onAllNodes(hasText("2") and hasSetTextAction()).fetchSemanticsNodes()).isNotEmpty()
         type(s(R.string.label_price_per_unit, "Box"), "1000")
         totalShows("₹2,000.00")
         assertThat(exists(s(R.string.trade_pieces, "420"))).isTrue()
-        clickButton(s(R.string.action_save))
-        waitFor(s(R.string.trade_saved_title, "B-000001"), 15_000)
+        advance(s(R.string.action_save), s(R.string.trade_saved_title, "B-000001"), 15_000)
         click(s(R.string.trade_done))
 
         // US5-4: edit the sale; the balance follows and the history keeps the original.
@@ -118,8 +114,7 @@ class TradeFlowsTest {
         compose.onNode(hasText("10") and hasSetTextAction()).performTextClearance()
         type(s(R.string.label_quantity), "12")
         totalShows("₹2,160.00")
-        clickButton(s(R.string.action_save))
-        waitFor(s(R.string.entry_history), 15_000)
+        advance(s(R.string.action_save), s(R.string.entry_history), 15_000)
         assertThat(exists(s(R.string.entry_quantity_line, "12", "Tray", "360"))).isTrue()
         assertThat(compose.onAllNodesWithText(s(R.string.entry_revised_badge), substring = true).fetchSemanticsNodes()).isNotEmpty()
 

@@ -78,8 +78,7 @@ class ShareFlowTest {
         waitFor(s(R.string.editor_add_title))
         type(s(R.string.label_customer_name), "Ramesh Traders")
         type(s(R.string.label_opening_amount), "1000")
-        clickButton(s(R.string.action_save))
-        waitFor(s(R.string.detail_statement), 15_000)
+        advance(s(R.string.action_save), s(R.string.detail_statement), 15_000)
 
         // Customer page → Statement opens with the customer already chosen.
         click(s(R.string.detail_statement))

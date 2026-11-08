@@ -62,8 +62,7 @@ class DashboardAndTransactionsTest {
         type(s(R.string.field_optional, s(R.string.label_mobile)), mobile)
         if (shopOwes) click(s(R.string.opening_shop_owes))
         type(s(R.string.label_opening_amount), opening)
-        clickButton(s(R.string.action_save))
-        waitFor(s(R.string.customer_sell), 15_000)
+        advance(s(R.string.action_save), s(R.string.customer_sell), 15_000)
     }
 
     @Test
@@ -83,14 +82,12 @@ class DashboardAndTransactionsTest {
         choose(s(R.string.label_unit), s(R.string.unit_option, "Tray", 30))
         type(s(R.string.label_quantity), "10")
         type(s(R.string.label_price_per_unit, "Tray"), "180")
-        clickButton(s(R.string.action_save))
-        waitFor(s(R.string.trade_saved_title, "S-000001"), 15_000)
+        advance(s(R.string.action_save), s(R.string.trade_saved_title, "S-000001"), 15_000)
         click(s(R.string.trade_done))
         click(s(R.string.customer_receive))
         waitFor(s(R.string.label_payment_mode))
         type(s(R.string.label_amount), "500")
-        clickButton(s(R.string.action_save))
-        waitFor(s(R.string.trade_saved_title, "RP-000001"), 15_000)
+        advance(s(R.string.action_save), s(R.string.trade_saved_title, "RP-000001"), 15_000)
         click(s(R.string.trade_done))
         waitFor(s(R.string.balance_to_receive, "₹2,300.00"), 10_000)
         back()

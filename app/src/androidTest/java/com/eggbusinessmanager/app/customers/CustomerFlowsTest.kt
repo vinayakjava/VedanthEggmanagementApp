@@ -110,8 +110,7 @@ class CustomerFlowsTest {
         waitFor(s(R.string.customers_none_found), 10_000)
         click(s(R.string.customers_add_typed, "Gopal"))
         waitFor(s(R.string.editor_add_title))
-        clickButton(s(R.string.action_save))
-        waitFor(s(R.string.balance_settled), 15_000)
+        advance(s(R.string.action_save), s(R.string.balance_settled), 15_000)
 
         // US2-7: a customer with no entries can be deleted.
         click(s(R.string.detail_delete))
@@ -145,8 +144,7 @@ class CustomerFlowsTest {
         waitFor(s(R.string.editor_edit_title))
         compose.onNode(hasText("1500") and hasSetTextAction()).performTextClearance()
         type(s(R.string.label_opening_amount), "2000")
-        clickButton(s(R.string.action_save))
-        waitFor(s(R.string.balance_to_receive, "₹2,000.00"), 15_000)
+        advance(s(R.string.action_save), s(R.string.balance_to_receive, "₹2,000.00"), 15_000)
 
         // Transaction history: the opening balance entry with its reference and running balance.
         click(s(R.string.detail_transactions))

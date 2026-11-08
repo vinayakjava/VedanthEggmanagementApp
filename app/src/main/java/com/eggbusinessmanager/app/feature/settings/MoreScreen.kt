@@ -60,6 +60,10 @@ class MoreViewModel @Inject constructor(
 /** The "More" tab: shop header, security settings and sign out (FR-011). Other settings arrive with US12. */
 @Composable
 fun MoreScreen(
+    onShopProfile: () -> Unit,
+    onOwnerProfile: () -> Unit,
+    onPreferences: () -> Unit,
+    onAbout: () -> Unit,
     onSecurity: () -> Unit,
     onUnits: () -> Unit,
     onVarieties: () -> Unit,
@@ -76,6 +80,16 @@ fun MoreScreen(
         ) {
             profile?.let { ShopHeader(it) }
             SettingsRow(
+                R.drawable.ic_nav_dashboard, stringResource(R.string.more_shop_profile), stringResource(R.string.more_shop_profile_summary),
+                onClick = onShopProfile,
+            )
+            SettingsRow(
+                R.drawable.ic_nav_customers,
+                stringResource(R.string.more_owner_profile),
+                stringResource(R.string.more_owner_profile_summary),
+                onClick = onOwnerProfile,
+            )
+            SettingsRow(
                 R.drawable.ic_shield, stringResource(R.string.more_security), stringResource(R.string.more_security_summary),
                 onClick = onSecurity,
             )
@@ -90,6 +104,14 @@ fun MoreScreen(
             SettingsRow(
                 R.drawable.ic_history, stringResource(R.string.more_backup), stringResource(R.string.more_backup_summary),
                 onClick = onBackup,
+            )
+            SettingsRow(
+                R.drawable.ic_edit, stringResource(R.string.more_preferences), stringResource(R.string.more_preferences_summary),
+                onClick = onPreferences,
+            )
+            SettingsRow(
+                R.drawable.ic_help, stringResource(R.string.more_about), stringResource(R.string.more_about_summary),
+                onClick = onAbout,
             )
             SettingsRow(
                 R.drawable.ic_logout, stringResource(R.string.more_sign_out), stringResource(R.string.more_sign_out_summary),

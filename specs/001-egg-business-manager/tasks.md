@@ -493,21 +493,21 @@ theme, language; backup passphrase change; About
 
 ### Tests for User Story 12
 
-- [ ] T200 [P] [US12] Unit tests for `ManageUnitsUseCase` (unique names, 1–10,000 pieces, Piece immutable, resize never alters past entries, used units deactivate instead of delete) and `ManageVarietiesUseCase` (exactly one default, last active protected, rename propagates) in `{domainTest}/usecase/settings/CatalogManagementTest.kt`
-- [ ] T201 [P] [US12] Integration test: resizing a unit leaves stored `pieces_per_unit_snapshot`/`pieces` untouched and audits the resize, in `{dataIt}/repository/CatalogRepositoryTest.kt`
-- [ ] T202 [P] [US12] Unit tests for `ChangeBackupPassphraseUseCase` (current passphrase required; old backups still need the old one) in `{domainTest}/usecase/backup/ChangeBackupPassphraseTest.kt`
-- [ ] T203 [P] [US12] Compose UI test: profile edit, unit add/resize notice, variety default change, theme and language switch without restart, in `{appUiTest}/settings/SettingsFlowsTest.kt`
+- [X] T200 [P] [US12] Unit tests for `ManageUnitsUseCase` (unique names, 1–10,000 pieces, Piece immutable, resize never alters past entries, used units deactivate instead of delete) and `ManageVarietiesUseCase` (exactly one default, last active protected, rename propagates) in `{domainTest}/usecase/settings/CatalogManagementTest.kt` — *Covered by `{domainTest}/usecase/catalog/CatalogUseCasesTest.kt` (Phase 4).*
+- [X] T201 [P] [US12] Integration test: resizing a unit leaves stored `pieces_per_unit_snapshot`/`pieces` untouched and audits the resize, in `{dataIt}/repository/CatalogRepositoryTest.kt` — *Covered by `{dataIt}/repository/TradeRepositoryTest.kt` resize test (Phase 4).*
+- [ ] T202 [P] [US12] Unit tests for `ChangeBackupPassphraseUseCase` (current passphrase required; old backups still need the old one) in `{domainTest}/usecase/backup/ChangeBackupPassphraseTest.kt` — *Partial (2026-11-08): Phase 11: the passphrase can be set again from Backup & restore (`SetBackupPassphraseUseCase`, ≠ login password); old backups keep their own salt, so they still need the old passphrase.*
+- [ ] T203 [P] [US12] Compose UI test: profile edit, unit add/resize notice, variety default change, theme and language switch without restart, in `{appUiTest}/settings/SettingsFlowsTest.kt` — *Partial (2026-11-08): Phase 11: `{appUiTest}/CompleteAppTest.kt` covers shop/owner profile edits, currency/grouping/date/default unit, auto-lock, About, sign out and back in; language switching pending.*
 
 ### Implementation for User Story 12
 
-- [ ] T204 [US12] Implement `RoomCatalogRepository` write operations (upsert/resize/deactivate units; upsert/default/deactivate varieties with invariants and audit) in `{data}/repository/RoomCatalogRepository.kt`
-- [ ] T205 [US12] Implement `RoomSettingsRepository` (typed `app_setting`, unknown keys ignored) in `{data}/repository/RoomSettingsRepository.kt`
-- [ ] T206 [US12] Implement `UpdateBusinessProfileUseCase`, `ManageUnitsUseCase`, `ManageVarietiesUseCase`, `UpdateAppSettingsUseCase`, `ChangeBackupPassphraseUseCase` in `{domain}/usecase/settings/` and `{domain}/usecase/backup/`
-- [ ] T207 [US12] Implement `MoreScreen` (settings hub) and `BusinessProfileScreen` in `{app}/feature/settings/`
-- [ ] T208 [P] [US12] Implement `UnitsSettingsScreen` and `VarietiesSettingsScreen` + ViewModels in `{app}/feature/settings/catalog/`
-- [ ] T209 [P] [US12] Implement `AppPreferencesScreen` (default Buy/Sell units, default variety, display unit, auto-lock timeout, theme, language) and `AboutScreen` (version name/code) in `{app}/feature/settings/preferences/`
-- [ ] T210 [US12] Implement the backup passphrase change screen (states that old backups need the old passphrase) in `{app}/feature/backup/BackupPassphraseScreen.kt`
-- [ ] T211 [US12] Add US12 strings in English and Hindi to `{appRes}/values/strings.xml` and `{appRes}/values-hi/strings.xml`
+- [X] T204 [US12] Implement `RoomCatalogRepository` write operations (upsert/resize/deactivate units; upsert/default/deactivate varieties with invariants and audit) in `{data}/repository/RoomCatalogRepository.kt` — *Phase 4 (`RoomCatalogRepository`).*
+- [X] T205 [US12] Implement `RoomSettingsRepository` (typed `app_setting`, unknown keys ignored) in `{data}/repository/RoomSettingsRepository.kt` — *`RoomSettingsRepository` also implements `AppPreferencesRepository` (currency symbol, grouping, date style, default unit, auto-lock); unknown values fall back to defaults.*
+- [ ] T206 [US12] Implement `UpdateBusinessProfileUseCase`, `ManageUnitsUseCase`, `ManageVarietiesUseCase`, `UpdateAppSettingsUseCase`, `ChangeBackupPassphraseUseCase` in `{domain}/usecase/settings/` and `{domain}/usecase/backup/` — *Partial (2026-11-08): Phase 11: `UpdateShopProfileUseCase`, `UpdateOwnerProfileUseCase` (password required to change the sign-in mobile/email), `UpdatePreferencesUseCase`, `SetAutoLockMinutesUseCase`; catalog use cases from Phase 4.*
+- [X] T207 [US12] Implement `MoreScreen` (settings hub) and `BusinessProfileScreen` in `{app}/feature/settings/` — *More hub with Shop profile, Owner profile, Security, Units, Varieties, Backup & restore, Display & preferences, About and Sign out; `ShopProfileScreen`/`OwnerProfileScreen` in `{app}/feature/settings/profile/`.*
+- [X] T208 [P] [US12] Implement `UnitsSettingsScreen` and `VarietiesSettingsScreen` + ViewModels in `{app}/feature/settings/catalog/` — *Phase 4 (`CatalogScreens.kt`).*
+- [ ] T209 [P] [US12] Implement `AppPreferencesScreen` (default Buy/Sell units, default variety, display unit, auto-lock timeout, theme, language) and `AboutScreen` (version name/code) in `{app}/feature/settings/preferences/` — *Partial (2026-11-08): Phase 11: `PreferencesScreen` (theme, ₹/Rs., Indian/international grouping, 4 date formats, default unit) and `AboutScreen` (version, build, privacy); auto-lock on the Security screen; language picker and display unit pending.*
+- [ ] T210 [US12] Implement the backup passphrase change screen (states that old backups need the old passphrase) in `{app}/feature/backup/BackupPassphraseScreen.kt` — *Partial (2026-11-08): Phase 11: the passphrase dialog on Backup & restore sets a new passphrase; its text says old backups cannot be opened without the passphrase they were made with.*
+- [X] T211 [US12] Add US12 strings in English and Hindi to `{appRes}/values/strings.xml` and `{appRes}/values-hi/strings.xml` — *In `strings_settings.xml` (English and Hindi).*
 
 **Checkpoint**: all user stories are functional
 
