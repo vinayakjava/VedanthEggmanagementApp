@@ -27,3 +27,8 @@ keystore.properties
 # Claude Code local settings
 .claude/settings.local.json
 .kotlin/
+
+# Release APKs are distributed, not committed.
+dist/
+*.apk
+*.aab

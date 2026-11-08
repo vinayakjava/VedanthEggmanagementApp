@@ -61,6 +61,18 @@ class ReportSharer @Inject constructor(
         return Intent.createChooser(send, chooserTitle)
     }
 
+    /** The Sharesheet for a PDF on its own, e.g. a receipt (FR-042a: receipts are PDF only). */
+    fun pdfOnlyChooser(uri: Uri, subject: String, chooserTitle: String): Intent {
+        val send = Intent(Intent.ACTION_SEND).apply {
+            type = ExportFormat.PDF.mimeType
+            putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            clipData = ClipData.newRawUri(subject, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        return Intent.createChooser(send, chooserTitle)
+    }
+
     /** The Sharesheet for the text summary alone (handy for a quick WhatsApp or SMS message). */
     fun textChooser(subject: String, text: String, chooserTitle: String): Intent {
         val send = Intent(Intent.ACTION_SEND).apply {

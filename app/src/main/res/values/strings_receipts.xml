@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Receipts for single entries (FR-042a). -->
+<resources>
+    <string name="receipt_title_sell">Sale receipt</string>
+    <string name="receipt_title_buy">Purchase receipt</string>
+    <string name="receipt_title_received">Payment receipt</string>
+    <string name="receipt_title_made">Payment voucher</string>
+    <string name="receipt_no">Receipt no.: %1$s</string>
+    <string name="receipt_revised">Revised</string>
+    <string name="receipt_date">Date: %1$s</string>
+    <string name="receipt_shop_phone">Phone: %1$s</string>
+    <string name="receipt_balance_after">Balance after this entry</string>
+    <string name="receipt_balance_now">Current balance</string>
+    <string name="receipt_col_item">Item</string>
+    <string name="receipt_pieces">Eggs (pieces)</string>
+    <string name="receipt_rate">Price per %1$s</string>
+    <string name="receipt_received_now">Received on the spot</string>
+    <string name="receipt_paid_now">Paid on the spot</string>
+    <string name="receipt_against">Against</string>
+    <string name="receipt_remarks">Remarks</string>
+    <string name="receipt_thanks">Thank you for your business.</string>
+    <string name="receipt_share">Share receipt</string>
+    <string name="receipt_share_failed">Could not prepare the receipt. Please try again.</string>
+</resources>

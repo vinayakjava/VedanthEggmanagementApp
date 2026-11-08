@@ -44,6 +44,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eggbusinessmanager.app.R
 import com.eggbusinessmanager.app.feature.payment.modeLabel
+import com.eggbusinessmanager.app.feature.receipt.ShareReceiptButton
+import com.eggbusinessmanager.app.feature.receipt.rememberShareReceipt
 import com.eggbusinessmanager.app.ui.components.DateField
 import com.eggbusinessmanager.app.ui.components.DropdownField
 import com.eggbusinessmanager.app.ui.components.ErrorBanner
@@ -177,7 +179,10 @@ fun TradeEditorScreen(
             onDismiss = { pickerOpen = false },
         )
     }
-    state.saved?.takeIf { it.isNew }?.let { SavedDialog(it, onRecordAnother = viewModel::recordAnother, onDone = onClose) }
+    val shareReceipt = rememberShareReceipt()
+    state.saved?.takeIf { it.isNew }?.let {
+        SavedDialog(it, onRecordAnother = viewModel::recordAnother, onDone = onClose, onShareReceipt = { shareReceipt(it.ref.rootId) })
+    }
 }
 
 @Composable
@@ -189,7 +194,7 @@ private fun editorTitle(isEdit: Boolean, type: EntryType): String = when {
 
 /** US3-2: confirmation with "Record another". */
 @Composable
-private fun SavedDialog(saved: TradeEditorViewModel.Saved, onRecordAnother: () -> Unit, onDone: () -> Unit) {
+private fun SavedDialog(saved: TradeEditorViewModel.Saved, onRecordAnother: () -> Unit, onDone: () -> Unit, onShareReceipt: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDone,
         title = { Text(stringResource(R.string.trade_saved_title, saved.ref.reference)) },
@@ -204,6 +209,7 @@ private fun SavedDialog(saved: TradeEditorViewModel.Saved, onRecordAnother: () -
                         modifier = Modifier.testTag(SAVED_PAID_TAG),
                     )
                 }
+                ShareReceiptButton(onShareReceipt)
             }
         },
         confirmButton = { TextButton(onClick = onRecordAnother) { Text(stringResource(R.string.trade_record_another)) } },

@@ -10,9 +10,11 @@ plugins {
 }
 
 // Semantic version. versionCode = major*10000 + minor*100 + patch (research R18).
-val versionMajor = 0
-val versionMinor = 1
-val versionPatch = 0
+// 1.0.0 is the first production release: its database schema (version 1) is frozen from here on.
+val versionMajor = 1
+val versionMinor = 0
+// The upgrade check (scripts/release_check.py) builds a newer patch with -PebmUpgradePatch=1; normal builds never set it.
+val versionPatch = (project.findProperty("ebmUpgradePatch") as String?)?.toInt() ?: 0
 
 // Release signing comes from ~/.gradle/gradle.properties or environment variables,
 // never from the repository (Constitution III).
@@ -21,13 +23,13 @@ fun signingValue(name: String): String? =
 
 android {
     namespace = "com.eggbusinessmanager.app"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         // Confirmed by the owner 2026-11-08 (research R18). Must never change after the first shared APK.
         applicationId = "com.eggbusinessmanager.app"
         minSdk = 31
-        targetSdk = 36
+        targetSdk = 37
         versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName = "$versionMajor.$versionMinor.$versionPatch"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

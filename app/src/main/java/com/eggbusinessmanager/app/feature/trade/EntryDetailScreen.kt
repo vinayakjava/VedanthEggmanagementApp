@@ -32,6 +32,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.eggbusinessmanager.app.R
 import com.eggbusinessmanager.app.feature.payment.modeLabel
+import com.eggbusinessmanager.app.feature.receipt.rememberShareReceipt
 import com.eggbusinessmanager.app.feature.settings.SettingsRow
 import com.eggbusinessmanager.app.navigation.EntryDetailRoute
 import com.eggbusinessmanager.app.ui.components.EmptyState
@@ -48,6 +49,7 @@ import com.eggbusinessmanager.domain.ledger.EntryStatus
 import com.eggbusinessmanager.domain.ledger.EntryType
 import com.eggbusinessmanager.domain.ledger.LedgerEntry
 import com.eggbusinessmanager.domain.money.QuantityParser
+import com.eggbusinessmanager.domain.receipt.BuildReceiptUseCase
 import com.eggbusinessmanager.domain.usecase.catalog.ObserveUnitsUseCase
 import com.eggbusinessmanager.domain.usecase.catalog.ObserveVarietiesUseCase
 import com.eggbusinessmanager.domain.usecase.customer.ObserveCustomerUseCase
@@ -156,6 +158,10 @@ fun EntryDetailScreen(
                 }
                 detail.linked?.let { linked -> LinkedRow(entry, linked) { onOpenEntry(linked.rootId) } }
                 message?.let { ErrorBanner(it.asString(), onDismiss = viewModel::dismissMessage) }
+                val shareReceipt = rememberShareReceipt()
+                if (BuildReceiptUseCase.hasReceipt(entry)) {
+                    SettingsRow(R.drawable.ic_share, stringResource(R.string.receipt_share), null, onClick = { shareReceipt(entry.rootId) })
+                }
                 EntryActions(entry, onEdit = { onEdit(entry.rootId, entry.type) }, onDelete = { confirmDelete = true })
                 if (detail.revisions.size > 1) History(detail.revisions)
             }

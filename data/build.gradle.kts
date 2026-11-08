@@ -12,7 +12,7 @@ plugins {
 
 android {
     namespace = "com.eggbusinessmanager.data"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 31

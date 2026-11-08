@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Receipts for single entries (FR-042a). -->
+<resources>
+    <string name="receipt_title_sell">बिक्री रसीद</string>
+    <string name="receipt_title_buy">ख़रीद रसीद</string>
+    <string name="receipt_title_received">भुगतान रसीद</string>
+    <string name="receipt_title_made">भुगतान वाउचर</string>
+    <string name="receipt_no">रसीद नं.: %1$s</string>
+    <string name="receipt_revised">संशोधित</string>
+    <string name="receipt_date">तारीख़: %1$s</string>
+    <string name="receipt_shop_phone">फ़ोन: %1$s</string>
+    <string name="receipt_balance_after">इस प्रविष्टि के बाद बकाया</string>
+    <string name="receipt_balance_now">अभी का बकाया</string>
+    <string name="receipt_col_item">विवरण</string>
+    <string name="receipt_pieces">अंडे (नग)</string>
+    <string name="receipt_rate">प्रति %1$s भाव</string>
+    <string name="receipt_received_now">मौके पर मिला</string>
+    <string name="receipt_paid_now">मौके पर दिया</string>
+    <string name="receipt_against">किसके लिए</string>
+    <string name="receipt_remarks">टिप्पणी</string>
+    <string name="receipt_thanks">आपके व्यापार के लिए धन्यवाद।</string>
+    <string name="receipt_share">रसीद भेजें</string>
+    <string name="receipt_share_failed">रसीद तैयार नहीं हो सकी। फिर से कोशिश करें।</string>
+</resources>

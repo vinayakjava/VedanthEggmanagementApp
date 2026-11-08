@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eggbusinessmanager.app.R
+import com.eggbusinessmanager.app.feature.receipt.ShareReceiptButton
+import com.eggbusinessmanager.app.feature.receipt.rememberShareReceipt
 import com.eggbusinessmanager.app.feature.trade.CustomerField
 import com.eggbusinessmanager.app.feature.trade.CustomerPicker
 import com.eggbusinessmanager.app.ui.components.DateField
@@ -163,11 +165,17 @@ private fun PaymentDialogs(state: PaymentEditorViewModel.UiState, viewModel: Pay
             dismissButton = { TextButton(onClick = viewModel::cancelAdvance) { Text(stringResource(R.string.action_cancel)) } },
         )
     }
+    val shareReceipt = rememberShareReceipt()
     state.saved?.takeIf { it.isNew }?.let { saved ->
         AlertDialog(
             onDismissRequest = onClose,
             title = { Text(stringResource(R.string.trade_saved_title, saved.ref.reference)) },
-            text = { Text(stringResource(R.string.trade_saved_body, saved.customerName, IndianFormatters.money(saved.amount))) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(stringResource(R.string.trade_saved_body, saved.customerName, IndianFormatters.money(saved.amount)))
+                    ShareReceiptButton { shareReceipt(saved.ref.rootId) }
+                }
+            },
             confirmButton = { TextButton(onClick = viewModel::recordAnother) { Text(stringResource(R.string.trade_record_another)) } },
             dismissButton = { TextButton(onClick = onClose) { Text(stringResource(R.string.trade_done)) } },
         )
