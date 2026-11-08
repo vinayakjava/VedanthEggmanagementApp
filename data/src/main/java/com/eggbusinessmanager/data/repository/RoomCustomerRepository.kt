@@ -109,7 +109,10 @@ class RoomLedgerRepository @Inject constructor(
 
     override suspend fun reviseEntry(current: LedgerEntry, values: EntryValues, at: Instant) = withContext(io) {
         check(dao.supersede(current.id) == 1) { "Entry ${current.id} is no longer active" }
-        dao.insert(values.toEntity(current.rootId, current.reference, clientRequestId = null, at = at).copy(supersedesEntryId = current.id))
+        dao.insert(
+            values.toEntity(current.rootId, current.reference, clientRequestId = null, at = at)
+                .copy(supersedesEntryId = current.id, linkedRootEntryId = current.linkedRootId),
+        )
         Unit
     }
 
@@ -123,6 +126,11 @@ class RoomLedgerRepository @Inject constructor(
 
     override suspend fun voidEntry(current: LedgerEntry, reason: String?, at: Instant) = withContext(io) {
         check(dao.voidEntry(current.id, reason, at.toEpochMilli()) == 1) { "Entry ${current.id} is no longer active" }
+    }
+
+    override suspend fun link(firstRootId: Long, secondRootId: Long) = withContext(io) {
+        check(dao.linkRoot(firstRootId, secondRootId) > 0) { "No entry $firstRootId" }
+        check(dao.linkRoot(secondRootId, firstRootId) > 0) { "No entry $secondRootId" }
     }
 
     override suspend fun lastPrice(customerId: Long, type: EntryType, varietyId: Long, unitId: Long): Money? =

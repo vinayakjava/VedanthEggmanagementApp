@@ -103,4 +103,17 @@
     <string name="error_entry_not_editable">यह प्रविष्टि हटाई या बदली जा चुकी है, इसे नहीं बदला जा सकता।</string>
     <string name="error_unit_locked">नग मूल इकाई है और इसे बदला नहीं जा सकता।</string>
     <string name="error_last_variety">कम से कम एक किस्म सक्रिय रहनी चाहिए।</string>
+
+    <!-- FR-023: payment on the spot -->
+    <string name="trade_received_now">अभी मिली राशि</string>
+    <string name="trade_paid_now">अभी दी गई राशि</string>
+    <string name="trade_rest_to_receive">इस बिक्री पर बाकी लेना: %1$s</string>
+    <string name="trade_rest_to_pay">इस ख़रीद पर बाकी देना: %1$s</string>
+    <string name="trade_received_in_full">पूरा मिला (%1$s)</string>
+    <string name="trade_paid_in_full">पूरा दिया (%1$s)</string>
+    <string name="trade_saved_paid">भुगतान %1$s, %2$s के रूप में सहेजा गया</string>
+    <string name="v_paid_now_over_total">यह कुल राशि से ज़्यादा नहीं हो सकती। अतिरिक्त राशि अलग भुगतान से दर्ज करें।</string>
+    <string name="entry_linked_payment">मौके पर भुगतान: %1$s</string>
+    <string name="entry_linked_trade">%1$s के साथ लिया गया</string>
+    <string name="entry_delete_linked_too">इसके साथ सहेजा गया %1$s भी हटाएँ</string>
 </resources>

@@ -9,6 +9,8 @@ import com.eggbusinessmanager.domain.error.ValidationCode
 import com.eggbusinessmanager.domain.error.ValidationErrors
 import com.eggbusinessmanager.domain.ledger.EntryType
 import com.eggbusinessmanager.domain.ledger.EntryValues
+import com.eggbusinessmanager.domain.ledger.PaymentLine
+import com.eggbusinessmanager.domain.ledger.PaymentMode
 import com.eggbusinessmanager.domain.ledger.TradeLine
 import com.eggbusinessmanager.domain.money.Money
 import com.eggbusinessmanager.domain.money.MoneyParser
@@ -17,6 +19,12 @@ import com.eggbusinessmanager.domain.money.QuantityParser
 import com.eggbusinessmanager.domain.money.TradeMath
 import com.eggbusinessmanager.domain.validation.CustomerValidator
 import java.time.LocalDate
+
+/**
+ * FR-023: the optional "Amount received now" (Sell) or "Amount paid now" (Buy). Saved as a separate
+ * payment linked to the trade, on the same date, so the ledger shows both lines (BR-013).
+ */
+data class PaidNow(val amount: String = "", val mode: PaymentMode = PaymentMode.CASH)
 
 /** What the owner typed on the Sell or Buy screen (FR-020). */
 data class TradeDraft(
@@ -28,6 +36,8 @@ data class TradeDraft(
     val quantity: String = "",
     val price: String = "",
     val remarks: String = "",
+    /** Only for a new trade; an existing one's payment is corrected on its own. */
+    val paidNow: PaidNow = PaidNow(),
 ) {
     init {
         require(type == EntryType.SELL || type == EntryType.BUY) { "A trade is a SELL or a BUY" }
@@ -47,6 +57,9 @@ data class ValidTrade(
     val pricePerUnit: Money,
     val total: Money,
     val remarks: String?,
+    /** The amount taken on the spot (FR-023), at most [total]; null when nothing was paid now. */
+    val paidNow: Money? = null,
+    val paidMode: PaymentMode = PaymentMode.CASH,
 )
 
 /** The values a trade is stored with. */
@@ -58,6 +71,17 @@ fun ValidTrade.toValues() = EntryValues(
     trade = TradeLine(varietyId, unitId, quantity, piecesPerUnit, pieces, pricePerUnit),
     remarks = remarks,
 )
+
+/** The linked payment for [ValidTrade.paidNow]: received for a sale, paid out for a purchase. */
+fun ValidTrade.paymentValues(): EntryValues? = paidNow?.let { amount ->
+    EntryValues(
+        type = if (type == EntryType.SELL) EntryType.PAYMENT_RECEIVED else EntryType.PAYMENT_MADE,
+        customerId = customerId,
+        date = date,
+        amount = amount,
+        payment = PaymentLine(paidMode, null),
+    )
+}
 
 /** Live total and pieces for the editor (FR-021): null parts until the inputs make sense. */
 data class TradePreview(val total: Money?, val pieces: Long?)
@@ -112,6 +136,7 @@ object TradeValidator {
         val total = if (quantity != null && price != null) TradeMath.lineTotal(quantity, price) else null
         if (total != null && (total < Money(1) || total > Money.MAX_ENTRY)) errors.add(Field.TOTAL, ValidationCode.OUT_OF_RANGE)
         if (draft.remarks.trim().length > REMARKS_MAX) errors.add(Field.REMARKS, ValidationCode.TOO_LONG)
+        val paidNow = paidNow(draft.paidNow.amount, total, errors)
 
         return errors.result {
             ValidTrade(
@@ -126,7 +151,21 @@ object TradeValidator {
                 pricePerUnit = checkNotNull(price),
                 total = checkNotNull(total),
                 remarks = draft.remarks.trim().ifEmpty { null },
+                paidNow = paidNow,
+                paidMode = draft.paidNow.mode,
             )
+        }
+    }
+
+    /** Blank or zero means nothing was paid now; more than the trade total belongs in a separate payment. */
+    private fun paidNow(text: String, total: Money?, errors: ValidationErrors): Money? = when (val parsed = MoneyParser.parse(text)) {
+        MoneyParser.Result.Blank -> null
+        MoneyParser.Result.Invalid -> null.also { errors.add(Field.PAID_NOW, ValidationCode.INVALID_FORMAT) }
+        MoneyParser.Result.TooLarge -> null.also { errors.add(Field.PAID_NOW, ValidationCode.OUT_OF_RANGE) }
+        is MoneyParser.Result.Valid -> when {
+            parsed.money.isZero -> null
+            total != null && parsed.money > total -> null.also { errors.add(Field.PAID_NOW, ValidationCode.OUT_OF_RANGE) }
+            else -> parsed.money
         }
     }
 

@@ -112,6 +112,8 @@ data class LedgerEntry(
     val supersedesId: Long? = null,
     /** Set on the last revision of an entry whose type was changed: the new entry's root (FR-033b). */
     val replacedByRootId: Long? = null,
+    /** FR-023: the root of the entry saved together with this one (a sale and the payment taken on the spot). */
+    val linkedRootId: Long? = null,
     val voidReason: String? = null,
     val voidedAt: Instant? = null,
 )

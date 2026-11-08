@@ -43,6 +43,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eggbusinessmanager.app.R
+import com.eggbusinessmanager.app.feature.payment.modeLabel
 import com.eggbusinessmanager.app.ui.components.DateField
 import com.eggbusinessmanager.app.ui.components.DropdownField
 import com.eggbusinessmanager.app.ui.components.ErrorBanner
@@ -50,15 +51,21 @@ import com.eggbusinessmanager.app.ui.components.FormScreen
 import com.eggbusinessmanager.app.ui.components.FormTextField
 import com.eggbusinessmanager.app.ui.components.PrimaryButton
 import com.eggbusinessmanager.app.ui.components.balanceLabel
+import com.eggbusinessmanager.app.ui.error.UiText
 import com.eggbusinessmanager.app.ui.format.IndianFormatters
 import com.eggbusinessmanager.domain.error.Field
 import com.eggbusinessmanager.domain.ledger.Balance
 import com.eggbusinessmanager.domain.ledger.EntryType
+import com.eggbusinessmanager.domain.ledger.PaymentMode
 import com.eggbusinessmanager.domain.money.Money
+import com.eggbusinessmanager.domain.money.MoneyParser
+import com.eggbusinessmanager.domain.trade.TradeDraft
 
 /** Test tags used by UI tests. */
 const val CUSTOMER_FIELD_TAG = "trade_customer"
 const val TOTAL_TAG = "trade_total"
+const val PAID_NOW_TAG = "trade_paid_now"
+const val SAVED_PAID_TAG = "trade_saved_paid"
 
 /**
  * Sell eggs / Buy eggs (US3), and editing a saved trade (US5-4). [newCustomerId] is the id of a
@@ -127,6 +134,16 @@ fun TradeEditorScreen(
             supportingText = if (state.priceSuggested) stringResource(R.string.trade_price_suggested) else null,
         )
         TotalCard(preview.total, preview.pieces, feedback.error(Field.TOTAL)?.asString())
+        if (!viewModel.isEdit) {
+            PaidNowFields(
+                draft = draft,
+                total = preview.total,
+                error = feedback.error(Field.PAID_NOW),
+                onAmount = viewModel::onPaidNow,
+                onMode = viewModel::onPaidMode,
+                onPaidInFull = viewModel::onPaidInFull,
+            )
+        }
         FormTextField(
             draft.remarks, viewModel::onRemarks, stringResource(R.string.field_optional, stringResource(R.string.label_remarks)),
             error = feedback.error(Field.REMARKS), singleLine = false,
@@ -176,10 +193,64 @@ private fun SavedDialog(saved: TradeEditorViewModel.Saved, onRecordAnother: () -
     AlertDialog(
         onDismissRequest = onDone,
         title = { Text(stringResource(R.string.trade_saved_title, saved.ref.reference)) },
-        text = { Text(stringResource(R.string.trade_saved_body, saved.customerName, IndianFormatters.money(saved.total))) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(stringResource(R.string.trade_saved_body, saved.customerName, IndianFormatters.money(saved.total)))
+                val paid = saved.paidNow
+                val paymentRef = saved.ref.linkedReference
+                if (paid != null && paymentRef != null) {
+                    Text(
+                        stringResource(R.string.trade_saved_paid, IndianFormatters.money(paid), paymentRef),
+                        modifier = Modifier.testTag(SAVED_PAID_TAG),
+                    )
+                }
+            }
+        },
         confirmButton = { TextButton(onClick = onRecordAnother) { Text(stringResource(R.string.trade_record_another)) } },
         dismissButton = { TextButton(onClick = onDone) { Text(stringResource(R.string.trade_done)) } },
     )
+}
+
+/**
+ * FR-023: money taken on the spot, saved as a linked payment. Up to the total; what is left stays on
+ * the customer's balance. The payment mode is asked only once an amount is typed.
+ */
+@Composable
+private fun PaidNowFields(
+    draft: TradeDraft,
+    total: Money?,
+    error: UiText?,
+    onAmount: (String) -> Unit,
+    onMode: (PaymentMode) -> Unit,
+    onPaidInFull: () -> Unit,
+) {
+    val isSale = draft.type == EntryType.SELL
+    val paid = (MoneyParser.parse(draft.paidNow.amount) as? MoneyParser.Result.Valid)?.money
+    val rest = if (paid != null && total != null && paid <= total) total - paid else null
+    FormTextField(
+        draft.paidNow.amount, onAmount,
+        stringResource(R.string.field_optional, stringResource(if (isSale) R.string.trade_received_now else R.string.trade_paid_now)),
+        error = error, keyboardType = KeyboardType.Decimal,
+        supportingText = rest?.let {
+            stringResource(if (isSale) R.string.trade_rest_to_receive else R.string.trade_rest_to_pay, IndianFormatters.money(it))
+        },
+        modifier = Modifier.testTag(PAID_NOW_TAG),
+    )
+    if (total != null && paid != total) {
+        TextButton(onClick = onPaidInFull) {
+            val label = if (isSale) R.string.trade_received_in_full else R.string.trade_paid_in_full
+            Text(stringResource(label, IndianFormatters.money(total)))
+        }
+    }
+    if (draft.paidNow.amount.isNotBlank()) {
+        DropdownField(
+            label = stringResource(R.string.label_payment_mode),
+            options = PaymentMode.entries,
+            selected = draft.paidNow.mode,
+            optionLabel = { stringResource(modeLabel(it)) },
+            onSelect = onMode,
+        )
+    }
 }
 
 @Composable

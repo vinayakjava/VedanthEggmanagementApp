@@ -59,7 +59,8 @@ class FakeLedgerRepository : LedgerRepository {
     override suspend fun reviseEntry(current: LedgerEntry, values: EntryValues, at: Instant) {
         val id = nextId++
         supersede(current.id)
-        rows.value += values.toEntry(id, current.rootId, current.reference, at).copy(supersedesId = current.id)
+        rows.value += values.toEntry(id, current.rootId, current.reference, at)
+            .copy(supersedesId = current.id, linkedRootId = current.linkedRootId)
     }
 
     override suspend fun replaceEntry(current: LedgerEntry, values: EntryValues, at: Instant): EntryRef {
@@ -74,6 +75,16 @@ class FakeLedgerRepository : LedgerRepository {
     override suspend fun voidEntry(current: LedgerEntry, reason: String?, at: Instant) {
         rows.value = rows.value.map {
             if (it.id == current.id) it.copy(status = EntryStatus.VOIDED, voidReason = reason, voidedAt = at) else it
+        }
+    }
+
+    override suspend fun link(firstRootId: Long, secondRootId: Long) {
+        rows.value = rows.value.map {
+            when (it.rootId) {
+                firstRootId -> it.copy(linkedRootId = secondRootId)
+                secondRootId -> it.copy(linkedRootId = firstRootId)
+                else -> it
+            }
         }
     }
 

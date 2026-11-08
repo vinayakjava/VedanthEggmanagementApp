@@ -23,21 +23,43 @@ class EntryWriter @Inject constructor(
     private val clock: Clock,
 ) {
     /** The entry an earlier save with this request id created, if any (double-tap protection). */
-    suspend fun existing(clientRequestId: String): EntryRef? = ledger.findByClientRequest(clientRequestId)
+    suspend fun existing(clientRequestId: String): EntryRef? = ledger.findByClientRequest(clientRequestId)?.let { ref ->
+        val linkedRoot = ledger.currentRevision(ref.rootId)?.linkedRootId ?: return@let ref
+        ref.copy(linkedReference = ledger.referenceOf(linkedRoot))
+    }
 
     suspend fun record(values: EntryValues, clientRequestId: String): EntryRef {
         val now = clock.now()
         return transactions.inTransaction {
-            ledger.findByClientRequest(clientRequestId) ?: ledger.insertEntry(values, clientRequestId, now).also { ref ->
-                audit.append(
-                    AuditEvent(
-                        AuditEvent.ENTITY_LEDGER_ENTRY, ref.rootId, values.customerId, AuditEvent.ACTION_CREATE,
-                        after = values.snapshot(), at = now,
-                    ),
-                )
+            ledger.findByClientRequest(clientRequestId) ?: insertAudited(values, clientRequestId, now)
+        }
+    }
+
+    /**
+     * Saves a trade and the payment taken on the spot together (FR-023): both or neither, each with its
+     * own reference and audit row, linked to each other.
+     */
+    suspend fun recordLinked(values: EntryValues, linked: EntryValues, clientRequestId: String): EntryRef {
+        val now = clock.now()
+        return transactions.inTransaction {
+            ledger.findByClientRequest(clientRequestId) ?: run {
+                val first = insertAudited(values, clientRequestId, now)
+                val second = insertAudited(linked, clientRequestId + LINKED_SUFFIX, now)
+                ledger.link(first.rootId, second.rootId)
+                first.copy(linkedReference = second.reference)
             }
         }
     }
+
+    private suspend fun insertAudited(values: EntryValues, clientRequestId: String, now: java.time.Instant): EntryRef =
+        ledger.insertEntry(values, clientRequestId, now).also { ref ->
+            audit.append(
+                AuditEvent(
+                    AuditEvent.ENTITY_LEDGER_ENTRY, ref.rootId, values.customerId, AuditEvent.ACTION_CREATE,
+                    after = values.snapshot(), at = now,
+                ),
+            )
+        }
 
     /**
      * Corrects [current] (FR-033): the original stays as a superseded revision. A type change creates a
@@ -50,7 +72,8 @@ class EntryWriter @Inject constructor(
         return transactions.inTransaction {
             val typeChanged = values.type != current.type
             val ref = if (typeChanged) {
-                ledger.replaceEntry(current, values, now)
+                // The linked payment follows the trade to its new reference.
+                ledger.replaceEntry(current, values, now).also { new -> current.linkedRootId?.let { ledger.link(new.rootId, it) } }
             } else {
                 ledger.reviseEntry(current, values, now)
                 EntryRef(current.rootId, current.reference)
@@ -72,6 +95,8 @@ class EntryWriter @Inject constructor(
         }
     }
 }
+
+private const val LINKED_SUFFIX = ":paid-now"
 
 /** The stored values of an entry, for comparing with an edit. */
 fun LedgerEntry.toValues() = EntryValues(type, customerId, date, amount, trade, payment, remarks)

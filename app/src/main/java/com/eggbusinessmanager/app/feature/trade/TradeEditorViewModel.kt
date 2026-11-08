@@ -16,6 +16,7 @@ import com.eggbusinessmanager.domain.error.DomainResult
 import com.eggbusinessmanager.domain.error.Field
 import com.eggbusinessmanager.domain.ledger.EntryType
 import com.eggbusinessmanager.domain.ledger.LedgerEntry
+import com.eggbusinessmanager.domain.ledger.PaymentMode
 import com.eggbusinessmanager.domain.money.Money
 import com.eggbusinessmanager.domain.money.MoneyParser
 import com.eggbusinessmanager.domain.repository.Clock
@@ -76,7 +77,7 @@ class TradeEditorViewModel @Inject constructor(
     val today: LocalDate = clock.today()
 
     /** What happened after a successful save: a new entry (show "Record another") or an edit (close). */
-    data class Saved(val ref: EntryRef, val customerName: String, val total: Money, val isNew: Boolean)
+    data class Saved(val ref: EntryRef, val customerName: String, val total: Money, val isNew: Boolean, val paidNow: Money? = null)
 
     data class UiState(
         val draft: TradeDraft,
@@ -206,6 +207,18 @@ class TradeEditorViewModel @Inject constructor(
 
     fun onRemarks(value: String) = edit(Field.REMARKS) { copy(remarks = value) }
 
+    /** FR-023: "Amount received now" (Sell) / "Amount paid now" (Buy). */
+    fun onPaidNow(value: String) = edit(Field.PAID_NOW) {
+        copy(paidNow = paidNow.copy(amount = value.filter { it.isDigit() || it == '.' || it == ',' }))
+    }
+
+    fun onPaidMode(mode: PaymentMode) = edit(Field.PAID_NOW) { copy(paidNow = paidNow.copy(mode = mode)) }
+
+    /** Fills in the whole total as paid now. */
+    fun onPaidInFull() {
+        preview.value.total?.let { total -> onPaidNow(MoneyParser.toInput(total)) }
+    }
+
     fun onReason(value: String) = _state.update { it.copy(reason = value, feedback = it.feedback.without(Field.REASON)) }
 
     /** FR-024: pre-fill the last price for this customer, type, variety and unit, unless the owner typed one. */
@@ -234,7 +247,10 @@ class TradeEditorViewModel @Inject constructor(
                 when (result) {
                     is DomainResult.Ok -> s.copy(
                         busy = false,
-                        saved = Saved(result.value, s.customerName, preview.value.total ?: Money.ZERO, isNew = !isEdit),
+                        saved = Saved(
+                            result.value, s.customerName, preview.value.total ?: Money.ZERO, isNew = !isEdit,
+                            paidNow = (MoneyParser.parse(s.draft.paidNow.amount) as? MoneyParser.Result.Valid)?.money,
+                        ),
                     )
                     is DomainResult.Err -> s.copy(busy = false, feedback = FormFeedback.from(result.error))
                 }
@@ -246,7 +262,11 @@ class TradeEditorViewModel @Inject constructor(
     fun recordAnother() {
         requestId = ids.newId()
         _state.update {
-            it.copy(draft = it.draft.copy(quantity = "", price = "", remarks = ""), saved = null, priceSuggested = false)
+            it.copy(
+                draft = it.draft.copy(quantity = "", price = "", remarks = "", paidNow = it.draft.paidNow.copy(amount = "")),
+                saved = null,
+                priceSuggested = false,
+            )
         }
         refreshSuggestedPrice()
     }

@@ -38,7 +38,12 @@ interface CustomerRepository {
 }
 
 /** A logical entry's identity: its root id and reference number (e.g. S-000001). */
-data class EntryRef(val rootId: Long, val reference: String)
+data class EntryRef(
+    val rootId: Long,
+    val reference: String,
+    /** The payment saved together with a trade (FR-023), e.g. "RP-000004". */
+    val linkedReference: String? = null,
+)
 
 /** All money-moving writes and ledger reads (contracts/domain-interfaces.md § LedgerRepository). */
 interface LedgerRepository {
@@ -70,6 +75,9 @@ interface LedgerRepository {
 
     /** Marks [current] VOIDED ("Deleted"): kept, labelled, excluded from every figure (FR-034). */
     suspend fun voidEntry(current: LedgerEntry, reason: String?, at: Instant)
+
+    /** Links two entries saved together (FR-023), in both directions, on every revision. */
+    suspend fun link(firstRootId: Long, secondRootId: Long)
 
     /** Last active price for this customer, type, variety and unit (FR-024). */
     suspend fun lastPrice(customerId: Long, type: EntryType, varietyId: Long, unitId: Long): Money?

@@ -163,6 +163,7 @@ fun MainScaffold(
                             if (isPayment) PaymentEditorRoute(type.name, rootId = rootId) else TradeEditorRoute(type.name, rootId = rootId),
                         )
                     },
+                    onOpenEntry = { navController.navigate(EntryDetailRoute(it)) },
                     onBack = navController::popBackStack,
                 )
             }

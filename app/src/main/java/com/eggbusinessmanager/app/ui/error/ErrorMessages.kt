@@ -118,6 +118,7 @@ object ErrorMessages {
             else -> R.string.v_amount_positive
         }
         Field.PAYMENT_REFERENCE -> R.string.v_payment_reference_too_long
+        Field.PAID_NOW -> if (code == ValidationCode.INVALID_FORMAT) R.string.v_amount_format else R.string.v_paid_now_over_total
         else -> R.string.error_validation
     }
 

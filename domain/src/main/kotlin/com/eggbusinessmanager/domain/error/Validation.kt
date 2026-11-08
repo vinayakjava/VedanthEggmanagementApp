@@ -37,6 +37,7 @@ enum class Field {
     UNIT_PIECES,
     VARIETY_NAME,
     AMOUNT,
+    PAID_NOW,
     PAYMENT_REFERENCE,
     ;
 

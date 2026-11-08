@@ -65,6 +65,7 @@ internal fun LedgerEntryEntity.toDomain() = LedgerEntry(
     payment = paymentMode?.let { PaymentLine(PaymentMode.valueOf(it), paymentReference) },
     supersedesId = supersedesEntryId,
     replacedByRootId = replacedByRootId,
+    linkedRootId = linkedRootEntryId,
     voidReason = voidReason,
     voidedAt = voidedAt?.let(Instant::ofEpochMilli),
 )

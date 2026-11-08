@@ -103,4 +103,17 @@
     <string name="error_entry_not_editable">This entry was deleted or replaced and cannot be changed.</string>
     <string name="error_unit_locked">Piece is the base unit and cannot be changed.</string>
     <string name="error_last_variety">At least one egg variety must stay active.</string>
+
+    <!-- FR-023: payment on the spot -->
+    <string name="trade_received_now">Amount received now</string>
+    <string name="trade_paid_now">Amount paid now</string>
+    <string name="trade_rest_to_receive">Still to receive on this sale: %1$s</string>
+    <string name="trade_rest_to_pay">Still to pay on this purchase: %1$s</string>
+    <string name="trade_received_in_full">Received in full (%1$s)</string>
+    <string name="trade_paid_in_full">Paid in full (%1$s)</string>
+    <string name="trade_saved_paid">Payment %1$s saved as %2$s</string>
+    <string name="v_paid_now_over_total">Can\'t be more than this total. Record extra money with a separate payment.</string>
+    <string name="entry_linked_payment">Paid on the spot: %1$s</string>
+    <string name="entry_linked_trade">Taken with %1$s</string>
+    <string name="entry_delete_linked_too">Also delete %1$s, saved with it</string>
 </resources>

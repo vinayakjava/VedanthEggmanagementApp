@@ -65,6 +65,10 @@ interface LedgerEntryDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(entry: LedgerEntryEntity): Long
 
+    /** FR-023: points every revision of [rootId] at the entry saved together with it. */
+    @Query("UPDATE ledger_entry SET linked_root_entry_id = :linkedRootId WHERE root_entry_id = :rootId")
+    suspend fun linkRoot(rootId: Long, linkedRootId: Long): Int
+
     /** A first revision is its own root; set right after insert, inside the same transaction. */
     @Query("UPDATE ledger_entry SET root_entry_id = id WHERE id = :id")
     suspend fun makeOwnRoot(id: Long)

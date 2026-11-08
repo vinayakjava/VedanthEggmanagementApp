@@ -24,6 +24,7 @@ import com.eggbusinessmanager.domain.trade.TradeContext
 import com.eggbusinessmanager.domain.trade.TradeDraft
 import com.eggbusinessmanager.domain.trade.TradeValidator
 import com.eggbusinessmanager.domain.trade.ValidTrade
+import com.eggbusinessmanager.domain.trade.paymentValues
 import com.eggbusinessmanager.domain.trade.toValues
 import com.eggbusinessmanager.domain.usecase.entry.EntryWriter
 import com.eggbusinessmanager.domain.usecase.entry.snapshot
@@ -65,7 +66,14 @@ class RecordTradeUseCase @Inject constructor(
         writer.existing(clientRequestId)?.let { return DomainResult.Ok(it) }
         when (val result = checks.check(draft)) {
             is DomainResult.Err -> result
-            is DomainResult.Ok -> DomainResult.Ok(writer.record(result.value.toValues(), clientRequestId))
+            is DomainResult.Ok -> {
+                val trade = result.value
+                val payment = trade.paymentValues()
+                DomainResult.Ok(
+                    if (payment == null) writer.record(trade.toValues(), clientRequestId)
+                    else writer.recordLinked(trade.toValues(), payment, clientRequestId),
+                )
+            }
         }
     }
 }
@@ -101,6 +109,7 @@ class EditTradeUseCase @Inject constructor(
 /**
  * Deletes an entry as the owner sees it (FR-034): it becomes VOIDED, stays visible labelled
  * "Deleted", counts nowhere, and can no longer be edited. Nothing is ever removed (FR-035).
+ * With [alsoLinked], the payment saved with a trade (or the trade saved with a payment) goes too.
  */
 class DeleteEntryUseCase @Inject constructor(
     private val ledger: LedgerRepository,
@@ -108,22 +117,29 @@ class DeleteEntryUseCase @Inject constructor(
     private val transactions: TransactionRunner,
     private val clock: Clock,
 ) {
-    suspend operator fun invoke(rootId: Long, reason: String = ""): DomainResult<Unit> = catchingResult {
+    suspend operator fun invoke(rootId: Long, reason: String = "", alsoLinked: Boolean = false): DomainResult<Unit> = catchingResult {
         val current = ledger.currentRevision(rootId) ?: return DomainResult.Err(DomainError.NotFound)
         if (current.status != EntryStatus.ACTIVE) return DomainResult.Err(DomainError.EntryNotEditable)
         if (reason.trim().length > REASON_MAX) return DomainResult.Err(DomainError.Validation(Field.REASON, ValidationCode.TOO_LONG))
         val now = clock.now()
         val why = reason.trim().ifEmpty { null }
         transactions.inTransaction {
-            ledger.voidEntry(current, why, now)
-            audit.append(
-                AuditEvent(
-                    AuditEvent.ENTITY_LEDGER_ENTRY, current.rootId, current.customerId, AuditEvent.ACTION_VOID,
-                    current.snapshot(), null, why, now,
-                ),
-            )
+            void(current, why, now)
+            if (alsoLinked) {
+                val linked = current.linkedRootId?.let { ledger.currentRevision(it) }
+                if (linked?.status == EntryStatus.ACTIVE) void(linked, why, now)
+            }
         }
         DomainResult.Ok(Unit)
+    }
+
+    private suspend fun void(entry: LedgerEntry, why: String?, now: java.time.Instant) {
+        ledger.voidEntry(entry, why, now)
+        audit.append(
+            AuditEvent(
+                AuditEvent.ENTITY_LEDGER_ENTRY, entry.rootId, entry.customerId, AuditEvent.ACTION_VOID, entry.snapshot(), null, why, now,
+            ),
+        )
     }
 
     private companion object {
@@ -137,13 +153,20 @@ data class EntryDetail(
     val revisions: List<LedgerEntry>,
     /** Reference of the entry that replaced this one after a type change ("Changed to B-000004"). */
     val replacedBy: String?,
+    /** FR-023: the entry saved together with this one (the sale's on-the-spot payment, or that payment's sale). */
+    val linked: LedgerEntry? = null,
 )
 
 /** One entry and its history (US5-4), updated live. */
 class ObserveEntryUseCase @Inject constructor(private val ledger: LedgerRepository) {
     operator fun invoke(rootId: Long): Flow<EntryDetail?> = ledger.observeRevisions(rootId).map { revisions ->
         val current = revisions.lastOrNull() ?: return@map null
-        EntryDetail(current, revisions, current.replacedByRootId?.let { ledger.referenceOf(it) })
+        EntryDetail(
+            current,
+            revisions,
+            current.replacedByRootId?.let { ledger.referenceOf(it) },
+            current.linkedRootId?.let { ledger.currentRevision(it) },
+        )
     }
 }
 

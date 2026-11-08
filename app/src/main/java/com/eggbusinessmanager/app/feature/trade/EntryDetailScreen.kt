@@ -2,11 +2,13 @@ package com.eggbusinessmanager.app.feature.trade
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -15,7 +17,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -109,9 +114,9 @@ class EntryDetailViewModel @Inject constructor(
     private val _message = MutableStateFlow<UiText?>(null)
     val message: StateFlow<UiText?> = _message.asStateFlow()
 
-    fun delete(reason: String) {
+    fun delete(reason: String, alsoLinked: Boolean) {
         viewModelScope.launch {
-            (deleteEntry(rootId, reason) as? DomainResult.Err)?.let { _message.value = ErrorMessages.forError(it.error) }
+            (deleteEntry(rootId, reason, alsoLinked) as? DomainResult.Err)?.let { _message.value = ErrorMessages.forError(it.error) }
         }
     }
 
@@ -126,6 +131,7 @@ class EntryDetailViewModel @Inject constructor(
 @Composable
 fun EntryDetailScreen(
     onEdit: (rootId: Long, type: EntryType) -> Unit,
+    onOpenEntry: (rootId: Long) -> Unit,
     onBack: () -> Unit,
     viewModel: EntryDetailViewModel = hiltViewModel(),
 ) {
@@ -148,19 +154,9 @@ fun EntryDetailScreen(
                         color = MaterialTheme.colorScheme.primary,
                     )
                 }
+                detail.linked?.let { linked -> LinkedRow(entry, linked) { onOpenEntry(linked.rootId) } }
                 message?.let { ErrorBanner(it.asString(), onDismiss = viewModel::dismissMessage) }
-                val editable = entry.status == EntryStatus.ACTIVE && (entry.trade != null || entry.payment != null)
-                if (editable) {
-                    SettingsRow(
-                        R.drawable.ic_edit, stringResource(R.string.entry_edit), null,
-                        onClick = { onEdit(entry.rootId, entry.type) },
-                    )
-                    SettingsRow(R.drawable.ic_delete, stringResource(R.string.entry_delete), null, onClick = { confirmDelete = true })
-                } else if (entry.status == EntryStatus.ACTIVE) {
-                    Text(stringResource(R.string.entry_opening_edit_hint), style = MaterialTheme.typography.bodyMedium)
-                } else {
-                    Text(stringResource(R.string.entry_cannot_change), style = MaterialTheme.typography.bodyMedium)
-                }
+                EntryActions(entry, onEdit = { onEdit(entry.rootId, entry.type) }, onDelete = { confirmDelete = true })
                 if (detail.revisions.size > 1) History(detail.revisions)
             }
         }
@@ -169,9 +165,10 @@ fun EntryDetailScreen(
     if (confirmDelete && detail != null) {
         DeleteDialog(
             reference = detail.current.reference,
-            onConfirm = { reason ->
+            linkedReference = detail.linked?.takeIf { it.status == EntryStatus.ACTIVE }?.reference,
+            onConfirm = { reason, alsoLinked ->
                 confirmDelete = false
-                viewModel.delete(reason)
+                viewModel.delete(reason, alsoLinked)
             },
             onDismiss = { confirmDelete = false },
         )
@@ -254,9 +251,38 @@ private fun History(revisions: List<LedgerEntry>) {
     }
 }
 
+/** Edit and delete for an active trade or payment; otherwise why it cannot change. */
 @Composable
-private fun DeleteDialog(reference: String, onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
+private fun EntryActions(entry: LedgerEntry, onEdit: () -> Unit, onDelete: () -> Unit) {
+    val editable = entry.status == EntryStatus.ACTIVE && (entry.trade != null || entry.payment != null)
+    when {
+        editable -> {
+            SettingsRow(R.drawable.ic_edit, stringResource(R.string.entry_edit), null, onClick = onEdit)
+            SettingsRow(R.drawable.ic_delete, stringResource(R.string.entry_delete), null, onClick = onDelete)
+        }
+        entry.status == EntryStatus.ACTIVE ->
+            Text(stringResource(R.string.entry_opening_edit_hint), style = MaterialTheme.typography.bodyMedium)
+        else -> Text(stringResource(R.string.entry_cannot_change), style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+/** FR-023: the sale's on-the-spot payment, or the sale a payment was taken with; opens it. */
+@Composable
+private fun LinkedRow(entry: LedgerEntry, linked: LedgerEntry, onOpen: () -> Unit) {
+    val label = if (entry.trade != null) R.string.entry_linked_payment else R.string.entry_linked_trade
+    val deleted = if (linked.status == EntryStatus.VOIDED) " · " + stringResource(R.string.entry_deleted_badge) else ""
+    SettingsRow(
+        R.drawable.ic_nav_transactions,
+        stringResource(label, linked.reference),
+        IndianFormatters.money(linked.amount) + deleted,
+        onClick = onOpen,
+    )
+}
+
+@Composable
+private fun DeleteDialog(reference: String, linkedReference: String?, onConfirm: (String, Boolean) -> Unit, onDismiss: () -> Unit) {
     var reason by rememberSaveable { mutableStateOf("") }
+    var alsoLinked by rememberSaveable { mutableStateOf(true) }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.entry_delete_title, reference)) },
@@ -264,9 +290,22 @@ private fun DeleteDialog(reference: String, onConfirm: (String) -> Unit, onDismi
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(stringResource(R.string.entry_delete_body))
                 FormTextField(reason, { reason = it.take(REASON_MAX) }, stringResource(R.string.entry_delete_reason))
+                linkedReference?.let {
+                    Row(
+                        Modifier.fillMaxWidth().toggleable(alsoLinked, role = Role.Checkbox) { checked -> alsoLinked = checked },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Checkbox(checked = alsoLinked, onCheckedChange = null)
+                        Text(stringResource(R.string.entry_delete_linked_too, it), Modifier.padding(start = 8.dp))
+                    }
+                }
             }
         },
-        confirmButton = { TextButton(onClick = { onConfirm(reason) }) { Text(stringResource(R.string.entry_delete)) } },
+        confirmButton = {
+            TextButton(onClick = { onConfirm(reason, linkedReference != null && alsoLinked) }) {
+                Text(stringResource(R.string.entry_delete))
+            }
+        },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } },
     )
 }
