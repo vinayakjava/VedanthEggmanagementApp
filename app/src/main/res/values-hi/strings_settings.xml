@@ -11,6 +11,8 @@
     <string name="profile_saved">सहेजा गया</string>
     <string name="owner_password_note">आपका मोबाइल नंबर और ईमेल साइन इन के लिए हैं। इन्हें बदलने के लिए मौजूदा पासवर्ड लिखें।</string>
     <string name="owner_current_password">मौजूदा पासवर्ड (केवल मोबाइल या ईमेल बदलने के लिए)</string>
+    <string name="pref_language">भाषा</string>
+    <string name="pref_language_system">फ़ोन की भाषा</string>
     <string name="pref_theme">थीम</string>
     <string name="pref_theme_system">सिस्टम</string>
     <string name="pref_theme_light">हल्की</string>

@@ -46,6 +46,16 @@
             </intent-filter>
         </activity>
 
+        <!-- In-app language choice (FR-061a): AppCompat stores it itself on Android 12 (13+ keeps it in the system). -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
+
         <!-- Shares generated export files only; never exported, access is granted per share intent. -->
         <provider
             android:name="androidx.core.content.FileProvider"

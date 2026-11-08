@@ -1,5 +1,6 @@
 package com.eggbusinessmanager.app.feature.settings.preferences
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -88,6 +90,7 @@ fun PreferencesScreen(onBack: () -> Unit, viewModel: PreferencesViewModel = hilt
     val p = preferences
     FormScreen(title = stringResource(R.string.more_preferences), onBack = onBack) {
         if (p == null) return@FormScreen
+        LanguageSection()
         Section(stringResource(R.string.pref_theme)) {
             val options = listOf(
                 ThemeMode.SYSTEM to R.string.pref_theme_system,
@@ -137,6 +140,26 @@ fun PreferencesScreen(onBack: () -> Unit, viewModel: PreferencesViewModel = hilt
                 optionLabel = { unit -> unit?.let { stringResource(R.string.unit_option, it.name, it.piecesPerUnit) } ?: none },
                 onSelect = { unit -> viewModel.change { copy(defaultUnitId = unit?.id) } },
             )
+        }
+    }
+}
+
+/**
+ * App language (FR-061a): phone language, English or Hindi. Android applies it at once (the screen is
+ * recreated) and remembers it per app; it is a phone setting, so it is not part of backups.
+ */
+@Composable
+private fun LanguageSection() {
+    val current = AppCompatDelegate.getApplicationLocales().toLanguageTags()
+    Section(stringResource(R.string.pref_language)) {
+        listOf(
+            "" to R.string.pref_language_system,
+            "en" to R.string.pref_language_english,
+            "hi" to R.string.pref_language_hindi,
+        ).forEach { (tag, label) ->
+            Choice(stringResource(label), current == tag) {
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
+            }
         }
     }
 }
