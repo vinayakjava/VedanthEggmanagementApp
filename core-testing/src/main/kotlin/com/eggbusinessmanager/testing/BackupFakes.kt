@@ -126,12 +126,13 @@ class FakeDeviceBackupStore(private val engine: FakeBackupEngine) : DeviceBackup
 }
 
 class FakeDriveBackupStore(private val engine: FakeBackupEngine) : DriveBackupStore {
-    val uploaded = mutableMapOf<String, BackupArtifact>()
+    val uploaded = linkedMapOf<String, BackupArtifact>()
+    private var uploads = 0
     var failWith: BackupFailure? = null
 
     override suspend fun upload(artifact: BackupArtifact): String {
         failWith?.let { throw BackupException(it) }
-        val id = "drive-${uploaded.size + 1}"
+        val id = "drive-${++uploads}"
         uploaded[id] = artifact
         return id
     }
@@ -141,11 +142,64 @@ class FakeDriveBackupStore(private val engine: FakeBackupEngine) : DriveBackupSt
         return uploaded.map { (id, a) -> RemoteBackup(id, a.fileName, a.header.createdAt, a.sizeBytes, a.header.trigger, "1.0", "Test") }
     }
 
+    override suspend fun delete(id: String) {
+        failWith?.let { throw BackupException(it) }
+        uploaded.remove(id)
+    }
+
     override suspend fun download(id: String): String {
         failWith?.let { throw BackupException(it) }
         if (id !in uploaded) throw BackupException(BackupFailure.NOT_A_BACKUP)
         val path = "download-$id"
         engine.files += path
         return path
+    }
+}
+
+class FakeAutoBackupSettings(
+    initial: com.eggbusinessmanager.domain.backup.AutoBackupSettings = com.eggbusinessmanager.domain.backup.AutoBackupSettings(),
+) : com.eggbusinessmanager.domain.backup.AutoBackupSettingsRepository {
+    val state = MutableStateFlow(initial)
+    override fun observe(): Flow<com.eggbusinessmanager.domain.backup.AutoBackupSettings> = state
+    override suspend fun save(settings: com.eggbusinessmanager.domain.backup.AutoBackupSettings) {
+        state.value = settings
+    }
+}
+
+/** Records what would be handed to WorkManager. */
+class FakeAutoBackupScheduler : com.eggbusinessmanager.domain.backup.AutoBackupScheduler {
+    var scheduledAt: Instant? = null
+    val calls = mutableListOf<String>()
+    override fun schedule(settings: com.eggbusinessmanager.domain.backup.AutoBackupSettings, at: Instant) {
+        scheduledAt = at
+        calls += "schedule"
+    }
+    override fun ensureScheduled(settings: com.eggbusinessmanager.domain.backup.AutoBackupSettings, at: Instant) {
+        if (scheduledAt == null) scheduledAt = at
+        calls += "ensure"
+    }
+    override fun cancel() {
+        scheduledAt = null
+        calls += "cancel"
+    }
+}
+
+class FakeBackupNotifier : com.eggbusinessmanager.domain.backup.BackupNotifier {
+    val shown = mutableListOf<BackupFailure>()
+    var cleared = 0
+    override fun notifyFailure(failure: BackupFailure) {
+        shown += failure
+    }
+    override fun clear() {
+        cleared++
+    }
+}
+
+class FakeDriveAuthorizer(connected: Boolean = true) : com.eggbusinessmanager.domain.backup.DriveAuthorizer {
+    val connected = MutableStateFlow(connected)
+    override suspend fun accessToken(): String = if (connected.value) "token" else throw BackupException(BackupFailure.AUTH_REQUIRED)
+    override fun observeConnected(): Flow<Boolean> = connected
+    override suspend fun setConnected(connected: Boolean) {
+        this.connected.value = connected
     }
 }

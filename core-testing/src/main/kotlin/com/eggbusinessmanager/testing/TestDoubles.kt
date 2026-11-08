@@ -15,6 +15,7 @@ class FixedClock(
 ) : Clock {
     override fun now(): Instant = instant
     override fun today(): LocalDate = instant.atZone(zone).toLocalDate()
+    override fun zone(): ZoneId = zone
     fun advanceBy(seconds: Long) {
         instant = instant.plusSeconds(seconds)
     }

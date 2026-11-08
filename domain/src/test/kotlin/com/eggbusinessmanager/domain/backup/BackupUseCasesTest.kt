@@ -27,9 +27,9 @@ class BackupUseCasesTest {
     private val history = FakeBackupHistory()
     private val device = FakeDeviceBackupStore(engine)
     private val drive = FakeDriveBackupStore(engine)
-    private val runBackup = RunBackupUseCase(engine, history, device, drive, clock)
+    private val runBackup = RunBackupUseCase(engine, history, device, drive, BackupLock(), clock)
     private val stage = StageRestoreUseCase(engine, device, drive)
-    private val confirm = ConfirmRestoreUseCase(engine, history, clock)
+    private val confirm = ConfirmRestoreUseCase(engine, history, BackupLock(), clock)
     private val status = ObserveBackupStatusUseCase(history)
 
     // ---- Backup ----

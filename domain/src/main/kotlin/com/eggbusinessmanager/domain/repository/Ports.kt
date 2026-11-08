@@ -7,6 +7,9 @@ import java.time.LocalDate
 interface Clock {
     fun now(): Instant
     fun today(): LocalDate
+
+    /** The phone's time zone, for wall-clock schedules such as "back up at 2 AM". */
+    fun zone(): java.time.ZoneId = java.time.ZoneId.systemDefault()
 }
 
 /** Generates unique ids (e.g. idempotency keys for saves). */

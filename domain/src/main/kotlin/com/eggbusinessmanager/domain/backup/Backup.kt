@@ -32,6 +32,9 @@ enum class BackupFailure {
     NEWER_VERSION,
     NOT_A_BACKUP,
     INTERRUPTED,
+
+    /** Another backup or restore is running right now. */
+    BUSY,
     UNKNOWN,
 }
 

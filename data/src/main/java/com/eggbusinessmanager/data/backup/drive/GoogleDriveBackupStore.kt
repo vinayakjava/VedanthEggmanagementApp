@@ -78,6 +78,11 @@ class GoogleDriveBackupStore @Inject constructor(
         }
     }
 
+    override suspend fun delete(id: String) {
+        val token = authorizer.accessToken()
+        withContext(io) { client.delete(token, id) }
+    }
+
     private fun DriveClient.DriveFile.toRemote(): RemoteBackup {
         val created = (appProperties["createdAt"] ?: createdTime)?.let {
             try {

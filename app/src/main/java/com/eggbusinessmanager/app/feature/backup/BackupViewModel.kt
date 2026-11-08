@@ -243,6 +243,7 @@ fun failureMessage(failure: BackupFailure): Int = when (failure) {
     BackupFailure.NEWER_VERSION -> R.string.bf_newer_version
     BackupFailure.NOT_A_BACKUP -> R.string.bf_not_a_backup
     BackupFailure.INTERRUPTED -> R.string.bf_interrupted
+    BackupFailure.BUSY -> R.string.bf_busy
     BackupFailure.UNKNOWN -> R.string.bf_unknown
 }
 

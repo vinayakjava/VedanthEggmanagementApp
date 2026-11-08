@@ -65,6 +65,8 @@ interface DriveBackupStore {
 
     /** Downloads into private storage and returns the local path. */
     suspend fun download(id: String): String
+
+    suspend fun delete(id: String)
 }
 
 /**

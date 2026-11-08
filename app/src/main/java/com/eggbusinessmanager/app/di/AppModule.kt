@@ -2,8 +2,12 @@ package com.eggbusinessmanager.app.di
 
 import com.eggbusinessmanager.app.BuildConfig
 import com.eggbusinessmanager.app.feature.backup.GoogleDriveAuthorizer
+import com.eggbusinessmanager.app.feature.backup.auto.AndroidBackupNotifier
+import com.eggbusinessmanager.app.feature.backup.auto.WorkManagerAutoBackupScheduler
 import com.eggbusinessmanager.app.session.AppSessionManager
 import com.eggbusinessmanager.data.logging.AndroidAppLogger
+import com.eggbusinessmanager.domain.backup.AutoBackupScheduler
+import com.eggbusinessmanager.domain.backup.BackupNotifier
 import com.eggbusinessmanager.domain.backup.DriveAuthorizer
 import com.eggbusinessmanager.domain.logging.AppLogger
 import com.eggbusinessmanager.domain.repository.SessionManager
@@ -36,4 +40,11 @@ abstract class AppBindingsModule {
     /** Google authorization needs Play services and an Activity for consent, so it lives in :app. */
     @Binds
     abstract fun bindDriveAuthorizer(impl: GoogleDriveAuthorizer): DriveAuthorizer
+
+    /** WorkManager and notifications are Android services, so automatic backup plumbing lives in :app. */
+    @Binds
+    abstract fun bindAutoBackupScheduler(impl: WorkManagerAutoBackupScheduler): AutoBackupScheduler
+
+    @Binds
+    abstract fun bindBackupNotifier(impl: AndroidBackupNotifier): BackupNotifier
 }

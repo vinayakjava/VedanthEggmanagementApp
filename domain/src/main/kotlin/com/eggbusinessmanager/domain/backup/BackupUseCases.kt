@@ -64,11 +64,21 @@ class RunBackupUseCase @Inject constructor(
     private val history: BackupHistory,
     private val device: DeviceBackupStore,
     private val drive: DriveBackupStore,
+    private val lock: BackupLock,
     private val clock: Clock,
 ) {
     /** [deviceUri] is required for [BackupDestination.DEVICE]. */
     suspend operator fun invoke(destination: BackupDestination, deviceUri: String? = null): BackupResult<BackupRecord> {
         if (!engine.hasPassphrase()) return BackupResult.Failed(BackupFailure.NO_PASSPHRASE)
+        if (!lock.mutex.tryLock()) return BackupResult.Failed(BackupFailure.BUSY)
+        return try {
+            backup(destination, deviceUri)
+        } finally {
+            lock.mutex.unlock()
+        }
+    }
+
+    private suspend fun backup(destination: BackupDestination, deviceUri: String?): BackupResult<BackupRecord> {
         val id = history.start(BackupOperation.BACKUP, destination, BackupTrigger.MANUAL, clock.now())
         var artifact: BackupArtifact? = null
         val result = backupResult {
@@ -157,9 +167,19 @@ class StageRestoreUseCase @Inject constructor(
 class ConfirmRestoreUseCase @Inject constructor(
     private val engine: BackupEngine,
     private val history: BackupHistory,
+    private val lock: BackupLock,
     private val clock: Clock,
 ) {
-    suspend operator fun invoke(): BackupResult<Unit> = backupResult {
+    suspend operator fun invoke(): BackupResult<Unit> {
+        if (!lock.mutex.tryLock()) return BackupResult.Failed(BackupFailure.BUSY)
+        return try {
+            confirm()
+        } finally {
+            lock.mutex.unlock()
+        }
+    }
+
+    private suspend fun confirm(): BackupResult<Unit> = backupResult {
         val safety = engine.createBackup(BackupTrigger.SAFETY, clock.now())
         val safetyId = history.start(BackupOperation.BACKUP, BackupDestination.DEVICE, BackupTrigger.SAFETY, clock.now())
         history.succeed(safetyId, clock.now(), safety.sizeBytes, safety.fileName, null)

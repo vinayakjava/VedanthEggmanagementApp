@@ -14,10 +14,12 @@ import com.eggbusinessmanager.data.repository.RoomBusinessProfileRepository
 import com.eggbusinessmanager.data.repository.RoomCatalogRepository
 import com.eggbusinessmanager.data.repository.RoomReportRepository
 import com.eggbusinessmanager.data.backup.RoomBackupHistory
+import com.eggbusinessmanager.data.settings.DataStoreAutoBackupSettings
 import com.eggbusinessmanager.data.backup.SafDeviceBackupStore
 import com.eggbusinessmanager.data.backup.SnapshotBackupEngine
 import com.eggbusinessmanager.data.backup.drive.GoogleDriveBackupStore
 import com.eggbusinessmanager.data.export.FileReportExporter
+import com.eggbusinessmanager.domain.backup.AutoBackupSettingsRepository
 import com.eggbusinessmanager.domain.backup.BackupEngine
 import com.eggbusinessmanager.domain.backup.BackupHistory
 import com.eggbusinessmanager.domain.backup.DeviceBackupStore
@@ -130,7 +132,12 @@ abstract class BusinessDataBindingsModule {
 
     @Binds
     abstract fun bindReportExporter(impl: FileReportExporter): ReportExporter
+}
 
+/** Backup and restore: snapshots, history, phone and Google Drive storage, automatic backup settings. */
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class BackupDataBindingsModule {
     @Binds
     abstract fun bindBackupEngine(impl: SnapshotBackupEngine): BackupEngine
 
@@ -142,4 +149,7 @@ abstract class BusinessDataBindingsModule {
 
     @Binds
     abstract fun bindDriveBackupStore(impl: GoogleDriveBackupStore): DriveBackupStore
+
+    @Binds
+    abstract fun bindAutoBackupSettings(impl: DataStoreAutoBackupSettings): AutoBackupSettingsRepository
 }

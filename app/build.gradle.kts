@@ -103,6 +103,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
     implementation(libs.play.services.auth)
+    implementation(libs.androidx.work.runtime)
     implementation(libs.kotlinx.coroutines.play.services)
 
     implementation(libs.androidx.core.ktx)
@@ -140,6 +141,7 @@ dependencies {
     androidTestImplementation(libs.truth)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.androidx.test.espresso.intents)
+    androidTestImplementation(libs.androidx.work.testing)
     androidTestUtil(libs.androidx.test.orchestrator)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

@@ -91,4 +91,30 @@
     <string name="bf_not_a_backup">This file is not an Egg Business Manager backup.</string>
     <string name="bf_interrupted">The restore was interrupted, so nothing was changed.</string>
     <string name="bf_unknown">Something went wrong. Please try again.</string>
+    <!-- Automatic backup (Phase 10) -->
+    <string name="auto_title">Automatic backup</string>
+    <string name="auto_enable">Back up automatically to Google Drive</string>
+    <string name="auto_needs">Set a backup passphrase and connect Google Drive to turn this on.</string>
+    <string name="auto_frequency">How often</string>
+    <string name="auto_daily">Daily</string>
+    <string name="auto_weekly">Weekly</string>
+    <string name="auto_monthly">Monthly</string>
+    <string name="auto_day_of_week">Day of the week</string>
+    <string name="auto_day_of_month">Day of the month</string>
+    <string name="auto_time">Preferred time: %1$s</string>
+    <string name="auto_time_pick">Change time</string>
+    <string name="auto_destination">Saved to Google Drive, in a hidden folder only this app can see.</string>
+    <string name="auto_keep_label">Automatic backups to keep</string>
+    <string name="auto_keep_option">Last %1$d</string>
+    <string name="auto_keep_note">Older automatic backups are deleted from Google Drive. Backups you make yourself are never deleted.</string>
+    <string name="auto_wifi">Only on Wi‑Fi</string>
+    <string name="auto_charging">Only while charging</string>
+    <string name="auto_next">Next backup: around %1$s</string>
+    <string name="auto_next_note">Android decides the exact moment to save battery, so the backup can run later — for example once the phone has a network connection and enough battery. A backup already made in this period is not repeated.</string>
+    <string name="auto_last_failed">Last automatic backup failed on %1$s: %2$s</string>
+    <string name="auto_battery">Battery saving may delay automatic backups on this phone.</string>
+    <string name="auto_battery_open">Battery settings</string>
+    <string name="auto_failed_title">Automatic backup failed</string>
+    <string name="auto_channel_name">Backup status</string>
+    <string name="bf_busy">Another backup or restore is running. Try again in a moment.</string>
 </resources>

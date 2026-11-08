@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eggbusinessmanager.app.R
+import com.eggbusinessmanager.app.feature.backup.auto.AutoBackupSection
 import com.eggbusinessmanager.app.ui.components.FormScreen
 import com.eggbusinessmanager.app.ui.components.PasswordField
 import com.eggbusinessmanager.app.ui.components.PrimaryButton
@@ -106,6 +107,7 @@ fun BackupScreen(onBack: () -> Unit, restoreOnly: Boolean = false, viewModel: Ba
         DriveCard(driveConnected, state.busy, viewModel)
         if (!restoreOnly) {
             BackupNowCard(state, driveConnected, viewModel) { saveBackup.launch(suggestedName()) }
+            AutoBackupSection()
         }
         RestoreCard(state.busy, driveConnected, viewModel, onPickFile = { openBackup.launch(arrayOf("*/*")) })
         if (!restoreOnly) {

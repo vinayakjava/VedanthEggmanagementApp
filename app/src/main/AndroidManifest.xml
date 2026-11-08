@@ -8,6 +8,8 @@
     -->
     <!-- Only for uploading and downloading encrypted backups to the app's hidden Google Drive folder. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Only to tell the owner when automatic backups keep failing (asked for when switching them on). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!-- Package visibility (API 30+): WhatsApp share and the generic share sheet. -->
     <queries>
