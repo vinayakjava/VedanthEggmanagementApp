@@ -9,7 +9,12 @@ import com.eggbusinessmanager.domain.ledger.EntryType.PAYMENT_RECEIVED
 import com.eggbusinessmanager.domain.ledger.EntryType.SELL
 import com.eggbusinessmanager.domain.money.Money
 import com.eggbusinessmanager.domain.payment.PaymentDraft
+import com.eggbusinessmanager.domain.backup.BackupDestination
+import com.eggbusinessmanager.domain.backup.BackupFailure
+import com.eggbusinessmanager.domain.backup.BackupOperation
+import com.eggbusinessmanager.domain.backup.BackupTrigger
 import com.eggbusinessmanager.domain.report.DashboardCalculator
+import com.eggbusinessmanager.domain.report.DashboardPeriod
 import com.eggbusinessmanager.domain.report.TradeTotals
 import com.eggbusinessmanager.domain.report.TransactionFilter
 import com.eggbusinessmanager.domain.report.TransactionSort
@@ -26,6 +31,7 @@ import com.eggbusinessmanager.domain.usecase.trade.EditTradeUseCase
 import com.eggbusinessmanager.domain.usecase.trade.RecordTradeUseCase
 import com.eggbusinessmanager.domain.usecase.trade.TradeChecks
 import com.eggbusinessmanager.testing.FakeAuditRepository
+import com.eggbusinessmanager.testing.FakeBackupHistory
 import com.eggbusinessmanager.testing.FakeCatalogRepository
 import com.eggbusinessmanager.testing.FakeCatalogRepository.Companion.BROWN
 import com.eggbusinessmanager.testing.FakeCatalogRepository.Companion.PIECE
@@ -36,12 +42,17 @@ import com.eggbusinessmanager.testing.FakeReportRepository
 import com.eggbusinessmanager.testing.FixedClock
 import com.eggbusinessmanager.testing.ImmediateTransactionRunner
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import java.time.LocalDate
 
+@OptIn(ExperimentalCoroutinesApi::class)
 /** Dashboard and Transactions (Phase 6): every figure is derived from entries recorded through the use cases. */
 class ReportUseCasesTest {
 
@@ -196,8 +207,8 @@ class ReportUseCasesTest {
         assertThat(d.activeCustomers).isEqualTo(3)
         assertThat(d.sales).isEqualTo(TradeTotals(count = 2, eggs = 360, value = rs(2_200)))
         assertThat(d.purchases).isEqualTo(TradeTotals(count = 2, eggs = 630, value = rs(3_160)))
-        assertThat(d.todaySales).isEqualTo(TradeTotals(1, 60, rs(400)))
-        assertThat(d.todayPurchases).isEqualTo(TradeTotals(1, 30, rs(160)))
+        assertThat(d.periodSales).isEqualTo(TradeTotals(1, 60, rs(400)))
+        assertThat(d.periodPurchases).isEqualTo(TradeTotals(1, 30, rs(160)))
         // Ramesh owes 800, Sita owes 240; the shop owes Farm Fresh 1,000.
         assertThat(d.receivables).isEqualTo(rs(1_040))
         assertThat(d.receivableCustomers).isEqualTo(2)
@@ -235,5 +246,67 @@ class ReportUseCasesTest {
         assertThat(d.recent.first().entry.reference).isEqualTo("S-000001")
         assertThat(d.recent.map { it.entry.reference }).doesNotContain("S-000012")
         assertThat(d.sales.value).isEqualTo(rs((2..11).sum() + 999L))
+    }
+
+    // ---- Dashboard periods, top customers, midnight, backup reminder (US6) ----
+
+    @Test
+    fun `US6-1 each period counts its sales, purchases, payments and net cash`() = runTest {
+        sampleBook() // the clock's today is Saturday 7 Nov 2026; the week started on Monday 2 Nov
+        val day = dashboard(DashboardPeriod.TODAY).first()
+        assertThat(day.periodSales).isEqualTo(TradeTotals(1, 60, rs(400)))
+        assertThat(day.periodPurchases).isEqualTo(TradeTotals(1, 30, rs(160)))
+        assertThat(day.netCash).isEqualTo(Money.ZERO)
+
+        val week = dashboard(DashboardPeriod.WEEK).first()
+        assertThat(week.periodSales).isEqualTo(TradeTotals(2, 360, rs(2_200)))
+        assertThat(week.periodPurchases).isEqualTo(TradeTotals(2, 630, rs(3_160)))
+        assertThat(week.periodReceived).isEqualTo(rs(1_000))
+        assertThat(week.periodPaid).isEqualTo(rs(2_000))
+        assertThat(week.netCash).isEqualTo(rs(-1_000))
+        // Opening balances (40 days ago) are not business in any period.
+        assertThat(dashboard(DashboardPeriod.MONTH).first().periodSales).isEqualTo(week.periodSales)
+        assertThat(DashboardPeriod.WEEK.from(LocalDate.of(2026, 11, 2))).isEqualTo(LocalDate.of(2026, 11, 2))
+        assertThat(DashboardPeriod.MONTH.from(today)).isEqualTo(LocalDate.of(2026, 11, 1))
+    }
+
+    @Test
+    fun `US6-2 the top customers are those who owe the most, at most five`() = runTest {
+        val (ramesh, _, sita) = sampleBook()
+        val owing = (1..5).map { customer("Owes $it", opening = (it * 10).toString()) }
+        val top = dashboard().first().topReceivables
+        assertThat(top.map { it.customer.id }).containsExactly(ramesh, sita, owing[4], owing[3], owing[2]).inOrder()
+        assertThat(top.first().netBalance).isEqualTo(rs(800))
+    }
+
+    @Test
+    fun `US6-4 today moves to the new day at midnight while the dashboard is open`() = runTest {
+        sampleBook()
+        val seen = mutableListOf<TradeTotals>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            dashboard(DashboardPeriod.TODAY, tickMs = 1_000).collect { seen += it.periodSales }
+        }
+        assertThat(seen.last()).isEqualTo(TradeTotals(1, 60, rs(400)))
+        clock.advanceBy(24 * 60 * 60)
+        advanceTimeBy(1_500)
+        assertThat(seen.last()).isEqualTo(TradeTotals())
+    }
+
+    @Test
+    fun `US6-5 the backup reminder shows without a successful backup in the last 7 days`() = runTest {
+        val history = FakeBackupHistory()
+        val reminder = ObserveBackupReminderUseCase(history, clock)
+        assertThat(reminder().first()).isTrue() // never backed up
+
+        val ok = history.start(BackupOperation.BACKUP, BackupDestination.DEVICE, BackupTrigger.MANUAL, clock.now())
+        history.succeed(ok, clock.now(), 1_024, "backup.ebmbackup", null)
+        assertThat(reminder().first()).isFalse()
+
+        clock.advanceBy(7 * 24 * 60 * 60 + 1)
+        assertThat(reminder().first()).isTrue() // more than 7 days ago
+
+        val failed = history.start(BackupOperation.BACKUP, BackupDestination.DEVICE, BackupTrigger.MANUAL, clock.now())
+        history.fail(failed, clock.now(), BackupFailure.LOW_STORAGE)
+        assertThat(reminder().first()).isTrue() // a failed attempt does not count
     }
 }

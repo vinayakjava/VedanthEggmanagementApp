@@ -51,18 +51,25 @@ class RoomReportRepository @Inject constructor(
         }.map { rows -> rows.map { it.toDomain() } }.distinctUntilChanged().flowOn(io)
     }
 
-    override fun observeDashboard(today: LocalDate, recentLimit: Int): Flow<DashboardSummary> = flow {
+    override fun observeDashboard(from: LocalDate, to: LocalDate, recentLimit: Int): Flow<DashboardSummary> = flow {
         val d = dao
         emitAll(
-            combine(d.customerCounts(), d.tradeTotals(null), d.tradeTotals(today.toEpochDay()), d.dues(), d.recent(recentLimit)) {
-                    counts, all, day, dues, recent ->
+            combine(
+                d.customerCounts(),
+                d.totals(null, null),
+                d.totals(from.toEpochDay(), to.toEpochDay()),
+                d.dues(),
+                d.recent(recentLimit),
+            ) { counts, all, period, dues, recent ->
                 DashboardSummary(
                     totalCustomers = counts.total,
                     activeCustomers = counts.active,
                     sales = all.of(EntryType.SELL),
                     purchases = all.of(EntryType.BUY),
-                    todaySales = day.of(EntryType.SELL),
-                    todayPurchases = day.of(EntryType.BUY),
+                    periodSales = period.of(EntryType.SELL),
+                    periodPurchases = period.of(EntryType.BUY),
+                    periodReceived = period.of(EntryType.PAYMENT_RECEIVED).value,
+                    periodPaid = period.of(EntryType.PAYMENT_MADE).value,
                     receivables = Money(dues.receivablePaise),
                     payables = Money(dues.payablePaise),
                     receivableCustomers = dues.receivableCount,

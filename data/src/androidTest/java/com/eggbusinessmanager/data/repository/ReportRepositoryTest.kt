@@ -178,8 +178,8 @@ class ReportRepositoryTest {
     fun dashboardMatchesTheReferenceCalculationAndCustomerBalances() = runTest {
         randomBook(Random(7))
         val everyone = ids.map { checkNotNull(customers.get(it)) }
-        val expected = DashboardCalculator.of(everyone, allEntries(), today, recentLimit = 10)
-        val actual = reports.observeDashboard(today, recentLimit = 10).first()
+        val expected = DashboardCalculator.of(everyone, allEntries(), today, today, recentLimit = 10)
+        val actual = reports.observeDashboard(today, today, recentLimit = 10).first()
         assertThat(actual).isEqualTo(expected)
 
         // Receivables/payables are exactly the positive/negative customer-list balances.
@@ -192,20 +192,20 @@ class ReportRepositoryTest {
 
     @Test
     fun dashboardUpdatesLiveAndFilteredTotalsFollow() = runTest {
-        assertThat(reports.observeDashboard(today, 10).first().sales.value).isEqualTo(Money.ZERO)
+        assertThat(reports.observeDashboard(today, today, 10).first().sales.value).isEqualTo(Money.ZERO)
         val ram = customer("Ram")
         val sale = (recordTrade(TradeDraft(EntryType.SELL, ram, today, brown, tray, "10", "180"), "a") as DomainResult.Ok).value
         recordPayment(PaymentDraft(EntryType.PAYMENT_RECEIVED, ram, today, "500"), "b")
 
-        var d = reports.observeDashboard(today, 10).first()
-        assertThat(d.todaySales.value).isEqualTo(Money.rupees(1_800))
-        assertThat(d.todaySales.eggs).isEqualTo(300)
+        var d = reports.observeDashboard(today, today, 10).first()
+        assertThat(d.periodSales.value).isEqualTo(Money.rupees(1_800))
+        assertThat(d.periodSales.eggs).isEqualTo(300)
         assertThat(d.receivables).isEqualTo(Money.rupees(1_300))
         assertThat(d.recent.map { it.entry.reference }).containsExactly("RP-000001", "S-000001").inOrder()
 
         delete(sale.rootId)
-        d = reports.observeDashboard(today, 10).first()
-        assertThat(d.todaySales.count).isEqualTo(0)
+        d = reports.observeDashboard(today, today, 10).first()
+        assertThat(d.periodSales.count).isEqualTo(0)
         assertThat(d.payables).isEqualTo(Money.rupees(500))
 
         val listed = ObserveTransactionsUseCase(reports)(TransactionFilter()).first()

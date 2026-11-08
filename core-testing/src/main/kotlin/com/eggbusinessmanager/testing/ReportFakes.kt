@@ -24,8 +24,8 @@ class FakeReportRepository(
             rows.map { TransactionRow(it, byId[it.customerId]?.name.orEmpty(), byId[it.customerId]?.mobile) }.filter(filter::matches)
         }
 
-    override fun observeDashboard(today: LocalDate, recentLimit: Int): Flow<DashboardSummary> =
-        combine(customers.customers, ledger.rows) { list, rows -> DashboardCalculator.of(list, rows, today, recentLimit) }
+    override fun observeDashboard(from: LocalDate, to: LocalDate, recentLimit: Int): Flow<DashboardSummary> =
+        combine(customers.customers, ledger.rows) { list, rows -> DashboardCalculator.of(list, rows, from, to, recentLimit) }
 
     override fun observeCustomerBalances(): Flow<List<CustomerSummary>> =
         combine(customers.customers, ledger.rows) { list, rows ->

@@ -72,7 +72,7 @@ class DashboardAndTransactionsTest {
         // A fresh book: zeros and no recent transactions.
         waitFor(s(R.string.dash_no_recent), 10_000)
         cardShows(DashboardTags.CUSTOMERS, "0")
-        cardShows(DashboardTags.TODAY_SALES, "₹0.00")
+        cardShows(DashboardTags.PERIOD_SALES, "₹0.00")
 
         // Ramesh owes ₹1,000, buys 10 trays at ₹180 and pays ₹500.
         click(s(R.string.nav_customers))
@@ -99,10 +99,10 @@ class DashboardAndTransactionsTest {
         // Every dashboard figure is computed from those entries.
         click(s(R.string.nav_dashboard))
         cardShows(DashboardTags.CUSTOMERS, "2")
-        cardShows(DashboardTags.TODAY_SALES, "₹1,800.00")
-        cardShows(DashboardTags.TODAY_SALES, s(R.string.dash_trade_detail, "1", "300"))
+        cardShows(DashboardTags.PERIOD_SALES, "₹1,800.00")
+        cardShows(DashboardTags.PERIOD_SALES, s(R.string.dash_trade_detail, "1", "300"))
         cardShows(DashboardTags.TOTAL_SALES, "₹1,800.00")
-        cardShows(DashboardTags.TODAY_PURCHASES, "₹0.00")
+        cardShows(DashboardTags.PERIOD_PURCHASES, "₹0.00")
         cardShows(DashboardTags.RECEIVABLES, "₹2,300.00")
         cardShows(DashboardTags.PAYABLES, "₹1,000.00")
         compose.waitUntil(10_000) { compose.onAllNodes(hasText("RP-000001", substring = true)).fetchSemanticsNodes().isNotEmpty() }

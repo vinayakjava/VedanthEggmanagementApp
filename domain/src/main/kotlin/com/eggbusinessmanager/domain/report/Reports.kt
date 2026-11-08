@@ -1,12 +1,15 @@
 package com.eggbusinessmanager.domain.report
 
 import com.eggbusinessmanager.domain.customer.Customer
+import com.eggbusinessmanager.domain.customer.CustomerSummary
 import com.eggbusinessmanager.domain.ledger.EntryStatus
 import com.eggbusinessmanager.domain.ledger.EntryType
 import com.eggbusinessmanager.domain.ledger.LedgerEntry
 import com.eggbusinessmanager.domain.money.Money
 import com.eggbusinessmanager.domain.validation.SearchKey
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 
 /** The entry types the Transactions screen lists: trades and payments (opening balances are not transactions). */
 val TRANSACTION_TYPES: Set<EntryType> = setOf(EntryType.SELL, EntryType.BUY, EntryType.PAYMENT_RECEIVED, EntryType.PAYMENT_MADE)
@@ -111,20 +114,53 @@ data class DashboardSummary(
     val activeCustomers: Int = 0,
     val sales: TradeTotals = TradeTotals(),
     val purchases: TradeTotals = TradeTotals(),
-    val todaySales: TradeTotals = TradeTotals(),
-    val todayPurchases: TradeTotals = TradeTotals(),
+    /** Sales, purchases and payments in the selected [DashboardPeriod] (US6-1). */
+    val periodSales: TradeTotals = TradeTotals(),
+    val periodPurchases: TradeTotals = TradeTotals(),
+    val periodReceived: Money = Money.ZERO,
+    val periodPaid: Money = Money.ZERO,
     val receivables: Money = Money.ZERO,
     val payables: Money = Money.ZERO,
     val receivableCustomers: Int = 0,
     val payableCustomers: Int = 0,
     val recent: List<TransactionRow> = emptyList(),
-)
+    /** The customers who owe the most, largest first (US6-2). */
+    val topReceivables: List<CustomerSummary> = emptyList(),
+) {
+    /** Net cash movement in the period: received − paid (US6-1). */
+    val netCash: Money get() = periodReceived - periodPaid
+}
+
+/** The dashboard's period (US6-1). Today is the default; a week starts on Monday; all end today. */
+enum class DashboardPeriod {
+    TODAY,
+    WEEK,
+    MONTH,
+    ;
+
+    fun from(today: LocalDate): LocalDate = when (this) {
+        TODAY -> today
+        WEEK -> today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+        MONTH -> today.withDayOfMonth(1)
+    }
+}
 
 /** The reference calculation of [DashboardSummary]; the SQL in the data layer must agree with it. */
 object DashboardCalculator {
     const val RECENT_LIMIT = 10
+    const val TOP_LIMIT = 5
 
-    fun of(customers: List<Customer>, entries: List<LedgerEntry>, today: LocalDate, recentLimit: Int = RECENT_LIMIT): DashboardSummary {
+    /** The customers with the largest positive balances, largest first. */
+    fun topReceivables(balances: List<CustomerSummary>): List<CustomerSummary> =
+        balances.filter { it.netBalance.isPositive }.sortedByDescending { it.netBalance }.take(TOP_LIMIT)
+
+    fun of(
+        customers: List<Customer>,
+        entries: List<LedgerEntry>,
+        from: LocalDate,
+        to: LocalDate,
+        recentLimit: Int = RECENT_LIMIT,
+    ): DashboardSummary {
         val active = entries.filter { it.status == EntryStatus.ACTIVE }
         val balances = active.groupBy { it.customerId }.values.map { list -> list.fold(Money.ZERO) { sum, e -> sum + e.balanceEffect } }
         val byId = customers.associateBy { it.id }
@@ -132,13 +168,16 @@ object DashboardCalculator {
             .sortedWith(compareByDescending<LedgerEntry> { it.createdAt }.thenByDescending { it.id })
             .take(recentLimit)
             .map { e -> TransactionRow(e, byId[e.customerId]?.name.orEmpty(), byId[e.customerId]?.mobile) }
+        val period = active.filter { it.date in from..to }
         return DashboardSummary(
             totalCustomers = customers.size,
             activeCustomers = customers.count { it.isActive },
             sales = trades(active, EntryType.SELL),
             purchases = trades(active, EntryType.BUY),
-            todaySales = trades(active.filter { it.date == today }, EntryType.SELL),
-            todayPurchases = trades(active.filter { it.date == today }, EntryType.BUY),
+            periodSales = trades(period, EntryType.SELL),
+            periodPurchases = trades(period, EntryType.BUY),
+            periodReceived = trades(period, EntryType.PAYMENT_RECEIVED).value,
+            periodPaid = trades(period, EntryType.PAYMENT_MADE).value,
             receivables = balances.filter { it.isPositive }.fold(Money.ZERO, Money::plus),
             payables = balances.filter { it.isNegative }.fold(Money.ZERO) { sum, b -> sum - b },
             receivableCustomers = balances.count { it.isPositive },

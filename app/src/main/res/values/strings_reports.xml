@@ -2,8 +2,6 @@
 <resources>
     <!-- Dashboard (Phase 6) -->
     <string name="dash_today">Today</string>
-    <string name="dash_today_sales">Today\'s sales</string>
-    <string name="dash_today_purchases">Today\'s purchases</string>
     <string name="dash_dues">Dues</string>
     <string name="dash_receivables">To receive</string>
     <string name="dash_payables">To pay</string>
@@ -38,4 +36,17 @@
     <string name="tx_empty_title">No transactions found</string>
     <string name="tx_empty_body">Change the dates, types or search to see more.</string>
     <string name="tx_reset">Reset filters</string>
+    <!-- Dashboard periods, top customers, backup reminder (US6) -->
+    <string name="dash_week">This week</string>
+    <string name="dash_month">This month</string>
+    <string name="dash_sales">Sales</string>
+    <string name="dash_purchases">Purchases</string>
+    <string name="dash_net_cash">Net cash (received − paid)</string>
+    <string name="dash_cash_detail">Received %1$s · Paid %2$s</string>
+    <string name="dash_top_customers">Who owes you the most</string>
+    <string name="dash_backup_title">Back up your data</string>
+    <string name="dash_backup_body">No backup in the last 7 days. If this phone is lost or reset, entries since the last backup cannot be recovered.</string>
+    <string name="dash_backup_now">Back up now</string>
+    <string name="dash_first_title">Add your first customer</string>
+    <string name="dash_first_body">Start with the people and shops you buy eggs from or sell eggs to. You can enter what they owe from your paper book as an opening balance.</string>
 </resources>

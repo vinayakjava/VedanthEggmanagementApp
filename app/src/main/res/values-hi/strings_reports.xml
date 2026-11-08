@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="dash_today">आज</string>
-    <string name="dash_today_sales">आज की बिक्री</string>
-    <string name="dash_today_purchases">आज की ख़रीद</string>
     <string name="dash_dues">बकाया</string>
     <string name="dash_receivables">लेना है</string>
     <string name="dash_payables">देना है</string>
@@ -36,4 +34,17 @@
     <string name="tx_empty_title">कोई लेन-देन नहीं मिला</string>
     <string name="tx_empty_body">ज़्यादा देखने के लिए तारीख़, प्रकार या खोज बदलें।</string>
     <string name="tx_reset">फ़िल्टर हटाएँ</string>
+    <!-- Dashboard periods, top customers, backup reminder (US6) -->
+    <string name="dash_week">इस हफ़्ते</string>
+    <string name="dash_month">इस महीने</string>
+    <string name="dash_sales">बिक्री</string>
+    <string name="dash_purchases">ख़रीद</string>
+    <string name="dash_net_cash">शुद्ध नकद (मिला − दिया)</string>
+    <string name="dash_cash_detail">मिला %1$s · दिया %2$s</string>
+    <string name="dash_top_customers">जिनसे सबसे ज़्यादा लेना है</string>
+    <string name="dash_backup_title">अपने डेटा का बैकअप लें</string>
+    <string name="dash_backup_body">पिछले 7 दिनों में कोई बैकअप नहीं। फ़ोन खो जाने या रीसेट होने पर पिछले बैकअप के बाद की प्रविष्टियाँ वापस नहीं मिलेंगी।</string>
+    <string name="dash_backup_now">अभी बैकअप लें</string>
+    <string name="dash_first_title">अपना पहला ग्राहक जोड़ें</string>
+    <string name="dash_first_body">उन लोगों और दुकानों से शुरू करें जिनसे आप अंडे ख़रीदते या जिन्हें बेचते हैं। कागज़ी बही का बकाया शुरुआती बकाया के रूप में डाल सकते हैं।</string>
 </resources>

@@ -13,7 +13,7 @@ interface ReportRepository {
     fun observeTransactions(filter: TransactionFilter): Flow<List<TransactionRow>>
 
     /** The dashboard as [com.eggbusinessmanager.domain.report.DashboardCalculator] defines it. */
-    fun observeDashboard(today: LocalDate, recentLimit: Int): Flow<DashboardSummary>
+    fun observeDashboard(from: LocalDate, to: LocalDate, recentLimit: Int): Flow<DashboardSummary>
 
     /** Every customer, active or deactivated, with its balance (for outstanding reports). */
     fun observeCustomerBalances(): Flow<List<CustomerSummary>>

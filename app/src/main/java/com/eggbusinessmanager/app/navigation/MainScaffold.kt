@@ -91,6 +91,9 @@ fun MainScaffold(
                     onBuy = { navController.navigate(TradeEditorRoute(EntryType.BUY.name)) },
                     onReceive = { navController.navigate(PaymentEditorRoute(EntryType.PAYMENT_RECEIVED.name)) },
                     onPay = { navController.navigate(PaymentEditorRoute(EntryType.PAYMENT_MADE.name)) },
+                    onAddCustomer = { navController.navigate(CustomerEditorRoute()) },
+                    onOpenCustomer = { navController.navigate(CustomerDetailRoute(it)) },
+                    onBackup = { navController.navigate(BackupRoute) },
                     onOpenEntry = { navController.navigate(EntryDetailRoute(it)) },
                     onSeeAll = { navController.navigateToTopLevel(TransactionsRoute) },
                 )

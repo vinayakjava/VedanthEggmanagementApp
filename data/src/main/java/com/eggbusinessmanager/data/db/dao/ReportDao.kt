@@ -69,11 +69,12 @@ interface ReportDao {
         """
         SELECT entry_type, COUNT(*) AS count, COALESCE(SUM(pieces), 0) AS eggs, COALESCE(SUM(amount_paise), 0) AS value
         FROM ledger_entry
-        WHERE status = 'ACTIVE' AND entry_type IN ('SELL', 'BUY') AND (:day IS NULL OR entry_date = :day)
+        WHERE status = 'ACTIVE' AND entry_type IN ('SELL', 'BUY', 'PAYMENT_RECEIVED', 'PAYMENT_MADE')
+          AND (:fromDay IS NULL OR entry_date >= :fromDay) AND (:toDay IS NULL OR entry_date <= :toDay)
         GROUP BY entry_type
         """,
     )
-    fun tradeTotals(day: Long?): Flow<List<TradeTotalRow>>
+    fun totals(fromDay: Long?, toDay: Long?): Flow<List<TradeTotalRow>>
 
     /** Sums of positive and of negative customer balances, never netted across customers. */
     @Query(
