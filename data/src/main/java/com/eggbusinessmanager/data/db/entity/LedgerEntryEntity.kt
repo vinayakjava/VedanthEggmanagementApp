@@ -22,6 +22,18 @@ import androidx.room.PrimaryKey
             childColumns = ["customer_id"],
             onDelete = ForeignKey.RESTRICT,
         ),
+        ForeignKey(
+            entity = EggVarietyEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["variety_id"],
+            onDelete = ForeignKey.RESTRICT,
+        ),
+        ForeignKey(
+            entity = MeasurementUnitEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["unit_id"],
+            onDelete = ForeignKey.RESTRICT,
+        ),
     ],
     indices = [
         Index(value = ["customer_id", "status", "entry_date", "created_at"]),
@@ -29,6 +41,8 @@ import androidx.room.PrimaryKey
         Index(value = ["root_entry_id"]),
         Index(value = ["reference_no"]),
         Index(value = ["linked_root_entry_id"]),
+        Index(value = ["variety_id"]),
+        Index(value = ["unit_id"]),
         Index(value = ["customer_id", "entry_type", "variety_id", "unit_id", "status", "entry_date"]),
         Index(value = ["client_request_id"], unique = true),
     ],

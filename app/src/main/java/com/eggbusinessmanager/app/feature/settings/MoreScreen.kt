@@ -59,7 +59,12 @@ class MoreViewModel @Inject constructor(
 
 /** The "More" tab: shop header, security settings and sign out (FR-011). Other settings arrive with US12. */
 @Composable
-fun MoreScreen(onSecurity: () -> Unit, viewModel: MoreViewModel = hiltViewModel()) {
+fun MoreScreen(
+    onSecurity: () -> Unit,
+    onUnits: () -> Unit,
+    onVarieties: () -> Unit,
+    viewModel: MoreViewModel = hiltViewModel(),
+) {
     val profile by viewModel.profile.collectAsStateWithLifecycle()
     var confirmSignOut by rememberSaveable { mutableStateOf(false) }
 
@@ -72,6 +77,14 @@ fun MoreScreen(onSecurity: () -> Unit, viewModel: MoreViewModel = hiltViewModel(
             SettingsRow(
                 R.drawable.ic_shield, stringResource(R.string.more_security), stringResource(R.string.more_security_summary),
                 onClick = onSecurity,
+            )
+            SettingsRow(
+                R.drawable.ic_sort, stringResource(R.string.more_units), stringResource(R.string.more_units_summary),
+                onClick = onUnits,
+            )
+            SettingsRow(
+                R.drawable.ic_nav_dashboard, stringResource(R.string.more_varieties), stringResource(R.string.more_varieties_summary),
+                onClick = onVarieties,
             )
             SettingsRow(
                 R.drawable.ic_logout, stringResource(R.string.more_sign_out), stringResource(R.string.more_sign_out_summary),

@@ -120,7 +120,7 @@ private fun FilterRow(
         Box {
             TextButton(onClick = { sortOpen = true }) {
                 Icon(painterResource(R.drawable.ic_sort), contentDescription = null)
-                Text(" " + sortLabel(sort))
+                Text(sortLabel(sort), modifier = Modifier.padding(start = 8.dp))
             }
             DropdownMenu(expanded = sortOpen, onDismissRequest = { sortOpen = false }) {
                 CustomerSort.entries.forEach { option ->

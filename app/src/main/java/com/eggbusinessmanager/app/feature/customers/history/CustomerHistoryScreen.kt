@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
@@ -44,6 +45,7 @@ import com.eggbusinessmanager.domain.customer.CustomerSummary
 import com.eggbusinessmanager.domain.ledger.Balance
 import com.eggbusinessmanager.domain.ledger.CustomerLedger
 import com.eggbusinessmanager.domain.ledger.EntryType
+import com.eggbusinessmanager.domain.ledger.LedgerEntry
 import com.eggbusinessmanager.domain.ledger.LedgerLine
 import com.eggbusinessmanager.domain.usecase.customer.ObserveCustomerLedgerUseCase
 import com.eggbusinessmanager.domain.usecase.customer.ObserveCustomerUseCase
@@ -78,7 +80,7 @@ class CustomerHistoryViewModel @Inject constructor(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomerHistoryScreen(onBack: () -> Unit, viewModel: CustomerHistoryViewModel = hiltViewModel()) {
+fun CustomerHistoryScreen(onOpenEntry: (Long) -> Unit, onBack: () -> Unit, viewModel: CustomerHistoryViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {
@@ -101,7 +103,7 @@ fun CustomerHistoryScreen(onBack: () -> Unit, viewModel: CustomerHistoryViewMode
             val ledger = state.ledger
             when {
                 ledger == null -> Unit
-                ledger.lines.isEmpty() -> EmptyState(
+                ledger.lines.isEmpty() && ledger.deleted.isEmpty() -> EmptyState(
                     title = stringResource(R.string.history_empty_title),
                     body = stringResource(R.string.history_empty_body),
                     iconRes = R.drawable.ic_history,
@@ -120,7 +122,12 @@ fun CustomerHistoryScreen(onBack: () -> Unit, viewModel: CustomerHistoryViewMode
                         }
                     }
                     // Newest first is easier to scan; the running balance is still computed oldest first.
-                    items(ledger.lines.asReversed(), key = { it.entry.id }) { line -> LedgerRow(line) }
+                    items(ledger.lines.asReversed(), key = { it.entry.id }) { line -> LedgerRow(line, onOpenEntry) }
+                    // Deleted entries stay visible, labelled, and never count (FR-034).
+                    if (ledger.deleted.isNotEmpty()) {
+                        item { Text(stringResource(R.string.history_deleted_heading), style = MaterialTheme.typography.titleSmall) }
+                        items(ledger.deleted.asReversed(), key = { "deleted-" + it.id }) { entry -> DeletedRow(entry, onOpenEntry) }
+                    }
                 }
             }
         }
@@ -128,10 +135,32 @@ fun CustomerHistoryScreen(onBack: () -> Unit, viewModel: CustomerHistoryViewMode
 }
 
 @Composable
-private fun LedgerRow(line: LedgerLine) {
+private fun DeletedRow(entry: LedgerEntry, onOpen: (Long) -> Unit) {
+    val locale = LocalConfiguration.current.locales[0]
+    Card(onClick = { onOpen(entry.rootId) }, modifier = Modifier.fillMaxWidth()) {
+        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(typeLabel(entry.type)), style = MaterialTheme.typography.titleSmall)
+                Text(
+                    "${IndianFormatters.date(entry.date, locale)} · ${entry.reference} · ${stringResource(R.string.entry_deleted_badge)}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+            Text(
+                IndianFormatters.money(entry.amount),
+                style = MaterialTheme.typography.titleMedium.copy(textDecoration = TextDecoration.LineThrough),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+private fun LedgerRow(line: LedgerLine, onOpen: (Long) -> Unit) {
     val locale = LocalConfiguration.current.locales[0]
     val entry = line.entry
-    Card(Modifier.fillMaxWidth()) {
+    Card(onClick = { onOpen(entry.rootId) }, modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(stringResource(typeLabel(entry.type)), style = MaterialTheme.typography.titleSmall)

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sell / Buy editor -->
+    <string name="trade_sell_title">अंडे बेचें</string>
+    <string name="trade_buy_title">अंडे ख़रीदें</string>
+    <string name="trade_edit_title">%1$s बदलें</string>
+    <string name="trade_type_sell">बिक्री</string>
+    <string name="trade_type_buy">ख़रीद</string>
+    <string name="label_customer">ग्राहक</string>
+    <string name="label_entry_date">तारीख़</string>
+    <string name="label_variety">अंडे की किस्म</string>
+    <string name="label_unit">इकाई</string>
+    <string name="label_quantity">मात्रा</string>
+    <string name="label_price_per_unit">प्रति %1$s दाम (₹)</string>
+    <string name="label_price">प्रति इकाई दाम (₹)</string>
+    <string name="label_remarks">टिप्पणी</string>
+    <string name="label_edit_reason">बदलाव का कारण</string>
+    <string name="trade_total">कुल</string>
+    <string name="trade_pieces">= %1$s अंडे</string>
+    <string name="unit_option">%1$s (%2$d अंडे)</string>
+    <string name="trade_choose_customer">ग्राहक चुनें</string>
+    <string name="trade_customer_search">ग्राहक खोजें</string>
+    <string name="trade_add_new_customer">नया ग्राहक जोड़ें</string>
+    <string name="trade_no_customers">कोई मिलता-जुलता ग्राहक नहीं</string>
+    <string name="trade_price_suggested">इस ग्राहक का पिछला दाम</string>
+    <string name="trade_saved_title">%1$s सहेजा गया</string>
+    <string name="trade_saved_body">%1$s · %2$s</string>
+    <string name="trade_record_another">एक और दर्ज करें</string>
+    <string name="trade_done">हो गया</string>
+    <string name="trade_impact_heading">सहेजने के बाद बकाया में बदलाव</string>
+    <string name="trade_impact_line">%1$s: %2$s</string>
+    <string name="trade_impact_up">+%1$s लेना है</string>
+    <string name="trade_impact_down">−%1$s (और देना है)</string>
+
+    <!-- Entry detail -->
+    <string name="entry_title">लेन-देन</string>
+    <string name="entry_deleted_badge">हटाया गया</string>
+    <string name="entry_revised_badge">संशोधित</string>
+    <string name="entry_changed_to">%1$s में बदला गया</string>
+    <string name="entry_quantity_line">%1$s × %2$s = %3$s अंडे</string>
+    <string name="entry_price_line">%1$s प्रति %2$s</string>
+    <string name="entry_history">बदलाव का इतिहास</string>
+    <string name="entry_revision_line">%1$s · %2$s</string>
+    <string name="entry_deleted_reason">कारण: %1$s</string>
+    <string name="entry_edit">बदलें</string>
+    <string name="entry_delete">हटाएँ</string>
+    <string name="entry_delete_title">%1$s हटाएँ?</string>
+    <string name="entry_delete_body">यह बकाया, कुल और रिपोर्ट से हट जाएगा। आपका हिसाब भरोसेमंद रहे, इसलिए यह इतिहास में “हटाया गया” के रूप में बना रहेगा। इसे वापस नहीं किया जा सकता।</string>
+    <string name="entry_delete_reason">कारण (वैकल्पिक)</string>
+    <string name="entry_cannot_change">हटाई गई या बदली जा चुकी प्रविष्टि नहीं बदली जा सकती।</string>
+    <string name="entry_opening_edit_hint">शुरुआती बकाया ग्राहक की “बदलें” स्क्रीन से बदलें।</string>
+
+    <!-- Customer quick actions and history -->
+    <string name="customer_sell">अंडे बेचें</string>
+    <string name="customer_buy">अंडे ख़रीदें</string>
+    <string name="history_deleted_heading">हटाए गए</string>
+
+    <!-- Dashboard placeholder with quick actions -->
+    <string name="dashboard_quick_actions">लेन-देन दर्ज करें</string>
+    <string name="dashboard_more_soon">दैनिक कुल और बकाया अगले अपडेट में यहाँ दिखेंगे।</string>
+
+    <!-- Units and varieties settings -->
+    <string name="more_units">माप की इकाइयाँ</string>
+    <string name="more_units_summary">ट्रे, बॉक्स, दर्जन, नग और हर एक में कितने अंडे</string>
+    <string name="more_varieties">अंडे की किस्में</string>
+    <string name="more_varieties_summary">सफ़ेद, भूरा, देसी और आपकी अपनी</string>
+    <string name="units_title">माप की इकाइयाँ</string>
+    <string name="units_add">इकाई जोड़ें</string>
+    <string name="units_edit">इकाई बदलें</string>
+    <string name="units_size">%1$d अंडे</string>
+    <string name="units_base_note">नग मूल इकाई है और इसे बदला नहीं जा सकता।</string>
+    <string name="units_resize_warning">पुरानी प्रविष्टियाँ उसी आकार से रहेंगी जिससे वे सहेजी गई थीं। नया आकार केवल नई प्रविष्टियों पर लागू होगा।</string>
+    <string name="label_unit_name">इकाई का नाम</string>
+    <string name="label_unit_pieces">एक इकाई में अंडे</string>
+    <string name="action_deactivate">निष्क्रिय करें</string>
+    <string name="action_activate">सक्रिय करें</string>
+    <string name="inactive_badge">निष्क्रिय</string>
+    <string name="varieties_title">अंडे की किस्में</string>
+    <string name="varieties_add">किस्म जोड़ें</string>
+    <string name="varieties_edit">किस्म का नाम बदलें</string>
+    <string name="varieties_default_badge">डिफ़ॉल्ट</string>
+    <string name="varieties_make_default">डिफ़ॉल्ट बनाएँ</string>
+    <string name="label_variety_name">किस्म का नाम</string>
+
+    <!-- Validation and errors -->
+    <string name="v_customer_required">ग्राहक चुनें</string>
+    <string name="v_variety_required">अंडे की किस्म चुनें</string>
+    <string name="v_unit_required">इकाई चुनें</string>
+    <string name="v_quantity_positive">0 से ज़्यादा मात्रा डालें</string>
+    <string name="v_quantity_format">अधिकतम 3 दशमलव तक मात्रा डालें</string>
+    <string name="v_quantity_whole">मात्रा पूरे अंडों के बराबर होनी चाहिए</string>
+    <string name="v_quantity_too_large">एक प्रविष्टि के लिए बहुत अधिक अंडे (अधिकतम 1,00,00,000)</string>
+    <string name="v_price_positive">0 से ज़्यादा दाम डालें</string>
+    <string name="v_price_format">अधिकतम 2 दशमलव तक दाम डालें</string>
+    <string name="v_price_too_large">प्रति इकाई दाम ₹10,00,000 से ज़्यादा नहीं हो सकता</string>
+    <string name="v_total_range">कुल राशि सीमा से बाहर है</string>
+    <string name="v_reason_too_long">बहुत लंबा है (अधिकतम 200 अक्षर)</string>
+    <string name="v_unit_name_duplicate">इस नाम की इकाई पहले से है</string>
+    <string name="v_unit_name">20 अक्षरों तक इकाई का नाम डालें</string>
+    <string name="v_unit_pieces">1 से 10,000 के बीच अंडों की पूरी संख्या डालें</string>
+    <string name="v_variety_name_duplicate">इस नाम की किस्म पहले से है</string>
+    <string name="v_variety_name">30 अक्षरों तक किस्म का नाम डालें</string>
+    <string name="error_entry_not_editable">यह प्रविष्टि हटाई या बदली जा चुकी है, इसे नहीं बदला जा सकता।</string>
+    <string name="error_unit_locked">नग मूल इकाई है और इसे बदला नहीं जा सकता।</string>
+    <string name="error_last_variety">कम से कम एक किस्म सक्रिय रहनी चाहिए।</string>
+</resources>

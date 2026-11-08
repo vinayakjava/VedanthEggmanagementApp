@@ -12,11 +12,43 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface LedgerEntryDao {
 
+    /** Current revisions of a customer's entries: ACTIVE and deleted (VOIDED); superseded rows are history only. */
     @Query(
-        "SELECT * FROM ledger_entry WHERE customer_id = :customerId AND status = 'ACTIVE' " +
+        "SELECT * FROM ledger_entry WHERE customer_id = :customerId AND status <> 'SUPERSEDED' " +
             "ORDER BY entry_date, created_at, id",
     )
-    fun observeActive(customerId: Long): Flow<List<LedgerEntryEntity>>
+    fun observeCurrent(customerId: Long): Flow<List<LedgerEntryEntity>>
+
+    @Query("SELECT * FROM ledger_entry WHERE root_entry_id = :rootId ORDER BY id")
+    fun observeRevisions(rootId: Long): Flow<List<LedgerEntryEntity>>
+
+    @Query("SELECT * FROM ledger_entry WHERE root_entry_id = :rootId ORDER BY id DESC LIMIT 1")
+    suspend fun currentRevision(rootId: Long): LedgerEntryEntity?
+
+    @Query("SELECT reference_no FROM ledger_entry WHERE root_entry_id = :rootId LIMIT 1")
+    suspend fun referenceOf(rootId: Long): String?
+
+    @Query("SELECT * FROM ledger_entry WHERE client_request_id = :clientRequestId LIMIT 1")
+    suspend fun byClientRequest(clientRequestId: String): LedgerEntryEntity?
+
+    /** FR-024: the most recent active price for this customer, type, variety and unit. */
+    @Query(
+        "SELECT price_per_unit_paise FROM ledger_entry WHERE customer_id = :customerId AND entry_type = :type " +
+            "AND variety_id = :varietyId AND unit_id = :unitId AND status = 'ACTIVE' " +
+            "ORDER BY entry_date DESC, created_at DESC, id DESC LIMIT 1",
+    )
+    suspend fun lastPrice(customerId: Long, type: String, varietyId: Long, unitId: Long): Long?
+
+    /** Deleting is voiding (FR-034): the row stays, labelled, and stops counting. */
+    @Query("UPDATE ledger_entry SET status = 'VOIDED', void_reason = :reason, voided_at = :at WHERE id = :id AND status = 'ACTIVE'")
+    suspend fun voidEntry(id: Long, reason: String?, at: Long): Int
+
+    /** Type change (FR-033b): the old entry's last revision points at the entry that replaced it. */
+    @Query(
+        "UPDATE ledger_entry SET status = 'SUPERSEDED', replaced_by_root_id = :newRootId " +
+            "WHERE id = :id AND status = 'ACTIVE'",
+    )
+    suspend fun markReplaced(id: Long, newRootId: Long): Int
 
     @Query("SELECT EXISTS(SELECT 1 FROM ledger_entry WHERE customer_id = :customerId)")
     suspend fun hasEntries(customerId: Long): Boolean

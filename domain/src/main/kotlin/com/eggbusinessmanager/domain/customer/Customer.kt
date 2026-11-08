@@ -84,11 +84,18 @@ data class AuditEvent(
     companion object {
         const val ENTITY_CUSTOMER = "CUSTOMER"
         const val ENTITY_LEDGER_ENTRY = "LEDGER_ENTRY"
+        const val ENTITY_UNIT = "UNIT"
+        const val ENTITY_VARIETY = "VARIETY"
         const val ACTION_CREATE = "CREATE"
         const val ACTION_EDIT = "EDIT"
         const val ACTION_OPENING_CHANGE = "OPENING_CHANGE"
         const val ACTION_ARCHIVE = "ARCHIVE"
         const val ACTION_UNARCHIVE = "UNARCHIVE"
         const val ACTION_DELETE = "DELETE"
+        const val ACTION_TYPE_CHANGE = "TYPE_CHANGE"
+        const val ACTION_CUSTOMER_CHANGE = "CUSTOMER_CHANGE"
+        const val ACTION_VOID = "VOID"
+        const val ACTION_UNIT_RESIZE = "UNIT_RESIZE"
+        const val ACTION_RENAME = "RENAME"
     }
 }

@@ -24,11 +24,20 @@ import kotlinx.serialization.Serializable
 
 /** Customers (US2). `customerId = 0` opens the editor for a new customer; `prefill` is text typed in search. */
 @Serializable data class CustomerDetailRoute(val customerId: Long)
-@Serializable data class CustomerEditorRoute(val customerId: Long = 0, val prefill: String = "")
+@Serializable data class CustomerEditorRoute(val customerId: Long = 0, val prefill: String = "", val returnToPicker: Boolean = false)
 @Serializable data class CustomerHistoryRoute(val customerId: Long)
+
+/**
+ * Sell / Buy (US3). `type` is SELL or BUY; `customerId` > 0 pre-selects a customer; `rootId` > 0 edits
+ * that entry instead of recording a new one.
+ */
+@Serializable data class TradeEditorRoute(val type: String, val customerId: Long = 0, val rootId: Long = 0)
+@Serializable data class EntryDetailRoute(val rootId: Long)
 
 /** Settings reached from More. */
 @Serializable data object SecurityRoute
 @Serializable data object ChangePasswordRoute
 @Serializable data object ChangeRecoveryPinRoute
 @Serializable data object ChangeSecurityQuestionsRoute
+@Serializable data object UnitsRoute
+@Serializable data object VarietiesRoute

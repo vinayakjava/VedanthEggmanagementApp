@@ -1,47 +1,30 @@
 package com.eggbusinessmanager.app.feature.customers.editor
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.eggbusinessmanager.app.R
+import com.eggbusinessmanager.app.ui.components.DateField
 import com.eggbusinessmanager.app.ui.components.ErrorBanner
 import com.eggbusinessmanager.app.ui.components.FormScreen
 import com.eggbusinessmanager.app.ui.components.FormTextField
 import com.eggbusinessmanager.app.ui.components.PrimaryButton
-import com.eggbusinessmanager.app.ui.error.UiText
-import com.eggbusinessmanager.app.ui.format.IndianFormatters
 import com.eggbusinessmanager.domain.error.Field
 import com.eggbusinessmanager.domain.ledger.OpeningDirection
-import com.eggbusinessmanager.domain.validation.CustomerValidator
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
 
 /** Add or edit a customer with an optional opening balance (FR-015). */
 @Composable
@@ -123,47 +106,3 @@ private fun OpeningDirectionPicker(selected: OpeningDirection, onSelect: (Openin
         }
     }
 }
-
-/** Read-only date field with a picker limited to 2000-01-01 … today (business-date rule). */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DateField(label: String, date: LocalDate, today: LocalDate, error: UiText?, onDate: (LocalDate) -> Unit) {
-    var open by rememberSaveable { mutableStateOf(false) }
-    val locale = LocalConfiguration.current.locales[0]
-    FormTextField(
-        value = IndianFormatters.date(date, locale),
-        onValueChange = {},
-        label = label,
-        error = error,
-        trailingIcon = {
-            IconButton(onClick = { open = true }) {
-                Icon(painterResource(R.drawable.ic_calendar), contentDescription = stringResource(R.string.action_choose_date))
-            }
-        },
-        readOnly = true,
-    )
-    if (open) {
-        val pickerState = rememberDatePickerState(
-            initialSelectedDateMillis = date.toUtcMillis(),
-            yearRange = CustomerValidator.EARLIEST_DATE.year..today.year,
-            selectableDates = object : SelectableDates {
-                override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                    val day = Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneOffset.UTC).toLocalDate()
-                    return !day.isAfter(today) && !day.isBefore(CustomerValidator.EARLIEST_DATE)
-                }
-            },
-        )
-        DatePickerDialog(
-            onDismissRequest = { open = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    pickerState.selectedDateMillis?.let { onDate(Instant.ofEpochMilli(it).atZone(ZoneOffset.UTC).toLocalDate()) }
-                    open = false
-                }) { Text(stringResource(R.string.action_ok)) }
-            },
-            dismissButton = { TextButton(onClick = { open = false }) { Text(stringResource(R.string.action_cancel)) } },
-        ) { DatePicker(state = pickerState) }
-    }
-}
-
-private fun LocalDate.toUtcMillis(): Long = atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()

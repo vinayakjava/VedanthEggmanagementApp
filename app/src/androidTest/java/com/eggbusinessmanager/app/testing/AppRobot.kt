@@ -2,8 +2,12 @@ package com.eggbusinessmanager.app.testing
 
 import android.content.Context
 import androidx.annotation.StringRes
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.ComposeTimeoutException
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
@@ -31,20 +35,39 @@ class AppRobot(private val compose: ComposeTestRule) {
         File(context.noBackupFilesDir, "datastore").deleteRecursively()
     }
 
-    fun waitFor(text: String, timeoutMs: Long = 60_000) =
-        compose.waitUntil(timeoutMs) { compose.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty() }
+    /** Waits for [text]; on timeout the failure lists what was on screen instead, to make failures readable. */
+    fun waitFor(text: String, timeoutMs: Long = 60_000) {
+        try {
+            compose.waitUntil(timeoutMs) { compose.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty() }
+        } catch (e: ComposeTimeoutException) {
+            throw AssertionError("Waited for \"$text\". On screen: ${screenTexts()}", e)
+        }
+    }
+
+    /** Every text currently on screen, in tree order. */
+    fun screenTexts(): String = compose.onAllNodes(SemanticsMatcher("any") { true }, useUnmergedTree = true)
+        .fetchSemanticsNodes(atLeastOneRootRequired = false)
+        .mapNotNull { node ->
+            val c = node.config
+            listOfNotNull(
+                c.getOrElseNullable(SemanticsProperties.Text) { null }?.joinToString(),
+                c.getOrElseNullable(SemanticsProperties.EditableText) { null }?.let { "[typed: $it]" },
+                c.getOrElseNullable(SemanticsProperties.Error) { null }?.let { "[error: $it]" },
+            ).joinToString(" ").ifEmpty { null }
+        }
+        .filter { it.isNotBlank() }
+        .joinToString(" | ")
 
     fun waitGone(text: String, timeoutMs: Long = 10_000) =
         compose.waitUntil(timeoutMs) { compose.onAllNodesWithText(text).fetchSemanticsNodes().isEmpty() }
 
     fun exists(text: String): Boolean = compose.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty()
 
-    /**
-     * Tries to scroll the node into view. Floating buttons and bottom-bar items cannot be scrolled to;
-     * that failure is ignored, and the following action reports a genuinely missing node.
-     */
+    /** Scrolls into view when anything on screen scrolls; otherwise just checks the node exists (same as AuthFlowTest). */
     fun SemanticsNodeInteraction.scrollIfNeeded(): SemanticsNodeInteraction {
-        runCatching { performScrollTo() }
+        val scrolled = compose.onAllNodes(hasScrollAction()).fetchSemanticsNodes().isNotEmpty() &&
+            runCatching { performScrollTo() }.isSuccess
+        if (!scrolled) assertExists()
         return this
     }
 
@@ -52,6 +75,7 @@ class AppRobot(private val compose: ComposeTestRule) {
         compose.onNode(hasText(label) and hasSetTextAction()).scrollIfNeeded().performTextInput(value)
 
     fun click(text: String) = compose.onAllNodesWithText(text).onFirst().scrollIfNeeded().performClick()
+
 
     fun clickButton(text: String) =
         compose.onNode(hasText(text) and hasClickAction() and !hasSetTextAction()).scrollIfNeeded().performClick()

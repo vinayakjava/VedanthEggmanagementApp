@@ -19,7 +19,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.toRoute
 import com.eggbusinessmanager.app.R
+import com.eggbusinessmanager.app.feature.dashboard.DashboardScreen
+import com.eggbusinessmanager.app.feature.settings.catalog.UnitsScreen
+import com.eggbusinessmanager.app.feature.settings.catalog.VarietiesScreen
+import com.eggbusinessmanager.app.feature.trade.EntryDetailScreen
+import com.eggbusinessmanager.app.feature.trade.TradeEditorScreen
+import com.eggbusinessmanager.domain.ledger.EntryType
 import com.eggbusinessmanager.app.feature.customers.detail.CustomerDetailScreen
 import com.eggbusinessmanager.app.feature.customers.editor.CustomerEditorScreen
 import com.eggbusinessmanager.app.feature.customers.history.CustomerHistoryScreen
@@ -67,7 +75,12 @@ fun MainScaffold(
             startDestination = DashboardRoute,
             modifier = Modifier.fillMaxSize(),
         ) {
-            composable<DashboardRoute> { SectionPlaceholder(TopLevelDestination.DASHBOARD) }
+            composable<DashboardRoute> {
+                DashboardScreen(
+                    onSell = { navController.navigate(TradeEditorRoute(EntryType.SELL.name)) },
+                    onBuy = { navController.navigate(TradeEditorRoute(EntryType.BUY.name)) },
+                )
+            }
             composable<CustomersRoute> {
                 CustomersScreen(
                     onOpenCustomer = { navController.navigate(CustomerDetailRoute(it)) },
@@ -78,13 +91,19 @@ fun MainScaffold(
                 CustomerDetailScreen(
                     onEdit = { navController.navigate(CustomerEditorRoute(customerId = it)) },
                     onHistory = { navController.navigate(CustomerHistoryRoute(it)) },
+                    onTrade = { id, type -> navController.navigate(TradeEditorRoute(type.name, customerId = id)) },
                     onBack = navController::popBackStack,
                 )
             }
-            composable<CustomerEditorRoute> {
+            composable<CustomerEditorRoute> { entry ->
+                val returnToPicker = entry.toRoute<CustomerEditorRoute>().returnToPicker
                 CustomerEditorScreen(
                     onSaved = { id, isNew ->
-                        if (isNew) {
+                        if (returnToPicker) {
+                            // US3-9: hand the new customer back to the Sell/Buy screen, which kept its input.
+                            navController.previousBackStackEntry?.savedStateHandle?.set(NEW_CUSTOMER_KEY, id)
+                            navController.popBackStack()
+                        } else if (isNew) {
                             // Replace the editor with the new customer's detail.
                             navController.navigate(CustomerDetailRoute(id)) {
                                 popUpTo<CustomerEditorRoute> { inclusive = true }
@@ -99,10 +118,35 @@ fun MainScaffold(
                     onBack = navController::popBackStack,
                 )
             }
-            composable<CustomerHistoryRoute> { CustomerHistoryScreen(onBack = navController::popBackStack) }
+            composable<CustomerHistoryRoute> {
+                CustomerHistoryScreen(onOpenEntry = { navController.navigate(EntryDetailRoute(it)) }, onBack = navController::popBackStack)
+            }
+            composable<TradeEditorRoute> { entry ->
+                val newCustomerId by entry.savedStateHandle.getStateFlow<Long?>(NEW_CUSTOMER_KEY, null).collectAsStateWithLifecycle()
+                TradeEditorScreen(
+                    newCustomerId = newCustomerId,
+                    onNewCustomerConsumed = { entry.savedStateHandle[NEW_CUSTOMER_KEY] = null },
+                    onAddCustomer = { prefill -> navController.navigate(CustomerEditorRoute(prefill = prefill, returnToPicker = true)) },
+                    onClose = navController::popBackStack,
+                )
+            }
+            composable<EntryDetailRoute> {
+                EntryDetailScreen(
+                    onEdit = { rootId, type -> navController.navigate(TradeEditorRoute(type.name, rootId = rootId)) },
+                    onBack = navController::popBackStack,
+                )
+            }
+            composable<UnitsRoute> { UnitsScreen(onBack = navController::popBackStack) }
+            composable<VarietiesRoute> { VarietiesScreen(onBack = navController::popBackStack) }
             composable<TransactionsRoute> { SectionPlaceholder(TopLevelDestination.TRANSACTIONS) }
             composable<ReportsRoute> { SectionPlaceholder(TopLevelDestination.REPORTS) }
-            composable<MoreRoute> { MoreScreen(onSecurity = { navController.navigate(SecurityRoute) }) }
+            composable<MoreRoute> {
+                MoreScreen(
+                    onSecurity = { navController.navigate(SecurityRoute) },
+                    onUnits = { navController.navigate(UnitsRoute) },
+                    onVarieties = { navController.navigate(VarietiesRoute) },
+                )
+            }
             composable<SecurityRoute> {
                 SecurityScreen(
                     onChangePassword = { navController.navigate(ChangePasswordRoute) },
@@ -128,6 +172,9 @@ fun MainScaffold(
         )
     }
 }
+
+/** SavedStateHandle key for a customer created from the Sell/Buy screen. */
+private const val NEW_CUSTOMER_KEY = "new_customer_id"
 
 private fun NavHostController.navigateToTopLevel(route: Any) = navigate(route) {
     popUpTo(graph.findStartDestination().id) { saveState = true }

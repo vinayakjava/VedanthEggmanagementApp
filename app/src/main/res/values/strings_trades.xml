@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sell / Buy editor -->
+    <string name="trade_sell_title">Sell eggs</string>
+    <string name="trade_buy_title">Buy eggs</string>
+    <string name="trade_edit_title">Edit %1$s</string>
+    <string name="trade_type_sell">Sell</string>
+    <string name="trade_type_buy">Buy</string>
+    <string name="label_customer">Customer</string>
+    <string name="label_entry_date">Date</string>
+    <string name="label_variety">Egg variety</string>
+    <string name="label_unit">Unit</string>
+    <string name="label_quantity">Quantity</string>
+    <string name="label_price_per_unit">Price per %1$s (₹)</string>
+    <string name="label_price">Price per unit (₹)</string>
+    <string name="label_remarks">Remarks</string>
+    <string name="label_edit_reason">Reason for change</string>
+    <string name="trade_total">Total</string>
+    <string name="trade_pieces">= %1$s eggs</string>
+    <string name="unit_option">%1$s (%2$d eggs)</string>
+    <string name="trade_choose_customer">Choose customer</string>
+    <string name="trade_customer_search">Search customers</string>
+    <string name="trade_add_new_customer">Add new customer</string>
+    <string name="trade_no_customers">No matching customers</string>
+    <string name="trade_price_suggested">Last price for this customer</string>
+    <string name="trade_saved_title">Saved %1$s</string>
+    <string name="trade_saved_body">%1$s · %2$s</string>
+    <string name="trade_record_another">Record another</string>
+    <string name="trade_done">Done</string>
+    <string name="trade_impact_heading">Balance change after saving</string>
+    <string name="trade_impact_line">%1$s: %2$s</string>
+    <string name="trade_impact_up">+%1$s to receive</string>
+    <string name="trade_impact_down">−%1$s (to pay more)</string>
+
+    <!-- Entry detail -->
+    <string name="entry_title">Transaction</string>
+    <string name="entry_deleted_badge">Deleted</string>
+    <string name="entry_revised_badge">Revised</string>
+    <string name="entry_changed_to">Changed to %1$s</string>
+    <string name="entry_quantity_line">%1$s × %2$s = %3$s eggs</string>
+    <string name="entry_price_line">%1$s per %2$s</string>
+    <string name="entry_history">Change history</string>
+    <string name="entry_revision_line">%1$s · %2$s</string>
+    <string name="entry_deleted_reason">Reason: %1$s</string>
+    <string name="entry_edit">Edit</string>
+    <string name="entry_delete">Delete</string>
+    <string name="entry_delete_title">Delete %1$s?</string>
+    <string name="entry_delete_body">It will be removed from the balance, totals and reports. It stays in the history marked “Deleted” so your records remain trustworthy. This cannot be undone.</string>
+    <string name="entry_delete_reason">Reason (optional)</string>
+    <string name="entry_cannot_change">Deleted or replaced entries cannot be changed.</string>
+    <string name="entry_opening_edit_hint">Change the opening balance from the customer\'s Edit screen.</string>
+
+    <!-- Customer quick actions and history -->
+    <string name="customer_sell">Sell eggs</string>
+    <string name="customer_buy">Buy eggs</string>
+    <string name="history_deleted_heading">Deleted</string>
+
+    <!-- Dashboard placeholder with quick actions -->
+    <string name="dashboard_quick_actions">Record a transaction</string>
+    <string name="dashboard_more_soon">Daily totals and dues will appear here in a coming update.</string>
+
+    <!-- Units and varieties settings -->
+    <string name="more_units">Measurement units</string>
+    <string name="more_units_summary">Tray, box, dozen, piece and how many eggs each holds</string>
+    <string name="more_varieties">Egg varieties</string>
+    <string name="more_varieties_summary">White, brown, country and your own</string>
+    <string name="units_title">Measurement units</string>
+    <string name="units_add">Add unit</string>
+    <string name="units_edit">Edit unit</string>
+    <string name="units_size">%1$d eggs</string>
+    <string name="units_base_note">Piece is the base unit and cannot be changed.</string>
+    <string name="units_resize_warning">Past entries keep the size they were saved with. Only new entries use the new size.</string>
+    <string name="label_unit_name">Unit name</string>
+    <string name="label_unit_pieces">Eggs in one unit</string>
+    <string name="action_deactivate">Deactivate</string>
+    <string name="action_activate">Activate</string>
+    <string name="inactive_badge">Inactive</string>
+    <string name="varieties_title">Egg varieties</string>
+    <string name="varieties_add">Add variety</string>
+    <string name="varieties_edit">Rename variety</string>
+    <string name="varieties_default_badge">Default</string>
+    <string name="varieties_make_default">Make default</string>
+    <string name="label_variety_name">Variety name</string>
+
+    <!-- Validation and errors -->
+    <string name="v_customer_required">Select a customer</string>
+    <string name="v_variety_required">Select an egg variety</string>
+    <string name="v_unit_required">Select a unit</string>
+    <string name="v_quantity_positive">Enter a quantity greater than 0</string>
+    <string name="v_quantity_format">Enter a quantity with up to 3 decimals</string>
+    <string name="v_quantity_whole">Quantity must equal a whole number of eggs</string>
+    <string name="v_quantity_too_large">Too many eggs for one entry (max 1,00,00,000)</string>
+    <string name="v_price_positive">Enter a price greater than 0</string>
+    <string name="v_price_format">Enter a price with up to 2 decimals</string>
+    <string name="v_price_too_large">Price per unit cannot exceed ₹10,00,000</string>
+    <string name="v_total_range">Total is outside the allowed range</string>
+    <string name="v_reason_too_long">Too long (max 200 characters)</string>
+    <string name="v_unit_name_duplicate">A unit with this name already exists</string>
+    <string name="v_unit_name">Enter a unit name of up to 20 characters</string>
+    <string name="v_unit_pieces">Enter a whole number of eggs between 1 and 10,000</string>
+    <string name="v_variety_name_duplicate">A variety with this name already exists</string>
+    <string name="v_variety_name">Enter a variety name of up to 30 characters</string>
+    <string name="error_entry_not_editable">This entry was deleted or replaced and cannot be changed.</string>
+    <string name="error_unit_locked">Piece is the base unit and cannot be changed.</string>
+    <string name="error_last_variety">At least one egg variety must stay active.</string>
+</resources>

@@ -24,6 +24,18 @@ enum class Field {
     NOTES,
     OPENING_AMOUNT,
     OPENING_DATE,
+    CUSTOMER,
+    ENTRY_DATE,
+    VARIETY,
+    UNIT,
+    QUANTITY,
+    PRICE,
+    TOTAL,
+    REMARKS,
+    REASON,
+    UNIT_NAME,
+    UNIT_PIECES,
+    VARIETY_NAME,
     ;
 
     companion object {
@@ -47,6 +59,11 @@ enum class ValidationCode {
     ANSWER_EQUALS_PASSWORD,
     DATE_IN_FUTURE,
     DATE_TOO_EARLY,
+    MUST_BE_POSITIVE,
+    NOT_WHOLE_PIECES,
+    OUT_OF_RANGE,
+    INACTIVE,
+    DUPLICATE,
 }
 
 /** Collects field errors, keeping only the first error per field, in the order fields were checked. */

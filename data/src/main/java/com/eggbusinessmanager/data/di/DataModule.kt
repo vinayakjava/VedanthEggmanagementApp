@@ -11,6 +11,7 @@ import com.eggbusinessmanager.data.db.RoomTransactionRunner
 import com.eggbusinessmanager.data.repository.RoomAccountRepository
 import com.eggbusinessmanager.data.repository.RoomAuditRepository
 import com.eggbusinessmanager.data.repository.RoomBusinessProfileRepository
+import com.eggbusinessmanager.data.repository.RoomCatalogRepository
 import com.eggbusinessmanager.data.repository.RoomCustomerRepository
 import com.eggbusinessmanager.data.repository.RoomLedgerRepository
 import com.eggbusinessmanager.data.repository.RoomSettingsRepository
@@ -23,6 +24,7 @@ import com.eggbusinessmanager.domain.repository.AccountRepository
 import com.eggbusinessmanager.domain.repository.AuditRepository
 import com.eggbusinessmanager.domain.repository.BiometricUnlockStore
 import com.eggbusinessmanager.domain.repository.BusinessProfileRepository
+import com.eggbusinessmanager.domain.repository.CatalogRepository
 import com.eggbusinessmanager.domain.repository.Clock
 import com.eggbusinessmanager.domain.repository.CustomerRepository
 import com.eggbusinessmanager.domain.repository.LedgerRepository
@@ -107,4 +109,7 @@ abstract class BusinessDataBindingsModule {
 
     @Binds
     abstract fun bindAuditRepository(impl: RoomAuditRepository): AuditRepository
+
+    @Binds
+    abstract fun bindCatalogRepository(impl: RoomCatalogRepository): CatalogRepository
 }

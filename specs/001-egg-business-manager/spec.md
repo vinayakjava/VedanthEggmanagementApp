@@ -69,6 +69,9 @@ customer is first added. When it is zero the formula is exactly the one requeste
   6-digit PIN code are required at signup, and the street address stays optional (FR-002).
 - Q: Customer "archive" or "activate/deactivate"? → A: Same behaviour; the owner-facing wording is
   "Deactivate" / "Activate". A deactivated customer is what this spec calls archived.
+- Q: Transactions must support "deletion with confirmation" — but FR-035 forbids deleting entries?
+  → A: "Delete" is the owner-facing word for void (FR-034): the entry leaves every balance, total
+  and report, and stays in the entry history labelled "Deleted". Nothing is permanently removed.
 
 ## User Scenarios & Testing *(mandatory)*
 

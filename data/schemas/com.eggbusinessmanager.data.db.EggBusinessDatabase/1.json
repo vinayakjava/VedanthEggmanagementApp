@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "379f02d5e164168d6103f34a448d7e35",
+    "identityHash": "2e0449ec5b59dfe350de15aa8067068d",
     "entities": [
       {
         "tableName": "app_setting",
@@ -409,7 +409,7 @@
       },
       {
         "tableName": "ledger_entry",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `root_entry_id` INTEGER NOT NULL, `supersedes_entry_id` INTEGER, `replaced_by_root_id` INTEGER, `entry_type` TEXT NOT NULL, `reference_no` TEXT NOT NULL, `status` TEXT NOT NULL, `customer_id` INTEGER NOT NULL, `entry_date` INTEGER NOT NULL, `amount_paise` INTEGER NOT NULL, `balance_effect_paise` INTEGER NOT NULL, `variety_id` INTEGER, `unit_id` INTEGER, `quantity_milli` INTEGER, `pieces_per_unit_snapshot` INTEGER, `pieces` INTEGER, `price_per_unit_paise` INTEGER, `payment_mode` TEXT, `payment_reference` TEXT, `opening_direction` TEXT, `linked_root_entry_id` INTEGER, `remarks` TEXT, `void_reason` TEXT, `voided_at` INTEGER, `client_request_id` TEXT, `created_at` INTEGER NOT NULL, FOREIGN KEY(`customer_id`) REFERENCES `customer`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `root_entry_id` INTEGER NOT NULL, `supersedes_entry_id` INTEGER, `replaced_by_root_id` INTEGER, `entry_type` TEXT NOT NULL, `reference_no` TEXT NOT NULL, `status` TEXT NOT NULL, `customer_id` INTEGER NOT NULL, `entry_date` INTEGER NOT NULL, `amount_paise` INTEGER NOT NULL, `balance_effect_paise` INTEGER NOT NULL, `variety_id` INTEGER, `unit_id` INTEGER, `quantity_milli` INTEGER, `pieces_per_unit_snapshot` INTEGER, `pieces` INTEGER, `price_per_unit_paise` INTEGER, `payment_mode` TEXT, `payment_reference` TEXT, `opening_direction` TEXT, `linked_root_entry_id` INTEGER, `remarks` TEXT, `void_reason` TEXT, `voided_at` INTEGER, `client_request_id` TEXT, `created_at` INTEGER NOT NULL, FOREIGN KEY(`customer_id`) REFERENCES `customer`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT , FOREIGN KEY(`variety_id`) REFERENCES `egg_variety`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT , FOREIGN KEY(`unit_id`) REFERENCES `measurement_unit`(`id`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
         "fields": [
           {
             "fieldPath": "id",
@@ -610,6 +610,24 @@
             "createSql": "CREATE INDEX IF NOT EXISTS `index_ledger_entry_linked_root_entry_id` ON `${TABLE_NAME}` (`linked_root_entry_id`)"
           },
           {
+            "name": "index_ledger_entry_variety_id",
+            "unique": false,
+            "columnNames": [
+              "variety_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ledger_entry_variety_id` ON `${TABLE_NAME}` (`variety_id`)"
+          },
+          {
+            "name": "index_ledger_entry_unit_id",
+            "unique": false,
+            "columnNames": [
+              "unit_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ledger_entry_unit_id` ON `${TABLE_NAME}` (`unit_id`)"
+          },
+          {
             "name": "index_ledger_entry_customer_id_entry_type_variety_id_unit_id_status_entry_date",
             "unique": false,
             "columnNames": [
@@ -640,6 +658,28 @@
             "onUpdate": "NO ACTION",
             "columns": [
               "customer_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "egg_variety",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "variety_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "measurement_unit",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "unit_id"
             ],
             "referencedColumns": [
               "id"
@@ -768,11 +808,141 @@
             "entry_type"
           ]
         }
+      },
+      {
+        "tableName": "measurement_unit",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `name_normalized` TEXT NOT NULL, `pieces_per_unit` INTEGER NOT NULL, `is_active` INTEGER NOT NULL DEFAULT 1, `is_system` INTEGER NOT NULL DEFAULT 0, `sort_order` INTEGER NOT NULL DEFAULT 0)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameNormalized",
+            "columnName": "name_normalized",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "piecesPerUnit",
+            "columnName": "pieces_per_unit",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isActive",
+            "columnName": "is_active",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "isSystem",
+            "columnName": "is_system",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sort_order",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_measurement_unit_name_normalized",
+            "unique": true,
+            "columnNames": [
+              "name_normalized"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_measurement_unit_name_normalized` ON `${TABLE_NAME}` (`name_normalized`)"
+          }
+        ]
+      },
+      {
+        "tableName": "egg_variety",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `name_normalized` TEXT NOT NULL, `is_active` INTEGER NOT NULL DEFAULT 1, `is_default` INTEGER NOT NULL DEFAULT 0, `sort_order` INTEGER NOT NULL DEFAULT 0)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameNormalized",
+            "columnName": "name_normalized",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isActive",
+            "columnName": "is_active",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "1"
+          },
+          {
+            "fieldPath": "isDefault",
+            "columnName": "is_default",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sort_order",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_egg_variety_name_normalized",
+            "unique": true,
+            "columnNames": [
+              "name_normalized"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_egg_variety_name_normalized` ON `${TABLE_NAME}` (`name_normalized`)"
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '379f02d5e164168d6103f34a448d7e35')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2e0449ec5b59dfe350de15aa8067068d')"
     ]
   }
 }

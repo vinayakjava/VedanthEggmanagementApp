@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -34,12 +36,14 @@ import com.eggbusinessmanager.app.ui.components.balanceLabel
 import com.eggbusinessmanager.app.ui.format.IndianFormatters
 import com.eggbusinessmanager.domain.customer.CustomerSummary
 import com.eggbusinessmanager.domain.ledger.Balance
+import com.eggbusinessmanager.domain.ledger.EntryType
 
 /** Customer detail (US2): balance header, contact, history, edit, deactivate/activate, delete. */
 @Composable
 fun CustomerDetailScreen(
     onEdit: (Long) -> Unit,
     onHistory: (Long) -> Unit,
+    onTrade: (customerId: Long, type: EntryType) -> Unit,
     onBack: () -> Unit,
     viewModel: CustomerDetailViewModel = hiltViewModel(),
 ) {
@@ -59,6 +63,17 @@ fun CustomerDetailScreen(
                 BalanceCard(summary)
                 ContactCard(summary)
                 ui.message?.let { ErrorBanner(it.asString(), onDismiss = viewModel::dismissMessage) }
+                // One customer can be both buyer and supplier: both actions are always offered.
+                if (customer.isActive) {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Button(onClick = { onTrade(customer.id, EntryType.SELL) }, modifier = Modifier.weight(1f)) {
+                            Text(stringResource(R.string.customer_sell))
+                        }
+                        FilledTonalButton(onClick = { onTrade(customer.id, EntryType.BUY) }, modifier = Modifier.weight(1f)) {
+                            Text(stringResource(R.string.customer_buy))
+                        }
+                    }
+                }
                 SettingsRow(R.drawable.ic_history, stringResource(R.string.detail_transactions), null, onClick = { onHistory(customer.id) })
                 SettingsRow(R.drawable.ic_edit, stringResource(R.string.detail_edit), null, onClick = { onEdit(customer.id) })
                 if (customer.isActive) {

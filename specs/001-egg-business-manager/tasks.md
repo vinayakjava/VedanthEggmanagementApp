@@ -75,12 +75,12 @@ navigation shell, localization and formatting. Every story depends on this phase
 ### Domain core (tests first)
 
 - [ ] T015 [P] Write unit tests for `Money` (add/subtract exact, overflow error, compare) and `QuantityMilli` parsing (≤ 3 decimals) in `{domainTest}/money/MoneyTest.kt` — *Partial (2026-11-08): Money tests done (`{domainTest}/money/MoneyTest.kt`: exact add/subtract, overflow, parsing); QuantityMilli comes with US3.*
-- [ ] T016 [P] Write unit tests for `TradeMath.lineTotal` (HALF_UP to paise, 7.5 × 183.50 = 1376.25) and `TradeMath.pieces` (whole-egg rule, 0.05 tray rejected) in `{domainTest}/money/TradeMathTest.kt`
+- [X] T016 [P] Write unit tests for `TradeMath.lineTotal` (HALF_UP to paise, 7.5 × 183.50 = 1376.25) and `TradeMath.pieces` (whole-egg rule, 0.05 tray rejected) in `{domainTest}/money/TradeMathTest.kt` — *In `{domainTest}/money/TradeMathTest.kt`.*
 - [X] T017 [P] Write unit tests for `BalanceEffect.of` covering all 5 entry types and both opening directions (BR-001–BR-005) in `{domainTest}/ledger/BalanceEffectTest.kt`
 - [ ] T018 [P] Write unit tests for `LedgerCalculator` (balance, running lines ordered by date, then created time, then id; brought-forward; receivable/payable split, BR-007/011/012) in `{domainTest}/ledger/LedgerCalculatorTest.kt` — *Partial (2026-11-08): Balance and running-line ordering tested in `{domainTest}/ledger/LedgerTest.kt`; brought-forward and receivable/payable split come with statements/dashboard.*
 - [ ] T019 [P] Write property-based tests (1,000 cases each): balance = Σ effects = spec formula; sums of line totals are exact; in `{domainTest}/ledger/LedgerPropertiesTest.kt`
 - [ ] T020 [P] Implement `Money`, `QuantityMilli` value classes in `{domain}/money/Money.kt` and `{domain}/money/QuantityMilli.kt` — *Partial (2026-11-08): `Money` and `MoneyParser` done; `QuantityMilli` comes with US3.*
-- [ ] T021 [P] Implement `TradeMath` in `{domain}/money/TradeMath.kt`
+- [X] T021 [P] Implement `TradeMath` in `{domain}/money/TradeMath.kt` — *In `{domain}/money/Quantity.kt` with `QuantityMilli` and `QuantityParser`.*
 - [ ] T022 [P] Implement domain enums and models (`EntryType`, `EntryStatus`, `PaymentMode`, `OpeningDirection`, `Balance`, `LedgerEntry`, `LedgerLine`, `Customer`, `CustomerSummary`, `MeasurementUnit`, `EggVariety`, `BusinessProfile`, `AppSettings`) in `{domain}/model/` — *Partial (2026-11-08): EntryType, EntryStatus, OpeningDirection, Balance, LedgerEntry, LedgerLine, Customer, CustomerSummary done (`{domain}/ledger/Ledger.kt`, `{domain}/customer/Customer.kt`); PaymentMode, units, varieties, settings models come with their stories.*
 - [ ] T023 Implement `BalanceEffect` and `LedgerCalculator` in `{domain}/ledger/BalanceEffect.kt` and `{domain}/ledger/LedgerCalculator.kt` — *Partial (2026-11-08): BalanceEffect and LedgerCalculator (balance, running lines) in `{domain}/ledger/Ledger.kt`; brought-forward comes with statements.*
 - [X] T024 [P] Implement `DomainResult`, `DomainError`, `ValidationCode`, `Field` in `{domain}/error/`
@@ -100,7 +100,7 @@ navigation shell, localization and formatting. Every story depends on this phase
 - [X] T032 Implement `DatabaseKeyProvider` (generate a 32-byte key on first launch, store it wrapped in `noBackupFilesDir`) in `{data}/security/DatabaseKeyProvider.kt`
 - [ ] T033 [P] Create Room entities per data-model.md: `OwnerAccountEntity`, `SecurityAnswerEntity`, `BusinessProfileEntity` in `{data}/db/entity/AccountEntities.kt`
 - [X] T034 [P] Create `CustomerEntity` with indexes in `{data}/db/entity/CustomerEntity.kt`
-- [ ] T035 [P] Create `MeasurementUnitEntity` and `EggVarietyEntity` in `{data}/db/entity/CatalogEntities.kt`
+- [X] T035 [P] Create `MeasurementUnitEntity` and `EggVarietyEntity` in `{data}/db/entity/CatalogEntities.kt` — *In `{data}/db/entity/CatalogEntities.kt`; seeds in SchemaCallback.*
 - [ ] T036 [P] Create `LedgerEntryEntity` with all columns and indexes from data-model.md in `{data}/db/entity/LedgerEntryEntity.kt` — *Partial (2026-11-08): All columns and indexes from data-model.md; variety_id/unit_id get their foreign keys when the catalog tables arrive (US3).*
 - [ ] T037 [P] Create `AuditLogEntity`, `ReferenceSequenceEntity`, `AppSettingEntity`, `BackupRecordEntity` in `{data}/db/entity/SupportEntities.kt` — *Partial (2026-11-08): AuditLogEntity and ReferenceSequenceEntity done in `{data}/db/entity/SupportEntities.kt` (audit customer FK is SET NULL, see data-model.md); BackupRecordEntity comes with US9.*
 - [ ] T038 [P] Create type converters (enums ↔ TEXT, `LocalDate` ↔ epoch day) in `{data}/db/converter/Converters.kt`
@@ -219,21 +219,21 @@ balance decreases; SELL with ₹1,000 received now ⇒ S- and RP- lines, net +�
 
 ### Tests for User Story 3
 
-- [ ] T092 [P] [US3] Unit tests for `EntryValidator` trade rules (quantity > 0, ≤ 3 decimals, whole pieces, ≤ 10,000,000 pcs, price > 0 ≤ ₹10,00,000, total range, active customer/unit/variety, "amount now" ≤ total) in `{domainTest}/validation/EntryValidatorTradeTest.kt`
-- [ ] T093 [P] [US3] Unit tests for `RecordSaleUseCase`/`RecordPurchaseUseCase` (effects, references S-/B-, linked payment created atomically, piece-count snapshot) and `SuggestPriceUseCase` (per customer + type + variety + unit) in `{domainTest}/usecase/entry/RecordTradeUseCasesTest.kt`
-- [ ] T094 [P] [US3] Integration tests: trade + linked payment in one transaction (inject failure after the first insert ⇒ nothing persisted); duplicate `client_request_id` ⇒ single row; sequences never reused; in `{dataIt}/repository/LedgerRepositoryTradeTest.kt`
-- [ ] T095 [P] [US3] Compose UI test: record a sale with on-the-spot payment; double-tap Save creates one entry; inline new customer keeps typed values; in `{appUiTest}/entries/RecordTradeFlowTest.kt`
+- [X] T092 [P] [US3] Unit tests for `EntryValidator` trade rules (quantity > 0, ≤ 3 decimals, whole pieces, ≤ 10,000,000 pcs, price > 0 ≤ ₹10,00,000, total range, active customer/unit/variety, "amount now" ≤ total) in `{domainTest}/validation/EntryValidatorTradeTest.kt` — *As `{domainTest}/trade/TradeValidatorTest.kt` (`TradeValidator`); linked-payment rules come with payments.*
+- [ ] T093 [P] [US3] Unit tests for `RecordSaleUseCase`/`RecordPurchaseUseCase` (effects, references S-/B-, linked payment created atomically, piece-count snapshot) and `SuggestPriceUseCase` (per customer + type + variety + unit) in `{domainTest}/usecase/entry/RecordTradeUseCasesTest.kt` — *Partial (2026-11-08): Effects, S-/B- references, idempotent save, unit-size snapshot and last price in `TradeUseCasesTest.kt`; the linked on-the-spot payment comes with payments (FR-023).*
+- [ ] T094 [P] [US3] Integration tests: trade + linked payment in one transaction (inject failure after the first insert ⇒ nothing persisted); duplicate `client_request_id` ⇒ single row; sequences never reused; in `{dataIt}/repository/LedgerRepositoryTradeTest.kt` — *Partial (2026-11-08): Trade persistence, idempotent client_request_id, revisions, type change, void and trigger tests in `{dataIt}/repository/TradeRepositoryTest.kt`; linked-payment atomicity comes with FR-023.*
+- [ ] T095 [P] [US3] Compose UI test: record a sale with on-the-spot payment; double-tap Save creates one entry; inline new customer keeps typed values; in `{appUiTest}/entries/RecordTradeFlowTest.kt` — *Partial (2026-11-08): Sell, buy with inline new customer keeping typed values, edit, delete and unit resize in `{appUiTest}/trade/TradeFlowsTest.kt`; on-the-spot payment comes with FR-023.*
 
 ### Implementation for User Story 3
 
-- [ ] T096 [P] [US3] Implement `EntryValidator` (trade part) in `{domain}/validation/EntryValidator.kt`
-- [ ] T097 [P] [US3] Create `CatalogDao` (active units/varieties, defaults) in `{data}/db/dao/CatalogDao.kt` and `RoomCatalogRepository` read operations in `{data}/repository/RoomCatalogRepository.kt`
-- [ ] T098 [US3] Implement `RoomLedgerRepository.insertTradeWithPayment` and `lastPrice` query in `{data}/repository/RoomLedgerRepository.kt` and `{data}/db/dao/LedgerEntryDao.kt`
-- [ ] T099 [US3] Implement `RecordSaleUseCase`, `RecordPurchaseUseCase`, `SuggestPriceUseCase` in `{domain}/usecase/entry/`
-- [ ] T100 [US3] Implement `EntryEditorScreen` in trade mode (customer picker sorted by recent activity with inline add; variety, unit, quantity, price, live total and pieces; date; remarks; "amount received/paid now" + mode; Save disabled while saving; UUID per editor session) + `EntryEditorViewModel` in `{app}/feature/entries/editor/`
-- [ ] T101 [US3] Implement the post-save confirmation sheet (reference, "Record another"; "Share receipt" hidden until US7) in `{app}/feature/entries/editor/SaveConfirmationSheet.kt`
-- [ ] T102 [US3] Wire the Sell/Buy quick actions from `CustomerDetailScreen` and a temporary dashboard FAB to `EntryEditor` in `{app}/feature/customers/detail/CustomerDetailScreen.kt` and `{app}/navigation/MainScaffold.kt`
-- [ ] T103 [US3] Add US3 strings in English and Hindi to `{appRes}/values/strings.xml` and `{appRes}/values-hi/strings.xml`
+- [X] T096 [P] [US3] Implement `EntryValidator` (trade part) in `{domain}/validation/EntryValidator.kt` — *As `TradeValidator` in `{domain}/trade/Trade.kt`.*
+- [X] T097 [P] [US3] Create `CatalogDao` (active units/varieties, defaults) in `{data}/db/dao/CatalogDao.kt` and `RoomCatalogRepository` read operations in `{data}/repository/RoomCatalogRepository.kt` — *Plus unit/variety management (FR-059, FR-027a) in `{data}/repository/RoomCatalogRepository.kt`.*
+- [ ] T098 [US3] Implement `RoomLedgerRepository.insertTradeWithPayment` and `lastPrice` query in `{data}/repository/RoomLedgerRepository.kt` and `{data}/db/dao/LedgerEntryDao.kt` — *Partial (2026-11-08): `lastPrice` and generic trade insert/revise/replace/void in `RoomCustomerRepository.kt` (RoomLedgerRepository); `insertTradeWithPayment` comes with FR-023.*
+- [X] T099 [US3] Implement `RecordSaleUseCase`, `RecordPurchaseUseCase`, `SuggestPriceUseCase` in `{domain}/usecase/entry/` — *As `RecordTradeUseCase` (SELL and BUY) and `SuggestPriceUseCase` in `{domain}/usecase/trade/`.*
+- [X] T100 [US3] Implement `EntryEditorScreen` in trade mode (customer picker sorted by recent activity with inline add; variety, unit, quantity, price, live total and pieces; date; remarks; "amount received/paid now" + mode; Save disabled while saving; UUID per editor session) + `EntryEditorViewModel` in `{app}/feature/entries/editor/` — *As `TradeEditorScreen`/`TradeEditorViewModel` in `{app}/feature/trade/` (separate Sell eggs / Buy eggs titles).*
+- [X] T101 [US3] Implement the post-save confirmation sheet (reference, "Record another"; "Share receipt" hidden until US7) in `{app}/feature/entries/editor/SaveConfirmationSheet.kt` — *Saved dialog with reference and "Record another".*
+- [X] T102 [US3] Wire the Sell/Buy quick actions from `CustomerDetailScreen` and a temporary dashboard FAB to `EntryEditor` in `{app}/feature/customers/detail/CustomerDetailScreen.kt` and `{app}/navigation/MainScaffold.kt` — *Sell/Buy on customer detail and on the dashboard.*
+- [X] T103 [US3] Add US3 strings in English and Hindi to `{appRes}/values/strings.xml` and `{appRes}/values-hi/strings.xml` — *In `strings_trades.xml` (English and Hindi).*
 
 **Checkpoint**: daily trading can be recorded; balances move correctly
 

@@ -41,6 +41,15 @@ sealed interface DomainError {
     /** The customer has ledger entries, so it can only be deactivated, never deleted (US2-6). */
     data object CustomerHasEntries : DomainError
 
+    /** The entry was deleted (voided) or already replaced by a newer revision; it cannot change (FR-034). */
+    data object EntryNotEditable : DomainError
+
+    /** The Piece unit is the base of every conversion and cannot be renamed, resized or deactivated (FR-059). */
+    data object UnitLocked : DomainError
+
+    /** At least one active egg variety must always exist (FR-027a). */
+    data object LastActiveVariety : DomainError
+
     /** The device does not have enough free storage to complete the operation. */
     data object LowStorage : DomainError
 

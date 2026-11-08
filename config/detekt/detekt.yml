@@ -10,7 +10,8 @@ complexity:
     functionThreshold: 8
     constructorThreshold: 10
     ignoreDefaultParameters: true
-    ignoreAnnotated: ['Composable']
+    # Hilt constructors are dependency lists, not APIs callers build by hand.
+    ignoreAnnotated: ['Composable', 'HiltViewModel']
   LongMethod:
     ignoreAnnotated: ['Composable']
     # End-to-end UI tests read best as one scenario.
@@ -19,9 +20,13 @@ complexity:
     ignoreAnnotatedFunctions: ['Preview']
     ignorePrivate: true
     # Room DAOs and repository ports are naturally a list of queries/operations.
-    thresholdInInterfaces: 15
+    thresholdInInterfaces: 25
+    # A repository's size is set by the port it implements.
+    ignoreOverridden: true
     # Form ViewModels expose one setter per input field by design.
     ignoreAnnotated: ['HiltViewModel']
+    # Test fakes implement whole repository interfaces.
+    excludes: ['**/core-testing/**', '**/test/**', '**/androidTest/**']
 
 naming:
   FunctionNaming:

@@ -16,7 +16,10 @@ import com.eggbusinessmanager.domain.ledger.BalanceEffect
 import com.eggbusinessmanager.domain.ledger.EntryStatus
 import com.eggbusinessmanager.domain.ledger.EntryType
 import com.eggbusinessmanager.domain.ledger.LedgerEntry
+import com.eggbusinessmanager.domain.money.Money
 import com.eggbusinessmanager.domain.repository.AuditRepository
+import com.eggbusinessmanager.domain.repository.EntryRef
+import com.eggbusinessmanager.domain.trade.ValidTrade
 import com.eggbusinessmanager.domain.repository.CustomerRepository
 import com.eggbusinessmanager.domain.repository.LedgerRepository
 import com.eggbusinessmanager.domain.validation.SearchKey
@@ -84,7 +87,46 @@ class RoomLedgerRepository @Inject constructor(
     private val dao get() = database.get().ledgerEntryDao()
 
     override fun observeEntries(customerId: Long): Flow<List<LedgerEntry>> =
-        flow { emitAll(dao.observeActive(customerId)) }.map { rows -> rows.map { it.toDomain() } }.distinctUntilChanged().flowOn(io)
+        flow { emitAll(dao.observeCurrent(customerId)) }.map { rows -> rows.map { it.toDomain() } }.distinctUntilChanged().flowOn(io)
+
+    override fun observeRevisions(rootId: Long): Flow<List<LedgerEntry>> =
+        flow { emitAll(dao.observeRevisions(rootId)) }.map { rows -> rows.map { it.toDomain() } }.distinctUntilChanged().flowOn(io)
+
+    override suspend fun currentRevision(rootId: Long): LedgerEntry? = withContext(io) { dao.currentRevision(rootId)?.toDomain() }
+
+    override suspend fun referenceOf(rootId: Long): String? = withContext(io) { dao.referenceOf(rootId) }
+
+    override suspend fun findByClientRequest(clientRequestId: String): EntryRef? = withContext(io) {
+        dao.byClientRequest(clientRequestId)?.let { EntryRef(it.rootEntryId, it.referenceNo) }
+    }
+
+    override suspend fun insertTrade(trade: ValidTrade, clientRequestId: String?, at: Instant): EntryRef = withContext(io) {
+        val reference = nextReference(trade.type)
+        val id = dao.insert(trade.toEntity(rootId = 0, reference = reference, clientRequestId = clientRequestId, at = at))
+        dao.makeOwnRoot(id)
+        EntryRef(id, reference)
+    }
+
+    override suspend fun reviseTrade(current: LedgerEntry, trade: ValidTrade, at: Instant) = withContext(io) {
+        check(dao.supersede(current.id) == 1) { "Entry ${current.id} is no longer active" }
+        dao.insert(trade.toEntity(current.rootId, current.reference, clientRequestId = null, at = at).copy(supersedesEntryId = current.id))
+        Unit
+    }
+
+    override suspend fun replaceTrade(current: LedgerEntry, trade: ValidTrade, at: Instant): EntryRef = withContext(io) {
+        val reference = nextReference(trade.type)
+        val id = dao.insert(trade.toEntity(rootId = 0, reference = reference, clientRequestId = null, at = at))
+        dao.makeOwnRoot(id)
+        check(dao.markReplaced(current.id, id) == 1) { "Entry ${current.id} is no longer active" }
+        EntryRef(id, reference)
+    }
+
+    override suspend fun voidEntry(current: LedgerEntry, reason: String?, at: Instant) = withContext(io) {
+        check(dao.voidEntry(current.id, reason, at.toEpochMilli()) == 1) { "Entry ${current.id} is no longer active" }
+    }
+
+    override suspend fun lastPrice(customerId: Long, type: EntryType, varietyId: Long, unitId: Long): Money? =
+        withContext(io) { dao.lastPrice(customerId, type.name, varietyId, unitId)?.let(::Money) }
 
     override suspend fun hasEntries(customerId: Long): Boolean = withContext(io) { dao.hasEntries(customerId) }
 

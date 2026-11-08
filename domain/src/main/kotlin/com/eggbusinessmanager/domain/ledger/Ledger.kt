@@ -1,6 +1,7 @@
 package com.eggbusinessmanager.domain.ledger
 
 import com.eggbusinessmanager.domain.money.Money
+import com.eggbusinessmanager.domain.money.QuantityMilli
 import java.time.Instant
 import java.time.LocalDate
 
@@ -49,7 +50,20 @@ object BalanceEffect {
     }
 }
 
-/** One stored revision of a ledger entry. Trade and payment details arrive with US3/US4. */
+/**
+ * The trade part of a SELL/BUY entry. [piecesPerUnit] is the unit's size when the entry was saved
+ * (FR-022): resizing the unit later never changes [pieces] or the total.
+ */
+data class TradeLine(
+    val varietyId: Long,
+    val unitId: Long,
+    val quantity: QuantityMilli,
+    val piecesPerUnit: Int,
+    val pieces: Long,
+    val pricePerUnit: Money,
+)
+
+/** One stored revision of a ledger entry. Payment details arrive with US4. */
 data class LedgerEntry(
     val id: Long,
     val rootId: Long,
@@ -63,13 +77,27 @@ data class LedgerEntry(
     val openingDirection: OpeningDirection?,
     val remarks: String?,
     val createdAt: Instant,
+    val trade: TradeLine? = null,
+    /** The revision this one corrected, if any. */
+    val supersedesId: Long? = null,
+    /** Set on the last revision of an entry whose type was changed: the new entry's root (FR-033b). */
+    val replacedByRootId: Long? = null,
+    val voidReason: String? = null,
+    val voidedAt: Instant? = null,
 )
 
 /** A ledger row with the customer's balance after it (BR-011). */
 data class LedgerLine(val entry: LedgerEntry, val runningBalance: Money)
 
-/** A customer's full ledger: lines oldest first, and the current balance. */
-data class CustomerLedger(val lines: List<LedgerLine>, val balance: Money)
+/**
+ * A customer's full ledger: active lines oldest first with running balances, the current balance, and
+ * deleted (voided) entries, which stay visible but never count (FR-034).
+ */
+data class CustomerLedger(
+    val lines: List<LedgerLine>,
+    val balance: Money,
+    val deleted: List<LedgerEntry> = emptyList(),
+)
 
 /**
  * Pure recomputation of balances (contracts/domain-interfaces.md). Must equal the SQL aggregates;
@@ -93,6 +121,12 @@ object LedgerCalculator {
             }
     }
 
-    fun ledger(entries: List<LedgerEntry>): CustomerLedger =
-        runningLines(entries).let { lines -> CustomerLedger(lines, lines.lastOrNull()?.runningBalance ?: Money.ZERO) }
+    fun ledger(entries: List<LedgerEntry>): CustomerLedger {
+        val lines = runningLines(entries)
+        return CustomerLedger(
+            lines = lines,
+            balance = lines.lastOrNull()?.runningBalance ?: Money.ZERO,
+            deleted = entries.filter { it.status == EntryStatus.VOIDED }.sortedWith(LEDGER_ORDER),
+        )
+    }
 }

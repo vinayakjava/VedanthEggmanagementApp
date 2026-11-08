@@ -32,6 +32,9 @@ object ErrorMessages {
         DomainError.NotFound -> R.string.error_not_found
         is DomainError.DuplicateMobile -> R.string.error_duplicate_mobile
         DomainError.CustomerHasEntries -> R.string.error_customer_has_entries
+        DomainError.EntryNotEditable -> R.string.error_entry_not_editable
+        DomainError.UnitLocked -> R.string.error_unit_locked
+        DomainError.LastActiveVariety -> R.string.error_last_variety
         DomainError.LowStorage -> R.string.error_low_storage
         DomainError.StorageUnavailable -> R.string.error_storage_unavailable
         is DomainError.Unexpected -> R.string.error_generic
@@ -80,7 +83,36 @@ object ErrorMessages {
         Field.CUSTOMER_NAME -> if (code == ValidationCode.REQUIRED) R.string.v_customer_name_required else R.string.v_name_length
         Field.NOTES -> R.string.v_notes_too_long
         Field.OPENING_AMOUNT -> R.string.v_amount
-        Field.OPENING_DATE -> if (code == ValidationCode.DATE_IN_FUTURE) R.string.v_date_future else R.string.v_date_invalid
+        Field.OPENING_DATE, Field.ENTRY_DATE ->
+            if (code == ValidationCode.DATE_IN_FUTURE) R.string.v_date_future else R.string.v_date_invalid
+        else -> tradeFieldMessage(field, code)
+    }
+
+    /** Sell/Buy and catalog fields (spec § Validation Rules). */
+    @Suppress("CyclomaticComplexMethod") // A flat lookup table; splitting it would hide the mapping.
+    @StringRes
+    private fun tradeFieldMessage(field: Field, code: ValidationCode): Int = when (field) {
+        Field.CUSTOMER -> R.string.v_customer_required
+        Field.VARIETY -> R.string.v_variety_required
+        Field.UNIT -> R.string.v_unit_required
+        Field.QUANTITY -> when (code) {
+            ValidationCode.INVALID_FORMAT -> R.string.v_quantity_format
+            ValidationCode.NOT_WHOLE_PIECES -> R.string.v_quantity_whole
+            ValidationCode.OUT_OF_RANGE -> R.string.v_quantity_too_large
+            else -> R.string.v_quantity_positive
+        }
+        Field.PRICE -> when (code) {
+            ValidationCode.INVALID_FORMAT -> R.string.v_price_format
+            ValidationCode.OUT_OF_RANGE -> R.string.v_price_too_large
+            else -> R.string.v_price_positive
+        }
+        Field.TOTAL -> R.string.v_total_range
+        Field.REMARKS -> R.string.v_notes_too_long
+        Field.REASON -> R.string.v_reason_too_long
+        Field.UNIT_NAME -> if (code == ValidationCode.DUPLICATE) R.string.v_unit_name_duplicate else R.string.v_unit_name
+        Field.UNIT_PIECES -> R.string.v_unit_pieces
+        Field.VARIETY_NAME -> if (code == ValidationCode.DUPLICATE) R.string.v_variety_name_duplicate else R.string.v_variety_name
+        else -> R.string.error_validation
     }
 
     @StringRes
