@@ -1,5 +1,6 @@
 package com.eggbusinessmanager.app.feature.reports
 
+import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -16,6 +17,7 @@ import com.eggbusinessmanager.domain.customer.CustomerSummary
 import com.eggbusinessmanager.domain.error.DomainResult
 import com.eggbusinessmanager.domain.export.ExportFormat
 import com.eggbusinessmanager.domain.export.ReportDocument
+import com.eggbusinessmanager.domain.export.ReportShareText
 import com.eggbusinessmanager.domain.report.ReportData
 import com.eggbusinessmanager.domain.report.ReportKind
 import com.eggbusinessmanager.domain.report.ReportRequest
@@ -29,12 +31,15 @@ import com.eggbusinessmanager.domain.usecase.report.LoadReportUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -56,6 +61,7 @@ class ReportViewerViewModel @Inject constructor(
     private val searchCustomers: SearchCustomersUseCase,
     private val factory: ReportDocumentFactory,
     private val saver: ReportFileSaver,
+    private val sharer: ReportSharer,
     private val clock: Clock,
 ) : ViewModel() {
 
@@ -174,6 +180,35 @@ class ReportViewerViewModel @Inject constructor(
     }
 
     fun messageShown() = _state.update { it.copy(message = null) }
+
+    /** Sharesheet intents to launch, one per share tap. */
+    private val _shareRequests = Channel<Intent>(Channel.BUFFERED)
+    val shareRequests: Flow<Intent> = _shareRequests.receiveAsFlow()
+
+    /**
+     * Shares the report as a PDF with the text summary as the message (Phase 8). [closing] and
+     * [chooserTitle] are passed in already translated.
+     */
+    fun sharePdf(closing: String, chooserTitle: String) {
+        val document = _state.value.document ?: return
+        if (_state.value.exporting) return
+        _state.update { it.copy(exporting = true, message = null) }
+        viewModelScope.launch {
+            val uri = sharer.preparePdf(document, suggestedName(ExportFormat.PDF))
+            _state.update { it.copy(exporting = false, message = if (uri == null) UiText.Resource(R.string.share_failed) else null) }
+            if (uri != null) {
+                val subject = ReportShareText.subject(document)
+                _shareRequests.send(sharer.pdfChooser(uri, subject, ReportShareText.body(document, closing), chooserTitle))
+            }
+        }
+    }
+
+    /** Shares only the readable summary, without an attachment. */
+    fun shareText(chooserTitle: String) {
+        val document = _state.value.document ?: return
+        val text = ReportShareText.body(document, document.generatedAt)
+        viewModelScope.launch { _shareRequests.send(sharer.textChooser(ReportShareText.subject(document), text, chooserTitle)) }
+    }
 
     private companion object {
         const val STOP_MS = 5_000L

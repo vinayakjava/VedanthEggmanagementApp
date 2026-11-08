@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sharing reports (Phase 8) -->
+    <string name="share_pdf">Share PDF</string>
+    <string name="share_text">Share as text</string>
+    <string name="share_chooser_title">Share report</string>
+    <string name="share_pdf_attached">The full report is attached as a PDF.</string>
+    <string name="share_failed">Could not prepare the PDF. Free some space and try again.</string>
+    <string name="share_no_app">No app on this phone can share this.</string>
+    <string name="detail_statement">Statement</string>
+</resources>

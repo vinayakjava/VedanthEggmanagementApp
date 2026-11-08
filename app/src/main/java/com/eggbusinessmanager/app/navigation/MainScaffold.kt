@@ -32,6 +32,7 @@ import com.eggbusinessmanager.app.feature.reports.ReportsScreen
 import com.eggbusinessmanager.app.feature.trade.TradeEditorScreen
 import com.eggbusinessmanager.app.feature.transactions.TransactionsScreen
 import com.eggbusinessmanager.domain.ledger.EntryType
+import com.eggbusinessmanager.domain.report.ReportKind
 import com.eggbusinessmanager.app.feature.customers.detail.CustomerDetailScreen
 import com.eggbusinessmanager.app.feature.customers.editor.CustomerEditorScreen
 import com.eggbusinessmanager.app.feature.customers.history.CustomerHistoryScreen
@@ -100,6 +101,7 @@ fun MainScaffold(
                     onHistory = { navController.navigate(CustomerHistoryRoute(it)) },
                     onTrade = { id, type -> navController.navigate(TradeEditorRoute(type.name, customerId = id)) },
                     onPayment = { id, type -> navController.navigate(PaymentEditorRoute(type.name, customerId = id)) },
+                    onStatement = { id -> navController.navigate(ReportViewerRoute(ReportKind.CUSTOMER_STATEMENT.name, customerId = id)) },
                     onBack = navController::popBackStack,
                 )
             }

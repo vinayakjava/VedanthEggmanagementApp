@@ -1,5 +1,6 @@
 package com.eggbusinessmanager.app.feature.reports
 
+import android.content.ActivityNotFoundException
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -10,15 +11,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -41,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -63,6 +68,8 @@ import com.eggbusinessmanager.domain.export.ReportDocument
 import com.eggbusinessmanager.domain.export.Table
 
 const val REPORT_PREVIEW_TAG = "report_preview"
+const val SHARE_PDF_TAG = "share_pdf"
+const val SHARE_TEXT_TAG = "share_text"
 
 /** A report: its parameters, an on-screen preview and Save as PDF / Excel / CSV to a folder the owner picks. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,6 +89,20 @@ fun ReportViewerScreen(onBack: () -> Unit, viewModel: ReportViewerViewModel = hi
     val launchers = ExportFormat.entries.associateWith { format ->
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(format.mimeType)) { uri -> viewModel.export(format, uri) }
     }
+    // The native Android Sharesheet: WhatsApp, Gmail, Bluetooth, Quick Share and every other app that accepts it.
+    val context = LocalContext.current
+    LaunchedEffect(viewModel) {
+        viewModel.shareRequests.collect { intent ->
+            try {
+                context.startActivity(intent)
+            } catch (ignored: ActivityNotFoundException) {
+                // Handled: tell the owner instead of crashing.
+                snackbar.showSnackbar(context.getString(R.string.share_no_app))
+            }
+        }
+    }
+    val pdfAttached = stringResource(R.string.share_pdf_attached)
+    val chooserTitle = stringResource(R.string.share_chooser_title)
 
     Scaffold(
         topBar = {
@@ -97,7 +118,12 @@ fun ReportViewerScreen(onBack: () -> Unit, viewModel: ReportViewerViewModel = hi
         snackbarHost = { SnackbarHost(snackbar) },
         bottomBar = {
             if (state.document != null) {
-                ExportBar(busy = state.exporting) { format -> launchers.getValue(format).launch(viewModel.suggestedName(format)) }
+                ExportBar(
+                    busy = state.exporting,
+                    onSharePdf = { viewModel.sharePdf(pdfAttached, chooserTitle) },
+                    onShareText = { viewModel.shareText(chooserTitle) },
+                    onExport = { format -> launchers.getValue(format).launch(viewModel.suggestedName(format)) },
+                )
             }
         },
     ) { padding ->
@@ -181,23 +207,42 @@ private fun Parameters(state: ReportViewerViewModel.UiState, viewModel: ReportVi
 }
 
 @Composable
-private fun ExportBar(busy: Boolean, onExport: (ExportFormat) -> Unit) {
+private fun ExportBar(busy: Boolean, onSharePdf: () -> Unit, onShareText: () -> Unit, onExport: (ExportFormat) -> Unit) {
     Surface(tonalElevation = 3.dp) {
-        Row(
-            Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(stringResource(R.string.rv_export_heading), style = MaterialTheme.typography.labelLarge)
-            val formats = listOf(
-                ExportFormat.PDF to R.string.rv_export_pdf,
-                ExportFormat.XLSX to R.string.rv_export_xlsx,
-                ExportFormat.CSV to R.string.rv_export_csv,
-            )
-            formats.forEach { (format, label) ->
-                OutlinedButton(onClick = { onExport(format) }, enabled = !busy, modifier = Modifier.weight(1f)) {
-                    Text(stringResource(label))
+        Column(Modifier.navigationBarsPadding()) {
+            Row(
+                Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Button(onClick = onSharePdf, enabled = !busy, modifier = Modifier.weight(1f).testTag(SHARE_PDF_TAG)) {
+                    Icon(painterResource(R.drawable.ic_share), contentDescription = null)
+                    Text(stringResource(R.string.share_pdf), modifier = Modifier.padding(start = 8.dp))
                 }
+                FilledTonalButton(onClick = onShareText, enabled = !busy, modifier = Modifier.weight(1f).testTag(SHARE_TEXT_TAG)) {
+                    Text(stringResource(R.string.share_text))
+                }
+            }
+            SaveRow(busy, onExport)
+        }
+    }
+}
+
+@Composable
+private fun SaveRow(busy: Boolean, onExport: (ExportFormat) -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(stringResource(R.string.rv_export_heading), style = MaterialTheme.typography.labelLarge)
+        val formats = listOf(
+            ExportFormat.PDF to R.string.rv_export_pdf,
+            ExportFormat.XLSX to R.string.rv_export_xlsx,
+            ExportFormat.CSV to R.string.rv_export_csv,
+        )
+        formats.forEach { (format, label) ->
+            OutlinedButton(onClick = { onExport(format) }, enabled = !busy, modifier = Modifier.weight(1f)) {
+                Text(stringResource(label))
             }
         }
     }

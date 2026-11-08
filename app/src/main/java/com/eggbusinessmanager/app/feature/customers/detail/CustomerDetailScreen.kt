@@ -46,6 +46,7 @@ fun CustomerDetailScreen(
     onHistory: (Long) -> Unit,
     onTrade: (customerId: Long, type: EntryType) -> Unit,
     onPayment: (customerId: Long, type: EntryType) -> Unit,
+    onStatement: (Long) -> Unit,
     onBack: () -> Unit,
     viewModel: CustomerDetailViewModel = hiltViewModel(),
 ) {
@@ -85,6 +86,7 @@ fun CustomerDetailScreen(
                     }
                 }
                 SettingsRow(R.drawable.ic_history, stringResource(R.string.detail_transactions), null, onClick = { onHistory(customer.id) })
+                SettingsRow(R.drawable.ic_share, stringResource(R.string.detail_statement), null, onClick = { onStatement(customer.id) })
                 SettingsRow(R.drawable.ic_edit, stringResource(R.string.detail_edit), null, onClick = { onEdit(customer.id) })
                 if (customer.isActive) {
                     SettingsRow(

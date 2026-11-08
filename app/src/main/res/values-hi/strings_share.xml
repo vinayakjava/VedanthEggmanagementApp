@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="share_pdf">PDF भेजें</string>
+    <string name="share_text">टेक्स्ट के रूप में भेजें</string>
+    <string name="share_chooser_title">रिपोर्ट भेजें</string>
+    <string name="share_pdf_attached">पूरी रिपोर्ट PDF के रूप में संलग्न है।</string>
+    <string name="share_failed">PDF तैयार नहीं हो सका। थोड़ी जगह खाली करके फिर कोशिश करें।</string>
+    <string name="share_no_app">इस फ़ोन पर इसे भेजने वाला कोई ऐप नहीं है।</string>
+    <string name="detail_statement">खाता विवरण</string>
+</resources>
