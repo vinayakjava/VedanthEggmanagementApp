@@ -15,6 +15,9 @@ import kotlinx.serialization.Serializable
 @Serializable data object RecoverWithPinRoute
 @Serializable data object RecoverWithQuestionsRoute
 
+/** Restore on a new phone, before an account exists (US9). */
+@Serializable data object RestoreFromBackupRoute
+
 /** Top-level destinations inside the main scaffold. */
 @Serializable data object DashboardRoute
 @Serializable data object CustomersRoute
@@ -47,3 +50,4 @@ import kotlinx.serialization.Serializable
 @Serializable data object ChangeSecurityQuestionsRoute
 @Serializable data object UnitsRoute
 @Serializable data object VarietiesRoute
+@Serializable data object BackupRoute

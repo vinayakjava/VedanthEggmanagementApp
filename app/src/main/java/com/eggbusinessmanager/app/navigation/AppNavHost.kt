@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.eggbusinessmanager.app.feature.backup.BackupScreen
 import com.eggbusinessmanager.app.feature.auth.recovery.ForgotPasswordScreen
 import com.eggbusinessmanager.app.feature.auth.recovery.RecoverWithPinScreen
 import com.eggbusinessmanager.app.feature.auth.recovery.RecoverWithQuestionsScreen
@@ -58,8 +59,12 @@ private fun AuthNavHost(hasAccount: Boolean) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = if (hasAccount) SignInRoute else WelcomeRoute) {
         composable<WelcomeRoute> {
-            WelcomeScreen(onCreateAccount = { navController.navigate(SignupGraph) })
+            WelcomeScreen(
+                onCreateAccount = { navController.navigate(SignupGraph) },
+                onRestore = { navController.navigate(RestoreFromBackupRoute) },
+            )
         }
+        composable<RestoreFromBackupRoute> { BackupScreen(onBack = navController::popBackStack, restoreOnly = true) }
         navigation<SignupGraph>(startDestination = SignupAccountRoute) {
             composable<SignupAccountRoute> { entry ->
                 SignupAccountScreen(

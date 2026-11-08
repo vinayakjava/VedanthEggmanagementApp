@@ -76,10 +76,16 @@ class AuthFlowTest {
     private fun clickButton(text: String) =
         compose.onNode(hasText(text) and hasClickAction() and !hasSetTextAction()).scrollIfNeeded().performClick()
 
+    /** Opens the dropdown, tapping it again if the first tap was not delivered (busy emulator), then picks [option]. */
     private fun choose(fieldLabel: String, option: String) {
-        compose.onNodeWithText(fieldLabel).scrollIfNeeded().performClick()
+        repeat(3) {
+            compose.onNodeWithText(fieldLabel).scrollIfNeeded().performClick()
+            if (runCatching { waitFor(option, 5_000) }.isSuccess) {
+                compose.onAllNodesWithText(option).onFirst().performClick()
+                return
+            }
+        }
         waitFor(option, 5_000)
-        compose.onAllNodesWithText(option).onFirst().performClick()
     }
 
     private fun signOut() {

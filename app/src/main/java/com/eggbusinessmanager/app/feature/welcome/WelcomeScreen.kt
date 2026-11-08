@@ -33,7 +33,7 @@ import com.eggbusinessmanager.app.ui.theme.EggBusinessTheme
 
 /** First screen when no account exists (US1-1): create an account, or (with US9) restore a backup. */
 @Composable
-fun WelcomeScreen(onCreateAccount: () -> Unit, modifier: Modifier = Modifier) {
+fun WelcomeScreen(onCreateAccount: () -> Unit, onRestore: () -> Unit, modifier: Modifier = Modifier) {
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Box(
             modifier = Modifier.fillMaxSize().safeDrawingPadding().verticalScroll(rememberScrollState()),
@@ -80,20 +80,13 @@ fun WelcomeScreen(onCreateAccount: () -> Unit, modifier: Modifier = Modifier) {
                 ) {
                     Text(stringResource(R.string.welcome_create_account), style = MaterialTheme.typography.titleMedium)
                 }
-                // Restore arrives with backup (US9); shown disabled so owners know it exists.
+                // A new phone: bring the business back from a backup file or Google Drive (US9).
                 OutlinedButton(
-                    onClick = {},
-                    enabled = false,
+                    onClick = onRestore,
                     modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
                 ) {
                     Text(stringResource(R.string.welcome_restore))
                 }
-                Text(
-                    text = stringResource(R.string.welcome_restore_soon),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                )
             }
         }
     }
@@ -102,5 +95,5 @@ fun WelcomeScreen(onCreateAccount: () -> Unit, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun WelcomeScreenPreview() {
-    EggBusinessTheme { WelcomeScreen(onCreateAccount = {}) }
+    EggBusinessTheme { WelcomeScreen(onCreateAccount = {}, onRestore = {}) }
 }

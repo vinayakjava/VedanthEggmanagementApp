@@ -5,10 +5,12 @@ import androidx.room.RoomDatabase
 import com.eggbusinessmanager.data.db.dao.AccountDao
 import com.eggbusinessmanager.data.db.dao.AppSettingDao
 import com.eggbusinessmanager.data.db.dao.AuditLogDao
+import com.eggbusinessmanager.data.db.dao.BackupRecordDao
 import com.eggbusinessmanager.data.db.dao.CatalogDao
 import com.eggbusinessmanager.data.db.dao.CustomerDao
 import com.eggbusinessmanager.data.db.dao.LedgerEntryDao
 import com.eggbusinessmanager.data.db.dao.ReportDao
+import com.eggbusinessmanager.data.db.entity.BackupRecordEntity
 import com.eggbusinessmanager.data.db.entity.AppSettingEntity
 import com.eggbusinessmanager.data.db.entity.AuditLogEntity
 import com.eggbusinessmanager.data.db.entity.CustomerEntity
@@ -43,6 +45,7 @@ import com.eggbusinessmanager.data.db.entity.SecurityAnswerEntity
         ReferenceSequenceEntity::class,
         MeasurementUnitEntity::class,
         EggVarietyEntity::class,
+        BackupRecordEntity::class,
     ],
     version = EggBusinessDatabase.VERSION,
     exportSchema = true,
@@ -55,6 +58,7 @@ abstract class EggBusinessDatabase : RoomDatabase() {
     abstract fun auditLogDao(): AuditLogDao
     abstract fun catalogDao(): CatalogDao
     abstract fun reportDao(): ReportDao
+    abstract fun backupRecordDao(): BackupRecordDao
 
     companion object {
         const val VERSION = 1

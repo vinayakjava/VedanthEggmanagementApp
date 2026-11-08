@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Backup and restore (Phase 9) -->
+    <string name="more_backup">Backup &amp; restore</string>
+    <string name="more_backup_summary">Encrypted backups to this phone or Google Drive</string>
+    <string name="backup_title">Backup &amp; restore</string>
+
+    <string name="backup_last">Last successful backup</string>
+    <string name="backup_last_none">No backup yet. Make one now so your records are safe if this phone is lost or damaged.</string>
+    <string name="backup_last_line">%1$s · %2$s</string>
+    <string name="backup_dest_heading">Back up to</string>
+    <string name="backup_dest_device">This phone (choose a folder)</string>
+    <string name="backup_dest_drive">Google Drive</string>
+    <string name="backup_now">Back up now</string>
+    <string name="backup_running">Working…</string>
+    <string name="backup_done">Backup saved: %1$s</string>
+
+    <string name="backup_passphrase_title">Backup passphrase</string>
+    <string name="backup_passphrase_set">Set passphrase</string>
+    <string name="backup_passphrase_change">Change passphrase</string>
+    <string name="backup_passphrase_ok">A passphrase is set. Backups are encrypted with it.</string>
+    <string name="backup_passphrase_missing">Set a backup passphrase first. Every backup is encrypted with it.</string>
+    <string name="backup_passphrase_body">Backups are encrypted with this passphrase and you will need it to restore. If you forget it, the backups cannot be opened — not by you and not by anyone else. Write it down and keep it safe.</string>
+    <string name="label_backup_passphrase">Backup passphrase</string>
+    <string name="label_backup_passphrase_confirm">Confirm passphrase</string>
+    <string name="backup_pp_saved">Backup passphrase saved</string>
+    <string name="v_pp_short">Use at least 8 characters</string>
+    <string name="v_pp_long">Use at most 64 characters</string>
+    <string name="v_pp_mismatch">The passphrases do not match</string>
+    <string name="v_pp_same">Use something different from your login password</string>
+
+    <string name="drive_title">Google Drive</string>
+    <string name="drive_connect">Connect Google Drive</string>
+    <string name="drive_connected">Connected</string>
+    <string name="drive_not_connected">Not connected</string>
+    <string name="drive_disconnect">Disconnect</string>
+    <string name="drive_privacy">Only encrypted backup files are stored, in a hidden folder that only this app can see. No business data is kept anywhere else.</string>
+
+    <string name="restore_title">Restore</string>
+    <string name="restore_from_device">Restore from a file on this phone</string>
+    <string name="restore_from_drive">Restore from Google Drive</string>
+    <string name="restore_from_safety">Restore a safety backup</string>
+    <string name="restore_pick">Choose a backup</string>
+    <string name="restore_drive_empty">No backups in Google Drive yet.</string>
+    <string name="restore_safety_empty">No safety backups on this phone.</string>
+    <string name="restore_item">%1$s · %2$s</string>
+    <string name="restore_passphrase_title">Enter the backup passphrase</string>
+    <string name="restore_passphrase_body">Use the passphrase that was set when this backup was made.</string>
+    <string name="restore_check">Check backup</string>
+    <string name="restore_checking">Checking the backup…</string>
+    <string name="restore_preview_title">Replace the data on this phone?</string>
+    <string name="restore_preview_backup">In the backup (made %1$s)</string>
+    <string name="restore_preview_current">On this phone now</string>
+    <string name="restore_counts">%1$s customers · %2$s entries</string>
+    <string name="restore_last_entry">Last entry: %1$s</string>
+    <string name="restore_shop">Shop: %1$s</string>
+    <string name="restore_device">Made on: %1$s</string>
+    <string name="restore_warning">Everything on this phone will be replaced by the backup. A safety backup of the current data is made first and kept on this phone, so you can go back.</string>
+    <string name="restore_understand">I understand the current data will be replaced</string>
+    <string name="restore_confirm">Replace and restart</string>
+    <string name="restore_outcome_ok_title">Backup restored</string>
+    <string name="restore_outcome_ok_body">Your data was restored. Sign in with the password that was in use when the backup was made.</string>
+    <string name="restore_outcome_fail_title">Restore not completed</string>
+    <string name="restore_outcome_fail_body">The backup could not be applied, so nothing was changed. Your data is exactly as it was before.</string>
+
+    <string name="bk_history_title">History</string>
+    <string name="bk_history_empty">No backups or restores yet.</string>
+    <string name="bk_history_backup">Backup</string>
+    <string name="bk_history_restore">Restore</string>
+    <string name="bk_history_safety">Safety backup</string>
+    <string name="bk_history_ok">Done</string>
+    <string name="bk_history_failed">Failed: %1$s</string>
+    <string name="bk_history_running">Not finished</string>
+    <string name="bk_history_download">Download</string>
+    <string name="bk_dest_device">This phone</string>
+    <string name="bk_dest_drive">Google Drive</string>
+    <string name="bk_size_kb">%1$s KB</string>
+    <string name="bk_size_mb">%1$s MB</string>
+    <string name="bk_downloaded">Backup saved to the phone</string>
+
+    <!-- One message per failure (contracts/backup-format.md) -->
+    <string name="bf_no_passphrase">Set a backup passphrase first.</string>
+    <string name="bf_no_network">No internet connection. Connect and try again.</string>
+    <string name="bf_auth_required">Google Drive needs your permission again. Tap Connect Google Drive.</string>
+    <string name="bf_drive_full">Your Google Drive is full. Free some space or back up to this phone.</string>
+    <string name="bf_location_unavailable">That location cannot be used. Choose another folder or file.</string>
+    <string name="bf_low_storage">Not enough storage on this phone. Free some space and try again.</string>
+    <string name="bf_wrong_passphrase">Incorrect passphrase.</string>
+    <string name="bf_corrupt">This backup is damaged and cannot be restored.</string>
+    <string name="bf_newer_version">This backup was made by a newer version of the app. Please update the app first.</string>
+    <string name="bf_not_a_backup">This file is not an Egg Business Manager backup.</string>
+    <string name="bf_interrupted">The restore was interrupted, so nothing was changed.</string>
+    <string name="bf_unknown">Something went wrong. Please try again.</string>
+</resources>

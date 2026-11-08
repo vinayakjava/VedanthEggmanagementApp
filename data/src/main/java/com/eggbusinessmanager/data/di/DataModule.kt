@@ -13,7 +13,15 @@ import com.eggbusinessmanager.data.repository.RoomAuditRepository
 import com.eggbusinessmanager.data.repository.RoomBusinessProfileRepository
 import com.eggbusinessmanager.data.repository.RoomCatalogRepository
 import com.eggbusinessmanager.data.repository.RoomReportRepository
+import com.eggbusinessmanager.data.backup.RoomBackupHistory
+import com.eggbusinessmanager.data.backup.SafDeviceBackupStore
+import com.eggbusinessmanager.data.backup.SnapshotBackupEngine
+import com.eggbusinessmanager.data.backup.drive.GoogleDriveBackupStore
 import com.eggbusinessmanager.data.export.FileReportExporter
+import com.eggbusinessmanager.domain.backup.BackupEngine
+import com.eggbusinessmanager.domain.backup.BackupHistory
+import com.eggbusinessmanager.domain.backup.DeviceBackupStore
+import com.eggbusinessmanager.domain.backup.DriveBackupStore
 import com.eggbusinessmanager.domain.export.ReportExporter
 import com.eggbusinessmanager.data.repository.RoomCustomerRepository
 import com.eggbusinessmanager.data.repository.RoomLedgerRepository
@@ -122,4 +130,16 @@ abstract class BusinessDataBindingsModule {
 
     @Binds
     abstract fun bindReportExporter(impl: FileReportExporter): ReportExporter
+
+    @Binds
+    abstract fun bindBackupEngine(impl: SnapshotBackupEngine): BackupEngine
+
+    @Binds
+    abstract fun bindBackupHistory(impl: RoomBackupHistory): BackupHistory
+
+    @Binds
+    abstract fun bindDeviceBackupStore(impl: SafDeviceBackupStore): DeviceBackupStore
+
+    @Binds
+    abstract fun bindDriveBackupStore(impl: GoogleDriveBackupStore): DriveBackupStore
 }

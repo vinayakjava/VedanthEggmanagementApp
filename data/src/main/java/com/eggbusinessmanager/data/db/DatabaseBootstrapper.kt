@@ -2,6 +2,7 @@ package com.eggbusinessmanager.data.db
 
 import android.content.Context
 import android.database.sqlite.SQLiteFullException
+import com.eggbusinessmanager.data.backup.SnapshotBackupEngine
 import com.eggbusinessmanager.data.di.IoDispatcher
 import com.eggbusinessmanager.data.security.DatabaseKeyProvider
 import com.eggbusinessmanager.data.security.KeyUnavailableException
@@ -29,13 +30,14 @@ import net.zetetic.database.sqlcipher.SQLiteDatabase as CipherDatabase
  * 3. snapshots the encrypted file before a schema migration (keeps the last 2);
  * 4. opens Room so creation/migrations happen here, off the main thread.
  *
- * The restore state machine (US9) plugs in before step 2.
+ * A confirmed restore (US9) is swapped in, verified or rolled back before step 2.
  */
 @Singleton
 class DatabaseBootstrapper @Inject constructor(
     @ApplicationContext private val context: Context,
     private val keyProvider: DatabaseKeyProvider,
     private val database: Provider<EggBusinessDatabase>,
+    private val backups: SnapshotBackupEngine,
     private val deviceStateStore: DeviceStateStore,
     private val clock: Clock,
     private val idGenerator: IdGenerator,
@@ -58,7 +60,10 @@ class DatabaseBootstrapper @Inject constructor(
         }
         return try {
             DatabaseFactory.loadNativeLibrary()
-            checkExistingDatabase(keyProvider.getOrCreateKey()) ?: openDatabase()
+            val key = keyProvider.getOrCreateKey()
+            // A confirmed restore is swapped in here, before Room opens, and rolled back if it fails (R10).
+            backups.coordinator.resume(key)?.let { outcome -> logger.info(TAG) { "Restore finished: $outcome" } }
+            checkExistingDatabase(key) ?: openDatabase()
         } catch (e: KeyUnavailableException) {
             logger.error(TAG, e) { "Database key unavailable" }
             StartupState.Failed(StartupState.Failed.Reason.KEY_UNAVAILABLE)

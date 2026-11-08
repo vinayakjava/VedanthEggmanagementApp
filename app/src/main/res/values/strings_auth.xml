@@ -3,7 +3,6 @@
     <!-- Welcome -->
     <string name="welcome_create_account">Create account</string>
     <string name="welcome_restore">Restore from backup</string>
-    <string name="welcome_restore_soon">Restoring from a backup will be available in a coming update.</string>
 
     <!-- Common form actions and labels -->
     <string name="action_next">Next</string>

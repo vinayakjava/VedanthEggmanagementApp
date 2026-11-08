@@ -63,6 +63,7 @@ fun MoreScreen(
     onSecurity: () -> Unit,
     onUnits: () -> Unit,
     onVarieties: () -> Unit,
+    onBackup: () -> Unit,
     viewModel: MoreViewModel = hiltViewModel(),
 ) {
     val profile by viewModel.profile.collectAsStateWithLifecycle()
@@ -85,6 +86,10 @@ fun MoreScreen(
             SettingsRow(
                 R.drawable.ic_nav_dashboard, stringResource(R.string.more_varieties), stringResource(R.string.more_varieties_summary),
                 onClick = onVarieties,
+            )
+            SettingsRow(
+                R.drawable.ic_history, stringResource(R.string.more_backup), stringResource(R.string.more_backup_summary),
+                onClick = onBackup,
             )
             SettingsRow(
                 R.drawable.ic_logout, stringResource(R.string.more_sign_out), stringResource(R.string.more_sign_out_summary),

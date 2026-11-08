@@ -16,8 +16,10 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso
 import com.eggbusinessmanager.app.R
 import java.io.File
 
@@ -74,16 +76,64 @@ class AppRobot(private val compose: ComposeTestRule) {
     fun type(label: String, value: String) =
         compose.onNode(hasText(label) and hasSetTextAction()).scrollIfNeeded().performTextInput(value)
 
+    /** Replaces what is in the field labelled [label]. */
+    fun clearAndType(label: String, value: String) {
+        val field = compose.onNode(hasText(label) and hasSetTextAction()).scrollIfNeeded()
+        field.performTextClearance()
+        field.performTextInput(value)
+    }
+
     fun click(text: String) = compose.onAllNodesWithText(text).onFirst().scrollIfNeeded().performClick()
 
 
     fun clickButton(text: String) =
         compose.onNode(hasText(text) and hasClickAction() and !hasSetTextAction()).scrollIfNeeded().performClick()
 
+    /**
+     * Opens a dropdown and picks [option]. On a busy emulator a tap right after typing is sometimes not
+     * delivered (the keyboard is still animating), so the field is tapped again, after hiding the keyboard,
+     * until the menu shows the option.
+     */
     fun choose(fieldLabel: String, option: String) {
-        compose.onNodeWithText(fieldLabel).scrollIfNeeded().performClick()
-        waitFor(option, 5_000)
+        retrying(until = { exists(option) }, stillThere = { exists(fieldLabel) }) {
+            compose.onNodeWithText(fieldLabel).scrollIfNeeded().performClick()
+        }
         compose.onAllNodesWithText(option).onFirst().performClick()
+    }
+
+    /**
+     * Taps the button [text] and waits for [next] to appear, tapping again (after hiding the keyboard) if
+     * the tap was not delivered. Safe for navigation and submit buttons: a tap that did land moves to the
+     * next screen, so the button is never pressed twice.
+     */
+    fun advance(text: String, next: String, timeoutMs: Long = 15_000) {
+        retrying(until = { exists(next) }, stillThere = { buttonShown(text) }) { clickButton(text) }
+        waitFor(next, timeoutMs)
+    }
+
+    private fun buttonShown(text: String) =
+        compose.onAllNodes(hasText(text) and hasClickAction() and !hasSetTextAction()).fetchSemanticsNodes().isNotEmpty()
+
+    /**
+     * Runs [action] until [until] holds. Taps again only while the control is [stillThere]: if it has gone,
+     * the earlier tap worked and the app is just slow (e.g. hashing the password), so the caller waits.
+     */
+    private fun retrying(until: () -> Boolean, stillThere: () -> Boolean, attempts: Int = 3, action: () -> Unit) {
+        var done = false
+        var attempt = 0
+        while (!done && attempt < attempts) {
+            if (attempt > 0 && stillThere()) {
+                Espresso.closeSoftKeyboard()
+                compose.waitForIdle()
+            }
+            done = if (attempt > 0 && (until() || !stillThere())) {
+                true
+            } else {
+                action()
+                runCatching { compose.waitUntil(RETRY_WAIT_MS) { until() } }.isSuccess || !stillThere()
+            }
+            attempt++
+        }
     }
 
     /** Creates the owner account through the real signup screens and waits for the dashboard. */
@@ -95,14 +145,12 @@ class AppRobot(private val compose: ComposeTestRule) {
         type(s(R.string.label_mobile), "9988776655")
         type(s(R.string.label_password), password)
         type(s(R.string.label_confirm_password), password)
-        clickButton(s(R.string.action_next))
-        waitFor(s(R.string.signup_shop_heading))
+        advance(s(R.string.action_next), s(R.string.signup_shop_heading))
         type(s(R.string.label_shop_name), "Patil Egg Centre")
         type(s(R.string.label_city), "Nashik")
         choose(s(R.string.label_state), s(R.string.state_andhra_pradesh))
         type(s(R.string.label_pin_code), "422001")
-        clickButton(s(R.string.action_next))
-        waitFor(s(R.string.signup_security_heading))
+        advance(s(R.string.action_next), s(R.string.signup_security_heading))
         type(s(R.string.label_recovery_pin), "482916")
         type(s(R.string.label_confirm_recovery_pin), "482916")
         choose(s(R.string.label_security_question, 1), s(R.string.sq_first_school))
@@ -111,7 +159,10 @@ class AppRobot(private val compose: ComposeTestRule) {
         type(s(R.string.label_security_answer, 2), "Nashik")
         choose(s(R.string.label_security_question, 3), s(R.string.sq_favourite_dish))
         type(s(R.string.label_security_answer, 3), "Poha")
-        clickButton(s(R.string.signup_create))
-        waitFor(s(R.string.nav_dashboard))
+        advance(s(R.string.signup_create), s(R.string.nav_dashboard), timeoutMs = 60_000)
+    }
+
+    private companion object {
+        const val RETRY_WAIT_MS = 5_000L
     }
 }

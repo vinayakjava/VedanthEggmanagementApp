@@ -26,6 +26,8 @@ import com.eggbusinessmanager.app.feature.dashboard.DashboardScreen
 import com.eggbusinessmanager.app.feature.settings.catalog.UnitsScreen
 import com.eggbusinessmanager.app.feature.settings.catalog.VarietiesScreen
 import com.eggbusinessmanager.app.feature.trade.EntryDetailScreen
+import com.eggbusinessmanager.app.feature.backup.BackupScreen
+import com.eggbusinessmanager.app.feature.backup.RestoreOutcomeDialog
 import com.eggbusinessmanager.app.feature.payment.PaymentEditorScreen
 import com.eggbusinessmanager.app.feature.reports.ReportViewerScreen
 import com.eggbusinessmanager.app.feature.reports.ReportsScreen
@@ -162,6 +164,7 @@ fun MainScaffold(
             }
             composable<UnitsRoute> { UnitsScreen(onBack = navController::popBackStack) }
             composable<VarietiesRoute> { VarietiesScreen(onBack = navController::popBackStack) }
+            composable<BackupRoute> { BackupScreen(onBack = navController::popBackStack) }
             composable<TransactionsRoute> { TransactionsScreen(onOpenEntry = { navController.navigate(EntryDetailRoute(it)) }) }
             composable<ReportsRoute> { ReportsScreen(onOpen = { navController.navigate(ReportViewerRoute(it.name)) }) }
             composable<ReportViewerRoute> { ReportViewerScreen(onBack = navController::popBackStack) }
@@ -170,6 +173,7 @@ fun MainScaffold(
                     onSecurity = { navController.navigate(SecurityRoute) },
                     onUnits = { navController.navigate(UnitsRoute) },
                     onVarieties = { navController.navigate(VarietiesRoute) },
+                    onBackup = { navController.navigate(BackupRoute) },
                 )
             }
             composable<SecurityRoute> {
@@ -185,6 +189,8 @@ fun MainScaffold(
             composable<ChangeSecurityQuestionsRoute> { ChangeSecurityQuestionsScreen(onDone = navController::popBackStack) }
         }
     }
+
+    RestoreOutcomeDialog()
 
     if (reviewRecovery) {
         RecoveryReviewDialog(

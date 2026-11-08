@@ -3,7 +3,6 @@
     <!-- Welcome -->
     <string name="welcome_create_account">खाता बनाएँ</string>
     <string name="welcome_restore">बैकअप से वापस लाएँ</string>
-    <string name="welcome_restore_soon">बैकअप से डेटा वापस लाने की सुविधा अगले अपडेट में आएगी।</string>
 
     <!-- Common form actions and labels -->
     <string name="action_next">आगे</string>

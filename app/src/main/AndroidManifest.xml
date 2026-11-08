@@ -6,6 +6,8 @@
       Permissions are added with the features that need them (plan § Android Permission Requirements).
       INTERNET arrives with Google Drive backup (US9) and is used for nothing else (Constitution I).
     -->
+    <!-- Only for uploading and downloading encrypted backups to the app's hidden Google Drive folder. -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Package visibility (API 30+): WhatsApp share and the generic share sheet. -->
     <queries>
