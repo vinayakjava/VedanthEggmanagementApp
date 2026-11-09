@@ -18,6 +18,8 @@ private const val USAGE = """EggVyapar license tool - lifetime, device-bound lic
   license-tool show L-XXXXXXXX             One license with its devices and keys.
   license-tool export [--file licenses.csv]  Everything as CSV (Excel).
   license-tool public-key                  Print the public key again.
+  license-tool verify --key EV1-... --device XXXX-XXXX-XXXX-XXXX
+      Check a key exactly as the app does (signature and device).
 
 Options: --home DIR (default: %USERPROFILE%\.eggvyapar-license, or EGGVYAPAR_LICENSE_HOME)"""
 
@@ -88,6 +90,20 @@ private val COMMANDS: Map<String, (Tool) -> Unit> = mapOf(
         } else {
             file.writeText("\uFEFF" + csv) // BOM so Excel reads names in any language
             t.out("Exported to ${file.absolutePath}")
+        }
+    },
+    "verify" to { t ->
+        // Checks a key exactly as the app does: signature with the public key, then the device.
+        val public = t.options["public-key"] ?: t.home.publicKey()
+        val hash = com.eggbusinessmanager.domain.license.LicenseFormat.parseDeviceCode(t.options.need("device"))
+            ?: throw LicenseToolException("\"${t.options["device"]}\" is not a device code.")
+        val verifier = com.eggbusinessmanager.domain.license.LicenseVerifier(
+            com.eggbusinessmanager.domain.license.LicensePublicKey(com.eggbusinessmanager.domain.license.LicenseCrypto.publicKey(public)),
+        )
+        when (val check = verifier.check(t.options.need("key"), hash)) {
+            is com.eggbusinessmanager.domain.license.LicenseCheck.Valid ->
+                t.out("VALID for this device: ${check.payload.licenseIdText}, devices allowed ${check.payload.maxDevices}")
+            else -> throw LicenseToolException("Not valid for this device: ${check::class.simpleName}")
         }
     },
     "help" to { t -> t.out(USAGE) },

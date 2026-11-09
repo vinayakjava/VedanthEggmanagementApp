@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <style>
+    :root { --brown: #7A4A00; --egg: #F2A93B; --cream: #FBF3E6; --ink: #1F242B; --muted: #5F6670; --rule: #E2D6C3; --bad: #9B1C1C; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Segoe UI", Roboto, Arial, sans-serif; color: var(--ink); background: #FFFCF7; }
+    header { background: var(--egg); padding: 14px 16px; }
+    header h1 { margin: 0; font-size: 20px; color: #3A2400; }
+    main { max-width: 760px; margin: 0 auto; padding: 16px; }
+    section { background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+    h2 { margin: 0 0 10px; font-size: 17px; color: var(--brown); }
+    label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 4px; }
+    input, select { width: 100%; padding: 11px 12px; font-size: 16px; border: 1px solid var(--rule); border-radius: 8px; }
+    .row { display: flex; gap: 12px; } .row > div { flex: 1; }
+    button { margin-top: 14px; padding: 12px 18px; font-size: 16px; border: 0; border-radius: 22px; background: var(--brown); color: #fff; cursor: pointer; }
+    button.secondary { background: #fff; color: var(--brown); border: 1px solid var(--brown); }
+    button:disabled { opacity: .5; }
+    .key { font-family: Consolas, monospace; font-size: 14px; word-break: break-all; background: var(--cream); border-radius: 8px; padding: 12px; margin-top: 10px; }
+    .msg { margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 14px; }
+    .msg.bad { background: #FDECEC; color: var(--bad); } .msg.ok { background: #EAF5EA; color: #1E5E22; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; }
+    .small { font-size: 12px; color: var(--muted); }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+<header><h1>EggVyapar · License keys</h1></header>
+<main>
+  <section id="loading">Loading…</section>
+
+  <section id="sell" hidden>
+    <h2>New license (sell)</h2>
+    <label for="customer">Customer name</label><input id="customer" autocomplete="off">
+    <label for="shop">Shop name</label><input id="shop" autocomplete="off">
+    <div class="row">
+      <div><label for="phone">Phone (optional)</label><input id="phone" inputmode="tel" autocomplete="off"></div>
+      <div><label for="max">Phones allowed</label><input id="max" type="number" min="1" max="255" value="1"></div>
+    </div>
+    <label for="device">Device code (from the customer's Activation screen)</label>
+    <input id="device" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" autocapitalize="characters">
+    <button id="generate">Generate key</button>
+    <div id="sellResult"></div>
+  </section>
+
+  <section id="more" hidden>
+    <h2>Another phone for an existing license</h2>
+    <label for="license">License</label><select id="license"></select>
+    <label for="device2">Device code of the new phone</label>
+    <input id="device2" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" autocapitalize="characters">
+    <div class="actions">
+      <button id="generate2">Generate key</button>
+      <button id="raise" class="secondary">Change phones allowed…</button>
+    </div>
+    <div id="moreResult"></div>
+  </section>
+
+  <section id="list" hidden>
+    <h2>Licenses</h2>
+    <p class="small">The same list is in the Google Sheet (tabs Licenses and Devices) — use File → Download for Excel.</p>
+    <table><thead><tr><th>License</th><th>Customer · Shop</th><th>Phones</th><th></th></tr></thead><tbody id="rows"></tbody></table>
+  </section>
+</main>
+
+<?!= include('Crypto'); ?>
+<script>
+  var signingKey = null, licenses = [];
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function call(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return new Promise(function (resolve, reject) {
+      var runner = google.script.run.withSuccessHandler(resolve).withFailureHandler(function (e) { reject(new Error(e && e.message || e)); });
+      runner[fn].apply(runner, args);
+    });
+  }
+
+  function showKey(box, result, customer) {
+    var text = 'Thank you for buying EggVyapar!\nYour lifetime license key (for this phone only):\n\n' + result.key +
+      '\n\nIn the app: copy this key, tap "Paste from clipboard", then "Activate".\nSupport: Vinayak Metagoli, +91 7848971006';
+    box.innerHTML = '<div class="msg ok">' + (result.existing ? 'This phone already had a key under ' : 'Key made for ') + esc(result.licenseId) +
+      ' (' + esc(customer) + '). Send it to the customer:</div><div class="key" id="keyText">' + esc(result.key) + '</div>' +
+      '<div class="actions"><button class="secondary" id="copyKey">Copy key</button>' +
+      '<button id="waKey">Send on WhatsApp</button></div>';
+    box.querySelector('#copyKey').onclick = function () { navigator.clipboard.writeText(result.key); this.textContent = 'Copied'; };
+    box.querySelector('#waKey').onclick = function () { window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank'); };
+  }
+
+  function showError(box, e) { box.innerHTML = '<div class="msg bad">' + esc(e.message || e) + '</div>'; }
+
+  async function issue(req, box, button) {
+    button.disabled = true;
+    box.innerHTML = '';
+    try {
+      var hash = EV.parseDeviceCode(req.deviceCode);
+      if (!hash) throw new Error('That is not a Device code. It has 16 characters, like 7K2Q-M9XP-4RTD-H8WN. Copy it exactly as sent.');
+      req.deviceCode = EV.deviceCode(hash);
+      var plan = await call('prepare', req);
+      var key = plan.existingKey;
+      if (!key) {
+        key = await EV.makeKey(signingKey, EV.parseLicenseId(plan.licenseId), plan.maxDevices, hash);
+        licenses = await call('saveKey', plan.licenseId, plan.deviceCode, key);
+        render();
+      }
+      showKey(box, { key: key, licenseId: plan.licenseId, existing: !!plan.existingKey }, plan.license.customer);
+      return true;
+    } catch (e) {
+      showError(box, e);
+      return false;
+    } finally {
+      button.disabled = false;
+    }
+  }
+
+  function render() {
+    $('license').innerHTML = licenses.map(function (l) {
+      return '<option value="' + esc(l.id) + '">' + esc(l.id + ' · ' + l.customer + ' · ' + l.shop + ' (' + l.devices.length + '/' + l.maxDevices + ')') + '</option>';
+    }).join('');
+    $('more').hidden = licenses.length === 0;
+    $('rows').innerHTML = licenses.map(function (l) {
+      return '<tr><td>' + esc(l.id) + '<div class="small">' + esc(l.created.slice(0, 10)) + '</div></td><td>' + esc(l.customer) + '<div class="small">' +
+        esc(l.shop) + (l.phone ? ' · ' + esc(l.phone) : '') + '</div></td><td>' + l.devices.length + ' / ' + l.maxDevices +
+        '<div class="small">' + l.devices.map(function (d) { return esc(d.deviceCode); }).join('<br>') + '</div></td><td>' +
+        (l.issued ? 'issued' : 'not issued') + '</td></tr>';
+    }).join('') || '<tr><td colspan="4" class="small">No licenses yet.</td></tr>';
+  }
+
+  $('generate').onclick = async function () {
+    var ok = await issue({
+      customer: $('customer').value, shop: $('shop').value, phone: $('phone').value, maxDevices: Number($('max').value || 1),
+      deviceCode: $('device').value, newLicenseId: EV.licenseIdText(EV.randomLicenseId()),
+    }, $('sellResult'), this);
+    if (ok) { $('customer').value = $('shop').value = $('phone').value = $('device').value = ''; $('max').value = 1; }
+  };
+
+  $('generate2').onclick = function () {
+    issue({ licenseId: $('license').value, deviceCode: $('device2').value }, $('moreResult'), this);
+  };
+
+  $('raise').onclick = async function () {
+    var id = $('license').value;
+    var license = licenses.filter(function (l) { return l.id === id; })[0];
+    var value = prompt('Phones allowed for ' + id + ' (' + license.customer + '), now ' + license.maxDevices + ':', license.maxDevices + 1);
+    if (!value) return;
+    try { licenses = await call('setLimit', id, Number(value)); render(); $('moreResult').innerHTML = '<div class="msg ok">Updated.</div>'; }
+    catch (e) { showError($('moreResult'), e); }
+  };
+
+  call('bootstrap').then(async function (data) {
+    signingKey = await EV.importSigningKey(data.signingKey);
+    licenses = data.licenses;
+    $('loading').hidden = true;
+    $('sell').hidden = false; $('list').hidden = false;
+    render();
+  }).catch(function (e) { showError($('loading'), e); });
+</script>
+</body>
+</html>
