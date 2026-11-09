@@ -26,3 +26,5 @@ include(":app")
 include(":domain")
 include(":data")
 include(":core-testing")
+
+include(":license-tool")

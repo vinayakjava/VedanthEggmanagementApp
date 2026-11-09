@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lifetime license activation. -->
+<resources>
+    <string name="license_title">License</string>
+    <string name="more_license_summary">Lifetime license for this phone</string>
+    <string name="license_activate_title">Activate EggVyapar</string>
+    <string name="license_activate_body">EggVyapar needs a lifetime license key for this phone. You enter it once; after that the app works offline and never asks again.</string>
+    <string name="license_step_send">1. Send this Device code to get your key</string>
+    <string name="license_copy">Copy</string>
+    <string name="license_share">Share</string>
+    <string name="license_share_text">EggVyapar Device code: %1$s</string>
+    <string name="license_contact">Buy or get your key: %1$s · %2$s</string>
+    <string name="license_step_paste">2. Paste the license key you received</string>
+    <string name="license_key_label">License key (starts with EV1-)</string>
+    <string name="license_paste">Paste from clipboard</string>
+    <string name="license_activate_action">Activate</string>
+    <string name="license_activate_note">Your shop data stays on this phone. A key works only on the phone whose Device code it was made for.</string>
+    <string name="license_error_empty">Paste the license key first.</string>
+    <string name="license_error_malformed">This is not a complete license key. Copy the whole key, starting with EV1-, and paste it again.</string>
+    <string name="license_error_not_genuine">This license key is not valid. Please contact the seller.</string>
+    <string name="license_error_other_device">This key was made for another phone. Send this phone\'s Device code to get a key for it.</string>
+    <string name="license_status_activated">Activated</string>
+    <string name="license_status_not_activated">Not activated</string>
+    <string name="license_lifetime">Lifetime License</string>
+    <string name="license_lifetime_note">Never expires. No renewals.</string>
+    <string name="license_id_label">License ID</string>
+    <string name="license_devices_label">Devices allowed</string>
+    <string name="license_activated_on">Activated on</string>
+    <string name="license_device_code_label">This phone\'s Device code</string>
+    <string name="license_info_line">%1$s: %2$s</string>
+    <string name="license_info_note">The license is for this phone. On a new phone, or after reinstalling, send the new Device code to get a key; your backups restore normally.</string>
+</resources>

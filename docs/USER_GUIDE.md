@@ -21,7 +21,21 @@ internet is when **you** choose to keep an encrypted backup in your own Google D
 > If a test version of the app was installed on the phone before, uninstall it first. Test versions
 > are signed with a different key, so Android will not install 1.0.0 over them.
 
-## 2. First start — create your account
+## 2. Activate your lifetime license (once)
+
+The first time EggVyapar opens it shows **Activate EggVyapar**:
+
+1. Tap **Share** (or **Copy**) and send the **Device code** shown (like `7K2Q-M9XP-4RTD-H8WN`) to the
+   seller — Vinayak Metagoli, +91 7848971006.
+2. You receive a **license key** starting with `EV1-`. Copy it, tap **Paste from clipboard** (or paste
+   into the box) and tap **Activate**.
+
+That is all: the license never expires, needs no renewal and no internet, and the app does not ask
+again. **More → License** shows *Activated · Lifetime License*. A key works only on the phone it was made
+for; on a new phone (or after reinstalling) send the new Device code for a key. Your data is never
+deleted by the license check.
+
+## 3. First start — create your account
 
 1. Tap **Create account**.
 2. Enter the **owner name**, **mobile number** (this is what you sign in with), optional **email**, and
@@ -33,9 +47,9 @@ internet is when **you** choose to keep an encrypted backup in your own Google D
 5. You land on the **Dashboard**.
 
 Already have a backup from another phone? Tap **Restore from a backup** on the first screen instead
-(see section 9).
+(see section 10).
 
-## 3. Signing in, locking and security
+## 4. Signing in, locking and security
 
 - **Sign in** with your mobile number (or email) and password. After several wrong tries the app makes
   you wait before trying again.
@@ -48,7 +62,7 @@ Already have a backup from another phone? Tap **Restore from a backup** on the f
   **change the security questions**.
 - **Sign out**: More → Sign out. Your data stays on the phone; you need the password to get back in.
 
-## 4. The main screens
+## 5. The main screens
 
 The bar at the bottom has five tabs:
 
@@ -69,7 +83,7 @@ The bar at the bottom has five tabs:
 Balances are always calculated from the entries, so they are correct even after you edit or delete
 an old entry.
 
-## 5. Customers
+## 6. Customers
 
 - **Add**: Customers → **+**. Name is required; mobile, address and notes are optional.
 - **Opening balance**: if the customer already had a balance in your paper book, enter the amount and
@@ -82,7 +96,7 @@ an old entry.
 - **Deactivate** a customer you no longer deal with (hidden from pickers, history kept). A customer
   with no entries can be deleted.
 
-## 6. Selling and buying eggs
+## 7. Selling and buying eggs
 
 Dashboard → **Sell** (or **Buy**), or from a customer's page.
 
@@ -103,7 +117,7 @@ The confirmation shows the reference number (Sales `S-000001`, Purchases `B-0000
 received `RP-…`, Payments made `PC-…`). Choose **Record another** (keeps customer, date, variety and
 unit), **Share receipt**, or **Done**. Tapping Save twice never creates two entries.
 
-## 7. Payments
+## 8. Payments
 
 Dashboard → **Receive** (money from a customer) or **Pay** (money to a customer/supplier).
 
@@ -113,7 +127,7 @@ Dashboard → **Receive** (money from a customer) or **Pay** (money to a custome
 - Paying **more** than is due creates an **advance**: the app asks you to confirm, and the balance
   turns the other way. Later sales use the advance up automatically.
 
-## 8. Correcting and deleting entries
+## 9. Correcting and deleting entries
 
 Open an entry from **Transactions** or a customer's **Transaction history**.
 
@@ -123,10 +137,10 @@ Open an entry from **Transactions** or a customer's **Transaction history**.
   the entry a new reference in the new series ("Changed to B-000004").
 - **Delete** — the entry stays visible, marked **Deleted**, and no longer counts anywhere. If the entry
   was saved together with an on-the-spot payment, the app offers to delete that payment too.
-- **Share receipt** — sends a one-page PDF receipt (see section 10).
+- **Share receipt** — sends a one-page PDF receipt (see section 11).
 - A sale and its on-the-spot payment link to each other: "Paid on the spot: RP-…" / "Taken with S-…".
 
-## 9. Backup and restore (More → Backup & restore)
+## 10. Backup and restore (More → Backup & restore)
 
 Backups contain everything: shop and owner profile, customers, all entries, units, varieties and
 settings. They are **encrypted with a backup passphrase** that you choose (different from the login
@@ -167,7 +181,7 @@ The **history** lists past backups; Drive backups can be downloaded to the phone
    wrong during the restore, it rolls back automatically. The app restarts with the restored data;
    sign in with the password that was in use when the backup was made.
 
-## 10. Reports, statements, receipts and sharing
+## 11. Reports, statements, receipts and sharing
 
 **Reports tab**
 
@@ -195,7 +209,7 @@ have no receipt.
 
 Shared files are made only when you ask and are removed from the app's temporary storage within a day.
 
-## 11. Settings (More)
+## 12. Settings (More)
 
 | Setting | What you can change |
 |---|---|
@@ -204,26 +218,26 @@ Shared files are made only when you ask and are removed from the app's temporary
 | **Security** | Password, recovery PIN, security questions, fingerprint unlock, auto-lock, lock now |
 | **Measurement units** | Add units and how many eggs each holds (Piece = 1 cannot change). Changing a unit's size only affects new entries; old entries keep the size they were saved with |
 | **Egg varieties** | Add, rename, deactivate varieties; choose the default variety for new entries |
-| **Backup & restore** | See section 9 |
+| **Backup & restore** | See section 10 |
 | **Display & preferences** | **Language** (phone language, English, हिन्दी — changes immediately); **Theme** (system, light, dark); **Currency symbol** (₹ or Rs.); **Number grouping** (Indian 1,00,000 or international 100,000); **Date format** (8 Nov 2026, 08/11/2026, 08-11-2026, 2026-11-08); **Default unit** for Sell and Buy |
 | **About** | App version and build, privacy and security information, libraries used |
-| **Sign out** | See section 3 |
+| **Sign out** | See section 4 |
 
-## 12. Privacy and security in short
+## 13. Privacy and security in short
 
 - All data is in an encrypted database on the phone (SQLCipher, key protected by the Android Keystore).
 - Password, PIN and security answers are stored only as strong one-way hashes.
 - Backups are encrypted with your passphrase before they leave the app.
 - The app is excluded from Android's own cloud backup, so your data never goes anywhere you did not choose.
 
-## 13. Updating to a new version
+## 14. Updating to a new version
 
 Install the new APK over the old one the same way as in section 1 — **do not uninstall first**.
 Your account, customers, entries and settings stay as they are. Updates must come from the same
 publisher (the same signing key); Android refuses an APK signed with a different key. Making a
 backup before updating is always a good idea.
 
-## 14. Getting help
+## 15. Getting help
 
 | Problem | What to do |
 |---|---|

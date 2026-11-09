@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lifetime license activation. -->
+<resources>
+    <string name="license_title">लाइसेंस</string>
+    <string name="more_license_summary">इस फ़ोन का आजीवन लाइसेंस</string>
+    <string name="license_activate_title">EggVyapar सक्रिय करें</string>
+    <string name="license_activate_body">EggVyapar को इस फ़ोन के लिए आजीवन लाइसेंस की चाहिए। इसे एक बार डालें; इसके बाद ऐप बिना इंटरनेट चलता है और दोबारा नहीं पूछता।</string>
+    <string name="license_step_send">1. अपनी की पाने के लिए यह डिवाइस कोड भेजें</string>
+    <string name="license_copy">कॉपी</string>
+    <string name="license_share">शेयर</string>
+    <string name="license_share_text">EggVyapar डिवाइस कोड: %1$s</string>
+    <string name="license_contact">की खरीदें या पाएँ: %1$s · %2$s</string>
+    <string name="license_step_paste">2. मिली हुई लाइसेंस की पेस्ट करें</string>
+    <string name="license_key_label">लाइसेंस की (EV1- से शुरू)</string>
+    <string name="license_paste">क्लिपबोर्ड से पेस्ट करें</string>
+    <string name="license_activate_action">सक्रिय करें</string>
+    <string name="license_activate_note">आपकी दुकान का डेटा इसी फ़ोन पर रहता है। की सिर्फ़ उसी फ़ोन पर चलती है जिसके डिवाइस कोड के लिए बनी है।</string>
+    <string name="license_error_empty">पहले लाइसेंस की पेस्ट करें।</string>
+    <string name="license_error_malformed">यह पूरी लाइसेंस की नहीं है। EV1- से शुरू होने वाली पूरी की कॉपी करके फिर से पेस्ट करें।</string>
+    <string name="license_error_not_genuine">यह लाइसेंस की मान्य नहीं है। कृपया विक्रेता से संपर्क करें।</string>
+    <string name="license_error_other_device">यह की किसी दूसरे फ़ोन के लिए बनी है। इस फ़ोन का डिवाइस कोड भेजकर इसकी की पाएँ।</string>
+    <string name="license_status_activated">सक्रिय</string>
+    <string name="license_status_not_activated">सक्रिय नहीं</string>
+    <string name="license_lifetime">आजीवन लाइसेंस</string>
+    <string name="license_lifetime_note">कभी समाप्त नहीं होता। कोई नवीनीकरण नहीं।</string>
+    <string name="license_id_label">लाइसेंस आईडी</string>
+    <string name="license_devices_label">अनुमत डिवाइस</string>
+    <string name="license_activated_on">सक्रिय किया</string>
+    <string name="license_device_code_label">इस फ़ोन का डिवाइस कोड</string>
+    <string name="license_info_line">%1$s: %2$s</string>
+    <string name="license_info_note">लाइसेंस इसी फ़ोन के लिए है। नए फ़ोन पर या दोबारा इंस्टॉल करने पर नया डिवाइस कोड भेजकर की पाएँ; आपके बैकअप सामान्य रूप से वापस आते हैं।</string>
+</resources>

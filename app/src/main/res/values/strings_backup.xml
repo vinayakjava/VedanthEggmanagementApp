@@ -144,4 +144,6 @@
     <string name="bf_google_setup">Google did not accept this copy of the app (error 10). The Google Cloud project must list this app with its signing key fingerprint (SHA-1) before Drive can be used. Backups to this phone still work.</string>
     <string name="backup_needs_passphrase">Set a backup passphrase first.</string>
     <string name="backup_needs_drive">Connect Google Drive above first, or choose This phone.</string>
+    <string name="drive_refused_code">Google did not give this app access to Drive (Google error %1$d). Check in the Google Cloud project that this Google account is listed under Test users and that the drive.appdata scope is added, then try again.</string>
+    <string name="drive_refused_no_token">Google finished without giving this app access to Drive. Check that the Google account is listed under Test users in the Google Cloud project and that you tapped Allow, then try again.</string>
 </resources>

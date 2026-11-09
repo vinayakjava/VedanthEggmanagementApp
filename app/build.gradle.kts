@@ -11,14 +11,21 @@ plugins {
 
 // Semantic version. versionCode = major*10000 + minor*100 + patch (research R18).
 // 1.0.0 was the first production release: its database schema (version 1) is frozen from there on.
-// 1.0.1: on-the-spot payment, receipts, dashboard periods, backup extras. 1.0.2: Drive connection errors shown. 1.0.3: developer on About.
+// 1.0.1: on-the-spot payment, receipts, dashboard periods, backup extras. 1.0.2: Drive connection errors shown. 1.0.3: developer on About. 1.0.4: Google error code shown. 1.0.5: lifetime licenses.
 val versionMajor = 1
 val versionMinor = 0
 // The upgrade check (scripts/release_check.py) builds a newer patch with -PebmUpgradePatch=<n>; normal builds never set it.
-val versionPatch = (project.findProperty("ebmUpgradePatch") as String?)?.toInt() ?: 3
+val versionPatch = (project.findProperty("ebmUpgradePatch") as String?)?.toInt() ?: 5
 
 // Release signing comes from ~/.gradle/gradle.properties or environment variables,
 // never from the repository (Constitution III).
+// Lifetime licenses: only the owner's PUBLIC verification key is embedded (app/license-public-key.txt,
+// made by `license-tool init`). Debug builds use a throwaway test key (core-testing TestLicenseKeys), so
+// keys made for testing never work in the release app. No signing secret is ever in the APK.
+val releaseLicensePublicKey = file("license-public-key.txt").readText().trim()
+val testLicensePublicKey =
+    "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEP3n+EoAO50SUF/1nOw+kiwB8IukQDS6u29AkFyhzDAWSlH36OSrqIQK/pG4/GndcDbqDTE6ErC5ZzlRRVrzhbg=="
+
 fun signingValue(name: String): String? =
     (project.findProperty(name) as String?) ?: System.getenv(name)
 
@@ -55,6 +62,7 @@ android {
 
     buildTypes {
         release {
+            buildConfigField("String", "LICENSE_PUBLIC_KEY", "\"$releaseLicensePublicKey\"")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -63,6 +71,7 @@ android {
             }
         }
         debug {
+            buildConfigField("String", "LICENSE_PUBLIC_KEY", "\"$testLicensePublicKey\"")
             isMinifyEnabled = false
         }
     }
@@ -133,6 +142,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     testImplementation(project(":core-testing"))
+    androidTestImplementation(project(":core-testing"))
     testImplementation(libs.junit)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)

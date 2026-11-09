@@ -1,5 +1,6 @@
 package com.eggbusinessmanager.app.navigation
 
+import com.eggbusinessmanager.app.feature.license.ActivationScreen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -41,6 +42,7 @@ fun AppNavHost(modifier: Modifier = Modifier, viewModel: RootViewModel = hiltVie
     Box(modifier.fillMaxSize().reportUserActivity(viewModel::onUserActivity)) {
         when (val root = state) {
             RootViewModel.RootState.Loading -> Unit
+            RootViewModel.RootState.Activation -> ActivationScreen()
             // A fresh auth graph per start destination, e.g. after signing out.
             is RootViewModel.RootState.Auth -> key(root.hasAccount) { AuthNavHost(hasAccount = root.hasAccount) }
             is RootViewModel.RootState.Main -> {

@@ -20,12 +20,12 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.eggbusinessmanager.app.MainActivity
 import com.eggbusinessmanager.app.R
+import com.eggbusinessmanager.app.testing.AppRobot
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.File
 
 /**
  * End-to-end on the real encrypted database and real PBKDF2 (US1, US11), fully offline:
@@ -46,9 +46,7 @@ class AuthFlowTest {
 
     @Before
     fun freshInstall() {
-        listOf("", "-wal", "-shm").forEach { File(context.getDatabasePath("egg_business.db").path + it).delete() }
-        File(context.noBackupFilesDir, "keys").deleteRecursively()
-        File(context.noBackupFilesDir, "datastore").deleteRecursively()
+        AppRobot(compose).wipeLocalData() // fresh install, licensed with a test key for this emulator
         scenario = ActivityScenario.launch(MainActivity::class.java)
     }
 

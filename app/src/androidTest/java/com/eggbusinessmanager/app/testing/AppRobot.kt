@@ -21,7 +21,14 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import com.eggbusinessmanager.app.R
+import com.eggbusinessmanager.data.license.FileLicenseStore
+import com.eggbusinessmanager.data.license.KeystoreDeviceIdentity
+import com.eggbusinessmanager.domain.license.StoredLicense
+import com.eggbusinessmanager.testing.TestLicenseKeys
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import java.io.File
+import java.time.Instant
 
 /** Shared helpers for end-to-end UI tests on the real app (encrypted DB, real PBKDF2). */
 class AppRobot(private val compose: ComposeTestRule) {
@@ -30,11 +37,23 @@ class AppRobot(private val compose: ComposeTestRule) {
 
     fun s(@StringRes id: Int, vararg args: Any): String = context.getString(id, *args)
 
-    /** Wipes local data so the next activity launch is a fresh install. Call before launching. */
-    fun wipeLocalData() {
+    /**
+     * Wipes local data so the next activity launch is a fresh install. Call before launching. Unless
+     * [activated] is false, the phone is also licensed with a key for its own Device code signed by the
+     * test key (accepted by debug builds only), so tests start at the Welcome screen as before.
+     */
+    fun wipeLocalData(activated: Boolean = true) {
         listOf("", "-wal", "-shm").forEach { File(context.getDatabasePath("egg_business.db").path + it).delete() }
         File(context.noBackupFilesDir, "keys").deleteRecursively()
         File(context.noBackupFilesDir, "datastore").deleteRecursively()
+        File(context.noBackupFilesDir, FileLicenseStore.DIR).deleteRecursively()
+        if (activated) activateThisPhone()
+    }
+
+    /** Saves a test-signed lifetime license for this emulator's Keystore identity. */
+    fun activateThisPhone() = runBlocking {
+        val hash = KeystoreDeviceIdentity(Dispatchers.IO).deviceHash()
+        FileLicenseStore(context, Dispatchers.IO).save(StoredLicense(TestLicenseKeys.keyFor(hash), Instant.now()))
     }
 
     /** Waits for [text]; on timeout the failure lists what was on screen instead, to make failures readable. */

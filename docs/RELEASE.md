@@ -1,4 +1,4 @@
-# EggVyapar — Release 1.0.3
+# EggVyapar — Release 1.0.5
 
 ## Version information
 
@@ -6,8 +6,8 @@
 |---|---|
 | App name | EggVyapar (named Egg Business Manager before 1.0.3; the application ID is unchanged) |
 | Application ID | `com.eggbusinessmanager.app` (permanent — never change it) |
-| Version name | 1.0.3 |
-| Version code | 10003 (`major*10000 + minor*100 + patch`) |
+| Version name | 1.0.5 |
+| Version code | 10005 (`major*10000 + minor*100 + patch`) |
 | Minimum Android | Android 12 (API 31) |
 | Target / compile SDK | Android 17 (API 37, latest stable) |
 | Database schema | version 1 — `data/schemas/com.eggbusinessmanager.data.db.EggBusinessDatabase/1.json` (frozen) |
@@ -88,12 +88,12 @@ Build the current version and a newer patch from the same sources, both release-
 
 ```powershell
 .\gradlew :app:assembleRelease;                         copy app\build\outputs\apk\release\app-release.apk dist\check-old.apk
-.\gradlew :app:assembleRelease -PebmUpgradePatch=4;     copy app\build\outputs\apk\release\app-release.apk dist\check-new.apk
+.\gradlew :app:assembleRelease -PebmUpgradePatch=6;     copy app\build\outputs\apk\release\app-release.apk dist\check-new.apk
 adb -s <device> uninstall com.eggbusinessmanager.app
 adb -s <device> install dist\check-old.apk
 python scripts\release_check.py seed --serial <device>
 adb -s <device> install -r dist\check-new.apk            # update in place, data kept
-python scripts\release_check.py verify --serial <device> --version 1.0.4 --build 10004
+python scripts\release_check.py verify --serial <device> --version 1.0.6 --build 10006
 ```
 
 `seed` creates the account, a customer with an opening balance, a sale with money received on the
@@ -134,6 +134,23 @@ Google identifies the app by package name **and** signing certificate. In the Go
 release **SHA-1** above (keep the debug one for development builds). The consent screen needs the
 `drive.appdata` scope; while it is in "Testing", add each owner's Google account as a test user, or
 publish the consent screen. Until then, backups to the phone work and Drive shows "can't connect".
+
+## Release notes — 1.0.5 (2026-11-09)
+
+- Lifetime licenses (docs/LICENSING.md): the app asks once for a license key made for this phone's
+  Device code (Android Keystore identity), verifies the ECDSA P-256 signature offline with the embedded
+  public key, and shows Settings → License (Activated · Lifetime License). Existing data is kept: an
+  update from 1.0.4 shows the Activation screen once, then everything is as before.
+- The private `license-tool` (module `:license-tool`) makes keys, enforces each license's device limit and
+  keeps the registry; the signing key lives only in `%USERPROFILE%\.eggvyapar-license`.
+- The release check (`scripts/release_check.py`) activates the release APK with a check key from a
+  scratch registry.
+
+## Release notes — 1.0.4 (2026-11-09)
+
+- Google Drive: when Google refuses access, the message now includes Google's error code and says
+  what to check (test user, drive.appdata scope), so the cause can be found without the phone's logs.
+  Refusals that Google reports like a cancel are shown too; only closing the chooser stays silent.
 
 ## Release notes — 1.0.3 (2026-11-09)
 

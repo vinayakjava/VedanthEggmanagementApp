@@ -92,10 +92,12 @@ class GoogleDriveAuthorizer @Inject constructor(
                 ConnectResult.Failed(BackupFailure.AUTH_REQUIRED, null)
             }
         } catch (e: ApiException) {
-            when {
-                e.statusCode == CommonStatusCodes.CANCELED || resultCode == Activity.RESULT_CANCELED && data == null ->
-                    ConnectResult.Cancelled
-                else -> ConnectResult.Failed(failureFor(e.statusCode), e.statusCode)
+            // Only a chooser closed with no answer at all is a plain cancel; Google reports refusals (for
+            // example an account that is not a test user) with a status, which the owner must see.
+            if (resultCode == Activity.RESULT_CANCELED && data == null) {
+                ConnectResult.Cancelled
+            } else {
+                ConnectResult.Failed(failureFor(e.statusCode), e.statusCode)
             }
         }
         if (result is ConnectResult.Failed) logger.warn(TAG) { "Drive authorization failed: status ${result.statusCode}" }

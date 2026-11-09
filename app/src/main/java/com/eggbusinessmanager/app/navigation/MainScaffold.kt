@@ -1,5 +1,6 @@
 package com.eggbusinessmanager.app.navigation
 
+import com.eggbusinessmanager.app.feature.license.LicenseScreen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
@@ -177,6 +178,7 @@ fun MainScaffold(
             composable<OwnerProfileRoute> { OwnerProfileScreen(onBack = navController::popBackStack) }
             composable<PreferencesRoute> { PreferencesScreen(onBack = navController::popBackStack) }
             composable<AboutRoute> { AboutScreen(onBack = navController::popBackStack) }
+            composable<LicenseRoute> { LicenseScreen(onBack = navController::popBackStack) }
             composable<TransactionsRoute> { TransactionsScreen(onOpenEntry = { navController.navigate(EntryDetailRoute(it)) }) }
             composable<ReportsRoute> { ReportsScreen(onOpen = { navController.navigate(ReportViewerRoute(it.name)) }) }
             composable<ReportViewerRoute> { ReportViewerScreen(onBack = navController::popBackStack) }
@@ -186,6 +188,7 @@ fun MainScaffold(
                     onOwnerProfile = { navController.navigate(OwnerProfileRoute) },
                     onPreferences = { navController.navigate(PreferencesRoute) },
                     onAbout = { navController.navigate(AboutRoute) },
+                    onLicense = { navController.navigate(LicenseRoute) },
                     onSecurity = { navController.navigate(SecurityRoute) },
                     onUnits = { navController.navigate(UnitsRoute) },
                     onVarieties = { navController.navigate(VarietiesRoute) },

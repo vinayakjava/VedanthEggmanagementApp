@@ -56,3 +56,4 @@ import kotlinx.serialization.Serializable
 @Serializable data object OwnerProfileRoute
 @Serializable data object PreferencesRoute
 @Serializable data object AboutRoute
+@Serializable data object LicenseRoute

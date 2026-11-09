@@ -1,5 +1,7 @@
 package com.eggbusinessmanager.app.di
 
+import com.eggbusinessmanager.domain.license.LicensePublicKey
+import com.eggbusinessmanager.domain.license.LicenseCrypto
 import com.eggbusinessmanager.app.BuildConfig
 import com.eggbusinessmanager.app.feature.backup.GoogleDriveAuthorizer
 import com.eggbusinessmanager.app.feature.backup.auto.AndroidBackupNotifier
@@ -28,6 +30,11 @@ object AppModule {
     fun provideAppLogger(): AppLogger = AndroidAppLogger(
         minLevel = if (BuildConfig.DEBUG) AndroidAppLogger.Level.DEBUG else AndroidAppLogger.Level.WARN,
     )
+
+    /** The owner's public license key (release) or the test key (debug); never a signing secret. */
+    @Provides
+    @Singleton
+    fun provideLicensePublicKey(): LicensePublicKey = LicensePublicKey(LicenseCrypto.publicKey(BuildConfig.LICENSE_PUBLIC_KEY))
 }
 
 @Module

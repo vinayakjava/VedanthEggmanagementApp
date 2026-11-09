@@ -137,9 +137,53 @@ def fail(message, device):
     sys.exit(1)
 
 
+def activate_if_needed(d):
+    """The release app asks for a lifetime license first: read the Device code, make a key with the
+    owner's license tool (using a scratch registry, so the real one stays clean) and paste it."""
+    end = time.time() + 40
+    while time.time() < end:
+        texts = d.texts()
+        if 'Activate EggVyapar' in texts:
+            break
+        if 'Create account' in texts or 'Welcome back' in texts:
+            return
+        time.sleep(1)
+    else:
+        return
+    code = next(t for t in d.texts() if re.fullmatch(r'[0-9A-Z]{4}(-[0-9A-Z]{4}){3}', t))
+    key = issue_check_key(code)
+    d.tap('License key (starts with EV1-)')
+    # Clear anything typed before, then type the key in short pieces: adb drops characters on long text.
+    for _ in range(3):
+        d.shell('input', 'keyevent', 'KEYCODE_MOVE_END')
+        d.shell('input', 'keyevent', *(['KEYCODE_DEL'] * 80))
+    for i in range(0, len(key), 20):
+        d.shell('input', 'text', key[i:i + 20])
+    d.hide_keyboard()
+    d.tap('Activate')
+    print('activated with a check key for device', code)
+
+
+def issue_check_key(code):
+    import shutil
+    import tempfile
+    real = os.path.join(os.environ['USERPROFILE'], '.eggvyapar-license')
+    tool = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'license.bat')  # runs it with Java 17
+    scratch = tempfile.mkdtemp(prefix='ebm-check-')
+    try:
+        for name in ('signing-key.pk8', 'public-key.txt'):
+            shutil.copy(os.path.join(real, name), scratch)
+        out = subprocess.run([tool, 'sell', '--customer', 'Release check', '--shop', 'Emulator', '--device', code,
+                              '--home', scratch], capture_output=True, text=True, check=True).stdout
+        return [line for line in out.splitlines() if line.startswith('EV1-')][-1]
+    finally:
+        shutil.rmtree(scratch, ignore_errors=True)
+
+
 def seed(d, version, build):
     d.adb('logcat', '-c', '-b', 'crash', check=False)
     d.launch()
+    activate_if_needed(d)
     d.wait('Create account', 60)
     d.tap('Create account')
     d.wait('Your details')
@@ -191,6 +235,7 @@ def seed(d, version, build):
 def verify(d, version, build):
     d.adb('logcat', '-c', '-b', 'crash', check=False)
     d.launch()
+    activate_if_needed(d)  # an update from a version without licensing asks once
     # The account survived the update: the app asks to sign in, not to create an account.
     d.wait('Welcome back', 60)
     d.type('Mobile number or email', MOBILE)

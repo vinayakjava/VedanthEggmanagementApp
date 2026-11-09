@@ -132,7 +132,9 @@ class BackupViewModel @Inject constructor(
 
     fun connectDrive() = busy {
         val consent = runCatching { (authorizer as? GoogleDriveAuthorizer)?.beginConnect() }
-        consent.exceptionOrNull()?.let { fail(failureOf(it)) }
+        consent.exceptionOrNull()?.let { error ->
+            driveRefused(failureOf(error), (error.cause as? com.google.android.gms.common.api.ApiException)?.statusCode)
+        }
         consent.getOrNull()?.let { _events.send(Event.Consent(it)) }
     }
 
@@ -140,12 +142,24 @@ class BackupViewModel @Inject constructor(
         when (val result = (authorizer as? GoogleDriveAuthorizer)?.completeConnect(resultCode, data)) {
             GoogleDriveAuthorizer.ConnectResult.Connected ->
                 _state.update { it.copy(message = UiText.Resource(R.string.drive_connected_ok)) }
-            is GoogleDriveAuthorizer.ConnectResult.Failed -> {
-                val reason = UiText.Resource(failureMessage(result.failure))
-                _state.update { it.copy(message = reason) }
-            }
+            is GoogleDriveAuthorizer.ConnectResult.Failed -> driveRefused(result.failure, result.statusCode)
             GoogleDriveAuthorizer.ConnectResult.Cancelled, null -> Unit
         }
+    }
+
+    /**
+     * Shows why connecting failed. Google's status code is included, so the owner can read it out
+     * instead of the developer needing the phone's logs: 10 = app not registered (SHA-1), and other
+     * codes point at the consent screen / test users.
+     */
+    private fun driveRefused(failure: BackupFailure, statusCode: Int?) {
+        val message = when {
+            failure == BackupFailure.AUTH_REQUIRED && statusCode != null ->
+                UiText.Resource(R.string.drive_refused_code, listOf(statusCode))
+            failure == BackupFailure.AUTH_REQUIRED -> UiText.Resource(R.string.drive_refused_no_token)
+            else -> UiText.Resource(failureMessage(failure))
+        }
+        _state.update { it.copy(message = message) }
     }
 
     fun disconnectDrive() = viewModelScope.launch { authorizer.setConnected(false) }

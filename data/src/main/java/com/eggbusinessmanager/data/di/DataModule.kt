@@ -1,5 +1,9 @@
 package com.eggbusinessmanager.data.di
 
+import com.eggbusinessmanager.data.license.FileLicenseStore
+import com.eggbusinessmanager.data.license.KeystoreDeviceIdentity
+import com.eggbusinessmanager.domain.license.DeviceIdentity
+import com.eggbusinessmanager.domain.license.LicenseStore
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
@@ -146,6 +150,17 @@ abstract class SettingsDataBindingsModule {
 
     @Binds
     abstract fun bindAppPreferences(impl: RoomSettingsRepository): AppPreferencesRepository
+}
+
+/** Lifetime license: this phone's Keystore identity and the activated key (never backed up). */
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class LicenseDataBindingsModule {
+    @Binds
+    abstract fun bindDeviceIdentity(impl: KeystoreDeviceIdentity): DeviceIdentity
+
+    @Binds
+    abstract fun bindLicenseStore(impl: FileLicenseStore): LicenseStore
 }
 
 /** Backup and restore: snapshots, history, phone and Google Drive storage, automatic backup settings. */

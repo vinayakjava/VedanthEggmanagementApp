@@ -64,6 +64,7 @@ fun MoreScreen(
     onOwnerProfile: () -> Unit,
     onPreferences: () -> Unit,
     onAbout: () -> Unit,
+    onLicense: () -> Unit,
     onSecurity: () -> Unit,
     onUnits: () -> Unit,
     onVarieties: () -> Unit,
@@ -108,6 +109,10 @@ fun MoreScreen(
             SettingsRow(
                 R.drawable.ic_edit, stringResource(R.string.more_preferences), stringResource(R.string.more_preferences_summary),
                 onClick = onPreferences,
+            )
+            SettingsRow(
+                R.drawable.ic_key, stringResource(R.string.license_title), stringResource(R.string.more_license_summary),
+                onClick = onLicense,
             )
             SettingsRow(
                 R.drawable.ic_help, stringResource(R.string.more_about), stringResource(R.string.more_about_summary),
