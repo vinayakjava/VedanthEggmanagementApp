@@ -3,7 +3,7 @@ package com.eggvyapar.licensetool
 import java.io.File
 import kotlin.system.exitProcess
 
-private const val USAGE = """EggVyapar license tool — lifetime, device-bound license keys (private: keep on your PC).
+private const val USAGE = """EggVyapar license tool - lifetime, device-bound license keys (private: keep on your PC).
 
   license-tool init
       Create your signing key (once). Prints the public key that goes into the app.
@@ -86,7 +86,7 @@ private val COMMANDS: Map<String, (Tool) -> Unit> = mapOf(
         if (file == null) {
             t.out(csv.trimEnd())
         } else {
-            file.writeText("﻿" + csv) // BOM so Excel reads names in any language
+            file.writeText("\uFEFF" + csv) // BOM so Excel reads names in any language
             t.out("Exported to ${file.absolutePath}")
         }
     },
@@ -95,11 +95,11 @@ private val COMMANDS: Map<String, (Tool) -> Unit> = mapOf(
 )
 
 private fun describe(r: LicenseRecord) =
-    "${r.id}  ${r.customer} · ${r.shop}${if (r.phone.isNotBlank()) " · ${r.phone}" else ""}  " +
+    "${r.id}  ${r.customer} | ${r.shop}${if (r.phone.isNotBlank()) " | ${r.phone}" else ""}  " +
         "devices ${r.devices.size}/${r.maxDevices}  ${if (r.issued) "issued" else "not issued"}  created ${r.createdAt}"
 
 private fun printKey(device: DeviceRecord, out: (String) -> Unit) {
-    out("License key for device ${device.deviceCode} — send this to the customer:")
+    out("License key for device ${device.deviceCode} - send this to the customer:")
     out(device.key)
 }
 
