@@ -30,6 +30,8 @@ data class AutoBackupSettings(
     val keepLast: Int = 10,
     val wifiOnly: Boolean = false,
     val onlyWhileCharging: Boolean = false,
+    /** When automatic backup was last switched on; slots before it are never "missed" (FR-055). */
+    val enabledSince: Instant? = null,
 ) {
     init {
         require(dayOfMonth in 1..MAX_DAY_OF_MONTH) { "Day of month must be 1–$MAX_DAY_OF_MONTH" }
@@ -121,6 +123,9 @@ interface AutoBackupScheduler {
 /** Tells the owner, outside the app, that automatic backups keep failing. */
 interface BackupNotifier {
     fun notifyFailure(failure: BackupFailure)
+
+    /** FR-055: automatic backups have not succeeded for [periods] scheduled periods in a row. */
+    fun notifyMissed(periods: Int, frequency: BackupFrequency)
 
     fun clear()
 }

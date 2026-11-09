@@ -9,6 +9,7 @@ import com.eggbusinessmanager.domain.model.account.SecurityQuestion
 import com.eggbusinessmanager.domain.usecase.auth.GetActiveLockoutUseCase
 import com.eggbusinessmanager.domain.usecase.auth.GetSecurityQuestionsUseCase
 import com.eggbusinessmanager.domain.usecase.auth.RecoverWithPinUseCase
+import com.eggbusinessmanager.domain.usecase.auth.SetPasswordAfterRestoreUseCase
 import com.eggbusinessmanager.domain.usecase.auth.RecoverWithSecurityAnswersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +30,7 @@ class RecoveryViewModel @Inject constructor(
     private val recoverWithAnswers: RecoverWithSecurityAnswersUseCase,
     private val getQuestions: GetSecurityQuestionsUseCase,
     private val activeLockout: GetActiveLockoutUseCase,
+    private val setPasswordAfterRestore: SetPasswordAfterRestoreUseCase,
 ) : ViewModel() {
 
     data class UiState(
@@ -75,6 +77,9 @@ class RecoveryViewModel @Inject constructor(
     fun submitPin() = submit { recoverWithPin(it.pin, it.newPassword, it.confirmPassword) }
 
     fun submitAnswers() = submit { recoverWithAnswers(it.answers, it.newPassword, it.confirmPassword) }
+
+    /** US9-9: right after a restore, no old password, PIN or answers are needed. */
+    fun submitAfterRestore() = submit { setPasswordAfterRestore(it.newPassword, it.confirmPassword) }
 
     private fun submit(action: suspend (UiState) -> DomainResult<Unit>) {
         val current = _state.value

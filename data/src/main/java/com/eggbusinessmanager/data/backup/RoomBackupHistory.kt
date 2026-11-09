@@ -50,6 +50,8 @@ class RoomBackupHistory @Inject constructor(
 
     override suspend fun fail(id: Long, at: Instant, failure: BackupFailure) =
         withContext(io) { dao.fail(id, at.toEpochMilli(), failure.name) }
+
+    override suspend fun forgetDriveFile(driveFileId: String) = withContext(io) { dao.forgetDriveFile(driveFileId) }
 }
 
 internal fun BackupRecordEntity.toDomain() = BackupRecord(

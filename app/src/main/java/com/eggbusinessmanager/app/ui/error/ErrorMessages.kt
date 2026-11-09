@@ -37,6 +37,7 @@ object ErrorMessages {
         DomainError.LastActiveVariety -> R.string.error_last_variety
         DomainError.LowStorage -> R.string.error_low_storage
         DomainError.StorageUnavailable -> R.string.error_storage_unavailable
+        DomainError.RestoreProofMissing -> R.string.error_restore_proof
         is DomainError.Unexpected -> R.string.error_generic
     }
 

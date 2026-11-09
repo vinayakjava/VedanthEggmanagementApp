@@ -15,6 +15,7 @@ import com.eggbusinessmanager.domain.backup.BackupPassphraseRules
 import com.eggbusinessmanager.domain.backup.BackupResult
 import com.eggbusinessmanager.domain.backup.ConfirmRestoreUseCase
 import com.eggbusinessmanager.domain.backup.DiscardRestoreUseCase
+import com.eggbusinessmanager.domain.backup.DeleteDriveBackupUseCase
 import com.eggbusinessmanager.domain.backup.DownloadDriveBackupUseCase
 import com.eggbusinessmanager.domain.backup.DriveAuthorizer
 import com.eggbusinessmanager.domain.backup.ListDriveBackupsUseCase
@@ -47,6 +48,7 @@ class BackupViewModel @Inject constructor(
     private val runBackup: RunBackupUseCase,
     private val listDrive: ListDriveBackupsUseCase,
     private val downloadDrive: DownloadDriveBackupUseCase,
+    private val deleteDrive: DeleteDriveBackupUseCase,
     private val stageRestore: StageRestoreUseCase,
     private val confirmRestore: ConfirmRestoreUseCase,
     private val discardRestore: DiscardRestoreUseCase,
@@ -164,6 +166,14 @@ class BackupViewModel @Inject constructor(
                 is BackupResult.Ok -> _state.update { it.copy(message = UiText.Resource(R.string.bk_downloaded)) }
                 is BackupResult.Failed -> fail(result.failure)
             }
+        }
+    }
+
+    /** FR-057: removes one backup from Google Drive; the history keeps the entry. */
+    fun deleteFromDrive(id: String) = busy {
+        when (val result = deleteDrive(id)) {
+            is BackupResult.Ok -> _state.update { it.copy(message = UiText.Resource(R.string.bk_deleted)) }
+            is BackupResult.Failed -> fail(result.failure)
         }
     }
 

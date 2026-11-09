@@ -117,4 +117,26 @@
     <string name="auto_failed_title">Automatic backup failed</string>
     <string name="auto_channel_name">Backup status</string>
     <string name="bf_busy">Another backup or restore is running. Try again in a moment.</string>
+    <!-- Backup extras: delete Drive backups, missed backups, password after restore -->
+    <string name="bk_history_delete">Delete</string>
+    <string name="bk_history_removed">Deleted from Google Drive</string>
+    <string name="bk_delete_title">Delete this backup from Google Drive?</string>
+    <string name="bk_delete_body">The backup from %1$s will be removed from your Google Drive. This cannot be undone. Your data on this phone is not affected.</string>
+    <string name="bk_deleted">Backup deleted from Google Drive.</string>
+    <string name="auto_missed_title">Automatic backups are not running</string>
+    <string name="restore_set_password">Set a new password</string>
+    <string name="restore_set_password_body">You restored this backup with its passphrase, so you can choose a new login password now without the old one.</string>
+    <string name="error_restore_proof">This option is only available right after restoring a backup. Use Forgot password instead.</string>
+    <plurals name="auto_missed_days">
+        <item quantity="one">No automatic backup has worked for %1$d day. Open the app and check Backup &amp; restore.</item>
+        <item quantity="other">No automatic backup has worked for %1$d days. Open the app and check Backup &amp; restore.</item>
+    </plurals>
+    <plurals name="auto_missed_weeks">
+        <item quantity="one">No automatic backup has worked for %1$d week. Open the app and check Backup &amp; restore.</item>
+        <item quantity="other">No automatic backup has worked for %1$d weeks. Open the app and check Backup &amp; restore.</item>
+    </plurals>
+    <plurals name="auto_missed_months">
+        <item quantity="one">No automatic backup has worked for %1$d month. Open the app and check Backup &amp; restore.</item>
+        <item quantity="other">No automatic backup has worked for %1$d months. Open the app and check Backup &amp; restore.</item>
+    </plurals>
 </resources>

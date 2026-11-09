@@ -17,6 +17,7 @@ import kotlinx.serialization.Serializable
 
 /** Restore on a new phone, before an account exists (US9). */
 @Serializable data object RestoreFromBackupRoute
+@Serializable data object SetPasswordAfterRestoreRoute
 
 /** Top-level destinations inside the main scaffold. */
 @Serializable data object DashboardRoute

@@ -1,6 +1,7 @@
 package com.eggbusinessmanager.domain.usecase.auth
 
 import com.eggbusinessmanager.domain.auth.CredentialGate
+import com.eggbusinessmanager.domain.backup.RestoreProof
 import com.eggbusinessmanager.domain.error.DomainError
 import com.eggbusinessmanager.domain.error.DomainResult
 import com.eggbusinessmanager.domain.error.Field
@@ -41,6 +42,21 @@ class PasswordResetter @Inject constructor(
             accounts.updatePassword(hasher.hash(newPassword), now)
             session.authenticated(afterRecovery = true)
         }
+    }
+}
+
+/**
+ * US9-9: right after restoring a backup — which needed the backup passphrase — the owner may set a new
+ * login password without the old one, once. Validation failures leave the chance open.
+ */
+class SetPasswordAfterRestoreUseCase @Inject constructor(
+    private val resetter: PasswordResetter,
+    private val proof: RestoreProof,
+) {
+    suspend operator fun invoke(newPassword: String, confirmation: String): DomainResult<Unit> {
+        if (!proof.isGranted) return DomainResult.Err(DomainError.RestoreProofMissing)
+        return resetter.reset(newPassword, confirmation, ValidationErrors(), DomainError.RestoreProofMissing) { true }
+            .also { if (it is DomainResult.Ok) proof.clear() }
     }
 }
 

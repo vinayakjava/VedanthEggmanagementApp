@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /** Outcome of a backup operation: a value or one [BackupFailure]. */
 sealed interface BackupResult<out T> {
@@ -188,9 +189,45 @@ class ConfirmRestoreUseCase @Inject constructor(
     }
 }
 
-/** After a restart: whether the restore was applied or rolled back (shown once). */
-class ConsumeRestoreOutcomeUseCase @Inject constructor(private val engine: BackupEngine) {
-    suspend operator fun invoke(): RestoreOutcome? = engine.consumeRestoreOutcome()
+/**
+ * After a restart: whether the restore was applied or rolled back (shown once). A successful restore
+ * proves ownership — the backup passphrase was needed — so it grants one password reset (US9-9).
+ */
+class ConsumeRestoreOutcomeUseCase @Inject constructor(private val engine: BackupEngine, private val proof: RestoreProof) {
+    suspend operator fun invoke(): RestoreOutcome? = engine.consumeRestoreOutcome().also {
+        if (it == RestoreOutcome.RESTORED) proof.grant()
+    }
+}
+
+/**
+ * US9-9: in this app session, right after a restore that needed the backup passphrase, the owner may set
+ * a new login password without the old one. Kept only in memory, so it ends with the app process.
+ */
+@Singleton
+class RestoreProof @Inject constructor() {
+    @Volatile
+    private var granted = false
+
+    val isGranted: Boolean get() = granted
+
+    fun grant() {
+        granted = true
+    }
+
+    fun clear() {
+        granted = false
+    }
+}
+
+/**
+ * FR-057: deletes one backup from Google Drive. The history keeps the record without its download link,
+ * so the list stays a true log of what happened.
+ */
+class DeleteDriveBackupUseCase @Inject constructor(private val drive: DriveBackupStore, private val history: BackupHistory) {
+    suspend operator fun invoke(driveFileId: String): BackupResult<Unit> = backupResult {
+        drive.delete(driveFileId)
+        history.forgetDriveFile(driveFileId)
+    }
 }
 
 /** Cancels a staged restore; the current data stays as it is. */

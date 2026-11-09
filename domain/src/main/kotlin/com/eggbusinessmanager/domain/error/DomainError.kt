@@ -56,6 +56,9 @@ sealed interface DomainError {
     /** Local data could not be opened, e.g. the encryption key is unavailable. */
     data object StorageUnavailable : DomainError
 
+    /** Setting a password without the old one is only possible right after a restore (US9-9). */
+    data object RestoreProofMissing : DomainError
+
     /** Anything unexpected. [cause] is for diagnostics only and is never shown to the user. */
     data class Unexpected(val cause: Throwable? = null) : DomainError
 }

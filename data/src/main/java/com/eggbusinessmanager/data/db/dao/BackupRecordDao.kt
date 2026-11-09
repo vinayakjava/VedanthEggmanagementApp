@@ -22,4 +22,7 @@ interface BackupRecordDao {
 
     @Query("UPDATE backup_record SET status = 'FAILED', finished_at = :at, failure_code = :failure WHERE id = :id")
     suspend fun fail(id: Long, at: Long, failure: String)
+
+    @Query("UPDATE backup_record SET drive_file_id = NULL WHERE drive_file_id = :driveFileId")
+    suspend fun forgetDriveFile(driveFileId: String)
 }

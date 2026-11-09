@@ -19,6 +19,8 @@ import androidx.navigation.compose.rememberNavController
 import com.eggbusinessmanager.app.feature.backup.BackupScreen
 import com.eggbusinessmanager.app.feature.auth.recovery.ForgotPasswordScreen
 import com.eggbusinessmanager.app.feature.auth.recovery.RecoverWithPinScreen
+import com.eggbusinessmanager.app.feature.auth.recovery.SetPasswordAfterRestoreScreen
+import com.eggbusinessmanager.app.feature.backup.RestoreOutcomeDialog
 import com.eggbusinessmanager.app.feature.auth.recovery.RecoverWithQuestionsScreen
 import com.eggbusinessmanager.app.feature.auth.signin.SignInScreen
 import com.eggbusinessmanager.app.feature.auth.signup.SignupAccountScreen
@@ -86,6 +88,11 @@ private fun AuthNavHost(hasAccount: Boolean) {
         }
         composable<SignInRoute> {
             SignInScreen(viewModel = hiltViewModel(), onForgotPassword = { navController.navigate(ForgotPasswordRoute) })
+            // After a restore the app restarts here: say how it went, and offer a new password (US9-9).
+            RestoreOutcomeDialog(onSetPassword = { navController.navigate(SetPasswordAfterRestoreRoute) })
+        }
+        composable<SetPasswordAfterRestoreRoute> {
+            SetPasswordAfterRestoreScreen(viewModel = hiltViewModel(), onBack = navController::popBackStack)
         }
         composable<ForgotPasswordRoute> {
             ForgotPasswordScreen(

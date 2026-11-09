@@ -47,6 +47,9 @@ interface BackupHistory {
     suspend fun succeed(id: Long, at: Instant, sizeBytes: Long?, fileName: String?, driveFileId: String?)
 
     suspend fun fail(id: Long, at: Instant, failure: BackupFailure)
+
+    /** The Drive file [driveFileId] was deleted: its records stay in the history, without a download link. */
+    suspend fun forgetDriveFile(driveFileId: String)
 }
 
 /** Files the owner picks with the Storage Access Framework; [uri] is a `content://` URI string. */

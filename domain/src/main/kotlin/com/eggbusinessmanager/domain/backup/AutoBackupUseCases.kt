@@ -102,7 +102,12 @@ class RunAutomaticBackupUseCase @Inject constructor(
             .filter { it.trigger == BackupTrigger.AUTOMATIC }
             .sortedByDescending { it.createdAt }
             .drop(keepLast)
-        old.forEach { backup -> backupResult { drive.delete(backup.id) } }
+        old.forEach { backup ->
+            backupResult {
+                drive.delete(backup.id)
+                history.forgetDriveFile(backup.id)
+            }
+        }
     }
 
     private suspend fun DriveBackupStore.listOrNull(): List<RemoteBackup>? = (backupResult { list() } as? BackupResult.Ok)?.value
@@ -154,7 +159,12 @@ class UpdateAutoBackupSettingsUseCase @Inject constructor(
     private val authorizer: DriveAuthorizer,
     private val clock: Clock,
 ) {
-    suspend operator fun invoke(new: AutoBackupSettings): BackupFailure? {
+    suspend operator fun invoke(settingsToSave: AutoBackupSettings): BackupFailure? {
+        val current = settings.observe().first()
+        // Remember when it was switched on, so slots before that are never counted as missed (FR-055).
+        val new = settingsToSave.copy(
+            enabledSince = if (settingsToSave.enabled) current.enabledSince.takeIf { current.enabled } ?: clock.now() else null,
+        )
         val problem = when {
             !new.enabled -> null
             !engine.hasPassphrase() -> BackupFailure.NO_PASSPHRASE
@@ -166,6 +176,46 @@ class UpdateAutoBackupSettingsUseCase @Inject constructor(
             if (new.enabled) scheduler.schedule(new, BackupSchedule.next(new, clock.now(), clock.zone())) else scheduler.cancel()
         }
         return problem
+    }
+}
+
+/**
+ * FR-055, at app start: when automatic backup is on but none has succeeded for [MISSED_PERIODS] scheduled
+ * slots in a row (since it was switched on), tells the owner with a notification. Returns the number of
+ * slots missed (0 when all is well).
+ */
+class CheckMissedBackupsUseCase @Inject constructor(
+    private val settings: AutoBackupSettingsRepository,
+    private val history: BackupHistory,
+    private val notifier: BackupNotifier,
+    private val clock: Clock,
+) {
+    suspend operator fun invoke(): Int {
+        val current = settings.observe().first()
+        val since = current.enabledSince
+        if (!current.enabled || since == null) return 0
+        val lastSuccess = history.observe().first()
+            .filter { it.trigger == BackupTrigger.AUTOMATIC && it.status == BackupStatus.SUCCESS }
+            .maxOfOrNull { it.startedAt }
+        val anchor = listOfNotNull(since, lastSuccess).max()
+        val missed = missedSlots(current, anchor)
+        if (missed >= MISSED_PERIODS) notifier.notifyMissed(missed, current.frequency)
+        return missed
+    }
+
+    /** Slots after [anchor] up to now, counted up to [MISSED_PERIODS]. */
+    private fun missedSlots(settings: AutoBackupSettings, anchor: Instant): Int {
+        var count = 0
+        var slot = BackupSchedule.previous(settings, clock.now(), clock.zone())
+        while (slot.isAfter(anchor) && count < MISSED_PERIODS) {
+            count++
+            slot = BackupSchedule.previous(settings, slot.minusSeconds(1), clock.zone())
+        }
+        return count
+    }
+
+    companion object {
+        const val MISSED_PERIODS = 3
     }
 }
 

@@ -75,6 +75,7 @@ fun BackupScreen(onBack: () -> Unit, restoreOnly: Boolean = false, viewModel: Ba
     val driveConnected by viewModel.driveConnected.collectAsStateWithLifecycle()
     val activity = LocalActivity.current
     var downloadId by rememberSaveable { mutableStateOf<String?>(null) }
+    var confirmDelete by remember { mutableStateOf<BackupRecord?>(null) }
 
     val saveBackup = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(BackupHeader.MIME_TYPE)) {
         viewModel.backupNow(it?.toString())
@@ -111,15 +112,41 @@ fun BackupScreen(onBack: () -> Unit, restoreOnly: Boolean = false, viewModel: Ba
         }
         RestoreCard(state.busy, driveConnected, viewModel, onPickFile = { openBackup.launch(arrayOf("*/*")) })
         if (!restoreOnly) {
-            HistoryCard(status.history) { record ->
-                downloadId = record.driveFileId
-                saveDownload.launch(record.fileName ?: suggestedName())
-            }
+            HistoryCard(
+                status.history,
+                onDownload = { record ->
+                    downloadId = record.driveFileId
+                    saveDownload.launch(record.fileName ?: suggestedName())
+                },
+                onDelete = { confirmDelete = it },
+            )
         }
     }
 
     if (state.passphraseDialog) PassphraseDialog(state, viewModel)
     RestoreDialogs(state, viewModel)
+    confirmDelete?.let { record ->
+        DeleteDriveBackupDialog(
+            record,
+            onConfirm = {
+                confirmDelete = null
+                record.driveFileId?.let(viewModel::deleteFromDrive)
+            },
+            onDismiss = { confirmDelete = null },
+        )
+    }
+}
+
+/** FR-057: deleting a Drive backup cannot be undone, so it is confirmed first. */
+@Composable
+private fun DeleteDriveBackupDialog(record: BackupRecord, onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.bk_delete_title)) },
+        text = { Text(stringResource(R.string.bk_delete_body, formatTime(record.startedAt))) },
+        confirmButton = { TextButton(onClick = onConfirm) { Text(stringResource(R.string.bk_history_delete)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } },
+    )
 }
 
 private fun suggestedName(): String =
@@ -265,25 +292,31 @@ private fun RestoreCard(busy: Boolean, driveConnected: Boolean, viewModel: Backu
 }
 
 @Composable
-private fun HistoryCard(records: List<BackupRecord>, onDownload: (BackupRecord) -> Unit) {
+private fun HistoryCard(records: List<BackupRecord>, onDownload: (BackupRecord) -> Unit, onDelete: (BackupRecord) -> Unit) {
     Section(stringResource(R.string.bk_history_title)) {
         if (records.isEmpty()) Text(stringResource(R.string.bk_history_empty), style = MaterialTheme.typography.bodyMedium)
         records.take(HISTORY_SHOWN).forEach { record ->
-            HistoryRow(record, onDownload)
+            HistoryRow(record, onDownload, onDelete)
             HorizontalDivider()
         }
     }
 }
 
+/** A Drive backup whose file was deleted (by the owner or by retention); the entry stays in the history. */
+private val BackupRecord.removedFromDrive: Boolean
+    get() = status == BackupStatus.SUCCESS && operation == BackupOperation.BACKUP &&
+        destination == BackupDestination.GOOGLE_DRIVE && driveFileId == null
+
 @Composable
-private fun HistoryRow(record: BackupRecord, onDownload: (BackupRecord) -> Unit) {
+private fun HistoryRow(record: BackupRecord, onDownload: (BackupRecord) -> Unit, onDelete: (BackupRecord) -> Unit) {
     val kind = when {
         record.operation == BackupOperation.RESTORE -> R.string.bk_history_restore
         record.trigger == BackupTrigger.SAFETY -> R.string.bk_history_safety
         else -> R.string.bk_history_backup
     }
+    val onDrive = record.status == BackupStatus.SUCCESS && record.driveFileId != null
     val outcome = when (record.status) {
-        BackupStatus.SUCCESS -> stringResource(R.string.bk_history_ok)
+        BackupStatus.SUCCESS -> stringResource(if (record.removedFromDrive) R.string.bk_history_removed else R.string.bk_history_ok)
         BackupStatus.FAILED -> {
             val reason = stringResource(failureMessage(record.failure ?: BackupFailure.UNKNOWN))
             stringResource(R.string.bk_history_failed, reason)
@@ -295,8 +328,13 @@ private fun HistoryRow(record: BackupRecord, onDownload: (BackupRecord) -> Unit)
         supportingContent = {
             Text(listOfNotNull(formatTime(record.startedAt), record.sizeBytes?.let { size(it) }, outcome).joinToString(" · "))
         },
-        trailingContent = if (record.status == BackupStatus.SUCCESS && record.driveFileId != null) {
-            { TextButton(onClick = { onDownload(record) }) { Text(stringResource(R.string.bk_history_download)) } }
+        trailingContent = if (onDrive) {
+            {
+                Row {
+                    TextButton(onClick = { onDownload(record) }) { Text(stringResource(R.string.bk_history_download)) }
+                    TextButton(onClick = { onDelete(record) }) { Text(stringResource(R.string.bk_history_delete)) }
+                }
+            }
         } else {
             null
         },

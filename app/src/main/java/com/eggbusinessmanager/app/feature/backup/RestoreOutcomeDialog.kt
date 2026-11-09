@@ -34,9 +34,12 @@ class RestoreOutcomeViewModel @Inject constructor(consume: ConsumeRestoreOutcome
     }
 }
 
-/** After the restart that applied (or rolled back) a restore: says what happened, once. */
+/**
+ * After the restart that applied (or rolled back) a restore: says what happened, once. On the sign-in
+ * screen, [onSetPassword] offers a new login password, since restoring needed the passphrase (US9-9).
+ */
 @Composable
-fun RestoreOutcomeDialog(viewModel: RestoreOutcomeViewModel = hiltViewModel()) {
+fun RestoreOutcomeDialog(onSetPassword: (() -> Unit)? = null, viewModel: RestoreOutcomeViewModel = hiltViewModel()) {
     val outcome by viewModel.outcome.collectAsStateWithLifecycle()
     val restored = outcome == RestoreOutcome.RESTORED
     if (outcome == null) return
@@ -45,5 +48,15 @@ fun RestoreOutcomeDialog(viewModel: RestoreOutcomeViewModel = hiltViewModel()) {
         title = { Text(stringResource(if (restored) R.string.restore_outcome_ok_title else R.string.restore_outcome_fail_title)) },
         text = { Text(stringResource(if (restored) R.string.restore_outcome_ok_body else R.string.restore_outcome_fail_body)) },
         confirmButton = { TextButton(onClick = viewModel::dismiss) { Text(stringResource(R.string.action_ok)) } },
+        dismissButton = if (restored && onSetPassword != null) {
+            {
+                TextButton(onClick = {
+                    viewModel.dismiss()
+                    onSetPassword()
+                }) { Text(stringResource(R.string.restore_set_password)) }
+            }
+        } else {
+            null
+        },
     )
 }

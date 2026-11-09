@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import com.eggbusinessmanager.app.R
 import com.eggbusinessmanager.app.feature.backup.failureMessage
 import com.eggbusinessmanager.domain.backup.BackupFailure
+import com.eggbusinessmanager.domain.backup.BackupFrequency
 import com.eggbusinessmanager.domain.backup.BackupNotifier
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -25,7 +26,20 @@ import javax.inject.Singleton
 @Singleton
 class AndroidBackupNotifier @Inject constructor(@ApplicationContext private val context: Context) : BackupNotifier {
 
-    override fun notifyFailure(failure: BackupFailure) {
+    override fun notifyFailure(failure: BackupFailure) =
+        show(context.getString(R.string.auto_failed_title), context.getString(failureMessage(failure)))
+
+    override fun notifyMissed(periods: Int, frequency: BackupFrequency) {
+        val unit = when (frequency) {
+            BackupFrequency.DAILY -> R.plurals.auto_missed_days
+            BackupFrequency.WEEKLY -> R.plurals.auto_missed_weeks
+            BackupFrequency.MONTHLY -> R.plurals.auto_missed_months
+        }
+        show(context.getString(R.string.auto_missed_title), context.resources.getQuantityString(unit, periods, periods))
+    }
+
+    /** One notification at a time: a newer message replaces the older one. Never contains business data. */
+    private fun show(title: String, text: String) {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
         ensureChannel()
         val open = context.packageManager.getLaunchIntentForPackage(context.packageName)?.let {
@@ -33,9 +47,9 @@ class AndroidBackupNotifier @Inject constructor(@ApplicationContext private val 
         }
         val notification = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_warning)
-            .setContentTitle(context.getString(R.string.auto_failed_title))
-            .setContentText(context.getString(failureMessage(failure)))
-            .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(failureMessage(failure))))
+            .setContentTitle(title)
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
             .setContentIntent(open)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

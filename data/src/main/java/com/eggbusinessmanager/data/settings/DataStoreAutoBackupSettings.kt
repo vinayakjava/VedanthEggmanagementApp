@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.eggbusinessmanager.domain.backup.AutoBackupSettings
 import com.eggbusinessmanager.domain.backup.AutoBackupSettingsRepository
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import java.time.DayOfWeek
+import java.time.Instant
 import java.time.LocalTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -38,6 +40,7 @@ class DataStoreAutoBackupSettings @Inject constructor(
             keepLast = p[KEEP_LAST]?.takeIf { it in AutoBackupSettings.RETENTION_CHOICES } ?: defaults.keepLast,
             wifiOnly = p[WIFI_ONLY] ?: defaults.wifiOnly,
             onlyWhileCharging = p[CHARGING] ?: defaults.onlyWhileCharging,
+            enabledSince = p[ENABLED_SINCE]?.let(Instant::ofEpochMilli),
         )
     }.distinctUntilChanged()
 
@@ -51,6 +54,8 @@ class DataStoreAutoBackupSettings @Inject constructor(
             p[KEEP_LAST] = settings.keepLast
             p[WIFI_ONLY] = settings.wifiOnly
             p[CHARGING] = settings.onlyWhileCharging
+            val since = settings.enabledSince
+            if (since == null) p.remove(ENABLED_SINCE) else p[ENABLED_SINCE] = since.toEpochMilli()
         }
     }
 
@@ -66,5 +71,6 @@ class DataStoreAutoBackupSettings @Inject constructor(
         val KEEP_LAST = intPreferencesKey("auto_backup_keep_last")
         val WIFI_ONLY = booleanPreferencesKey("auto_backup_wifi_only")
         val CHARGING = booleanPreferencesKey("auto_backup_only_charging")
+        val ENABLED_SINCE = longPreferencesKey("auto_backup_enabled_since")
     }
 }

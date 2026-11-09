@@ -1,4 +1,4 @@
-# Egg Business Manager — Release 1.0.0
+# Egg Business Manager — Release 1.0.1
 
 ## Version information
 
@@ -6,8 +6,8 @@
 |---|---|
 | App name | Egg Business Manager |
 | Application ID | `com.eggbusinessmanager.app` (permanent — never change it) |
-| Version name | 1.0.0 |
-| Version code | 10000 (`major*10000 + minor*100 + patch`) |
+| Version name | 1.0.1 |
+| Version code | 10001 (`major*10000 + minor*100 + patch`) |
 | Minimum Android | Android 12 (API 31) |
 | Target / compile SDK | Android 17 (API 37, latest stable) |
 | Database schema | version 1 — `data/schemas/com.eggbusinessmanager.data.db.EggBusinessDatabase/1.json` (frozen) |
@@ -88,12 +88,12 @@ Build the current version and a newer patch from the same sources, both release-
 
 ```powershell
 .\gradlew :app:assembleRelease;                         copy app\build\outputs\apk\release\app-release.apk dist\check-old.apk
-.\gradlew :app:assembleRelease -PebmUpgradePatch=1;     copy app\build\outputs\apk\release\app-release.apk dist\check-new.apk
+.\gradlew :app:assembleRelease -PebmUpgradePatch=2;     copy app\build\outputs\apk\release\app-release.apk dist\check-new.apk
 adb -s <device> uninstall com.eggbusinessmanager.app
 adb -s <device> install dist\check-old.apk
 python scripts\release_check.py seed --serial <device>
 adb -s <device> install -r dist\check-new.apk            # update in place, data kept
-python scripts\release_check.py verify --serial <device> --version 1.0.1 --build 10001
+python scripts\release_check.py verify --serial <device> --version 1.0.2 --build 10002
 ```
 
 `seed` creates the account, a customer with an opening balance, a sale with money received on the
@@ -134,6 +134,19 @@ Google identifies the app by package name **and** signing certificate. In the Go
 release **SHA-1** above (keep the debug one for development builds). The consent screen needs the
 `drive.appdata` scope; while it is in "Testing", add each owner's Google account as a test user, or
 publish the consent screen. Until then, backups to the phone work and Drive shows "can't connect".
+
+## Release notes — 1.0.1 (2026-11-08)
+
+- Dashboard: Today / This week / This month with sales, purchases, money received and paid and net
+  cash; top 5 customers who owe the most; backup reminder after 7 days without a backup; a guide on a
+  new account.
+- Backups: delete single Google Drive backups from the history; after a restore, set a new login
+  password without the old one; a notification when automatic backups miss 3 scheduled periods.
+- APK: `dist/EggBusinessManager-1.0.1.apk`, SHA-256
+  `e643addf72c27e84090ca761ad79f28b57c6aa2776b651fb3c57348cedcb7003`; signature verified (release
+  certificate); smoke test of the signed APK passed (version 1.0.1, build 10001).
+- Tests: unit and database suites pass; new feature tests pass; the full app suite was interrupted
+  when the build PC slept (20 of 32 passed before that) and is to be re-run.
 
 ## Release notes — 1.0.0
 

@@ -100,6 +100,10 @@ class FakeBackupHistory : BackupHistory {
         it.copy(status = BackupStatus.FAILED, finishedAt = at, failure = failure)
     }
 
+    override suspend fun forgetDriveFile(driveFileId: String) {
+        records.value = records.value.map { if (it.driveFileId == driveFileId) it.copy(driveFileId = null) else it }
+    }
+
     private fun change(id: Long, transform: (BackupRecord) -> BackupRecord) {
         records.value = records.value.map { if (it.id == id) transform(it) else it }
     }
@@ -186,9 +190,13 @@ class FakeAutoBackupScheduler : com.eggbusinessmanager.domain.backup.AutoBackupS
 
 class FakeBackupNotifier : com.eggbusinessmanager.domain.backup.BackupNotifier {
     val shown = mutableListOf<BackupFailure>()
+    val missed = mutableListOf<Int>()
     var cleared = 0
     override fun notifyFailure(failure: BackupFailure) {
         shown += failure
+    }
+    override fun notifyMissed(periods: Int, frequency: com.eggbusinessmanager.domain.backup.BackupFrequency) {
+        missed += periods
     }
     override fun clear() {
         cleared++

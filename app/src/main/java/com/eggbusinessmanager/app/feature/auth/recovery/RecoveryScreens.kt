@@ -97,6 +97,20 @@ fun RecoverWithPinScreen(viewModel: RecoveryViewModel, onBack: () -> Unit) {
     }
 }
 
+/** US9-9: a new login password right after restoring a backup (the passphrase proved ownership). */
+@Composable
+fun SetPasswordAfterRestoreScreen(viewModel: RecoveryViewModel, onBack: () -> Unit) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    FormScreen(title = stringResource(R.string.restore_set_password), onBack = onBack) {
+        Text(stringResource(R.string.restore_set_password_body), style = MaterialTheme.typography.bodyMedium)
+        NewPasswordFields(state, viewModel, viewModel::submitAfterRestore)
+        SubmitArea(
+            state.feedback, state.busy, stringResource(R.string.restore_set_password),
+            viewModel::submitAfterRestore, viewModel::onLockoutFinished,
+        )
+    }
+}
+
 /** Reset by answering the owner's 3 security questions. */
 @Composable
 fun RecoverWithQuestionsScreen(viewModel: RecoveryViewModel, onBack: () -> Unit) {

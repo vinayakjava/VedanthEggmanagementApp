@@ -108,4 +108,26 @@
     <string name="auto_failed_title">स्वचालित बैकअप विफल</string>
     <string name="auto_channel_name">बैकअप स्थिति</string>
     <string name="bf_busy">कोई और बैकअप या रीस्टोर चल रहा है। थोड़ी देर बाद कोशिश करें।</string>
+    <!-- Backup extras: delete Drive backups, missed backups, password after restore -->
+    <string name="bk_history_delete">हटाएँ</string>
+    <string name="bk_history_removed">Google Drive से हटाया गया</string>
+    <string name="bk_delete_title">यह बैकअप Google Drive से हटाएँ?</string>
+    <string name="bk_delete_body">%1$s का बैकअप आपके Google Drive से हट जाएगा। इसे वापस नहीं लाया जा सकता। इस फ़ोन का डेटा नहीं बदलेगा।</string>
+    <string name="bk_deleted">बैकअप Google Drive से हटा दिया गया।</string>
+    <string name="auto_missed_title">अपने-आप बैकअप नहीं हो रहा</string>
+    <string name="restore_set_password">नया पासवर्ड बनाएँ</string>
+    <string name="restore_set_password_body">आपने यह बैकअप उसके पासफ़्रेज़ से वापस लाया है, इसलिए आप पुराने पासवर्ड के बिना अभी नया लॉगिन पासवर्ड चुन सकते हैं।</string>
+    <string name="error_restore_proof">यह विकल्प सिर्फ़ बैकअप वापस लाने के तुरंत बाद मिलता है। "पासवर्ड भूल गए" का उपयोग करें।</string>
+    <plurals name="auto_missed_days">
+        <item quantity="one">%1$d दिन से अपने-आप बैकअप नहीं हुआ। ऐप खोलें और बैकअप और रीस्टोर देखें।</item>
+        <item quantity="other">%1$d दिन से अपने-आप बैकअप नहीं हुआ। ऐप खोलें और बैकअप और रीस्टोर देखें।</item>
+    </plurals>
+    <plurals name="auto_missed_weeks">
+        <item quantity="one">%1$d हफ़्ते से अपने-आप बैकअप नहीं हुआ। ऐप खोलें और बैकअप और रीस्टोर देखें।</item>
+        <item quantity="other">%1$d हफ़्तों से अपने-आप बैकअप नहीं हुआ। ऐप खोलें और बैकअप और रीस्टोर देखें।</item>
+    </plurals>
+    <plurals name="auto_missed_months">
+        <item quantity="one">%1$d महीने से अपने-आप बैकअप नहीं हुआ। ऐप खोलें और बैकअप और रीस्टोर देखें।</item>
+        <item quantity="other">%1$d महीनों से अपने-आप बैकअप नहीं हुआ। ऐप खोलें और बैकअप और रीस्टोर देखें।</item>
+    </plurals>
 </resources>

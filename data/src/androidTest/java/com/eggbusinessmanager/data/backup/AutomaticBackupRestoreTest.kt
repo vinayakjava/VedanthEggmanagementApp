@@ -94,6 +94,7 @@ class AutomaticBackupRestoreTest {
         override fun notifyFailure(failure: BackupFailure) {
             notified += failure
         }
+        override fun notifyMissed(periods: Int, frequency: com.eggbusinessmanager.domain.backup.BackupFrequency) = Unit
         override fun clear() = Unit
     }
 
