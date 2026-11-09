@@ -32,7 +32,7 @@
     <string name="error_storage_unavailable">आपका डेटा अभी नहीं खुल सका। कृपया फिर से कोशिश करें।</string>
     <string name="error_validation">कृपया चिह्नित फ़ील्ड जाँचें।</string>
 
-    <string name="cd_brand_mark">एग बिज़नेस मैनेजर लोगो</string>
+    <string name="cd_brand_mark">EggVyapar लोगो</string>
     <string name="cd_warning">चेतावनी</string>
     <string name="loading">लोड हो रहा है…</string>
 </resources>

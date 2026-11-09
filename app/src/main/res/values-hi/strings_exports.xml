@@ -26,7 +26,7 @@
     <string name="rv_saved">%1$s सहेजा गया</string>
     <string name="rv_save_failed">फ़ाइल सहेजी नहीं जा सकी। कोई दूसरा फ़ोल्डर चुनें।</string>
     <string name="rv_export_heading">इस रूप में सहेजें</string>
-    <string name="doc_generated">%1$s को बनाया गया · Egg Business Manager</string>
+    <string name="doc_generated">%1$s को बनाया गया · EggVyapar</string>
     <string name="doc_period">अवधि: %1$s – %2$s</string>
     <string name="doc_period_from">अवधि: %1$s से</string>
     <string name="doc_period_to">अवधि: %1$s तक</string>

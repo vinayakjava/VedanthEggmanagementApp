@@ -38,4 +38,6 @@
     <string name="about_security_body">आपका पासवर्ड कभी सहेजा नहीं जाता, केवल उसका मज़बूत हैश। बैकअप ऐसे पासफ़्रेज़ से एन्क्रिप्ट होते हैं जिसे सिर्फ़ आप जानते हैं।</string>
     <string name="about_libraries_title">इनसे बना</string>
     <string name="about_libraries_body">Kotlin, Jetpack Compose, Material 3, Room, SQLCipher, Hilt, WorkManager, DataStore, OkHttp और Google Identity Services।</string>
+    <string name="about_developer_title">विकसितकर्ता</string>
+    <string name="about_developer_contact">संपर्क: %1$s</string>
 </resources>

@@ -136,8 +136,16 @@ class BackupViewModel @Inject constructor(
         consent.getOrNull()?.let { _events.send(Event.Consent(it)) }
     }
 
-    fun onConsentResult(data: Intent?) = busy {
-        (authorizer as? GoogleDriveAuthorizer)?.completeConnect(data)
+    fun onConsentResult(resultCode: Int, data: Intent?) = busy {
+        when (val result = (authorizer as? GoogleDriveAuthorizer)?.completeConnect(resultCode, data)) {
+            GoogleDriveAuthorizer.ConnectResult.Connected ->
+                _state.update { it.copy(message = UiText.Resource(R.string.drive_connected_ok)) }
+            is GoogleDriveAuthorizer.ConnectResult.Failed -> {
+                val reason = UiText.Resource(failureMessage(result.failure))
+                _state.update { it.copy(message = reason) }
+            }
+            GoogleDriveAuthorizer.ConnectResult.Cancelled, null -> Unit
+        }
     }
 
     fun disconnectDrive() = viewModelScope.launch { authorizer.setConnected(false) }
@@ -241,6 +249,7 @@ class BackupViewModel @Inject constructor(
 }
 
 @StringRes
+@Suppress("CyclomaticComplexMethod") // one branch per failure; exhaustive, so a new failure cannot be forgotten
 fun failureMessage(failure: BackupFailure): Int = when (failure) {
     BackupFailure.NO_PASSPHRASE -> R.string.bf_no_passphrase
     BackupFailure.NO_NETWORK -> R.string.bf_no_network
@@ -254,6 +263,7 @@ fun failureMessage(failure: BackupFailure): Int = when (failure) {
     BackupFailure.NOT_A_BACKUP -> R.string.bf_not_a_backup
     BackupFailure.INTERRUPTED -> R.string.bf_interrupted
     BackupFailure.BUSY -> R.string.bf_busy
+    BackupFailure.GOOGLE_SETUP -> R.string.bf_google_setup
     BackupFailure.UNKNOWN -> R.string.bf_unknown
 }
 

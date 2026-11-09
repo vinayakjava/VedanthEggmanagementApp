@@ -45,4 +45,8 @@
     <string name="about_security_body">Your password is never stored, only a strong hash of it. Backups are encrypted with a passphrase that only you know.</string>
     <string name="about_libraries_title">Built with</string>
     <string name="about_libraries_body">Kotlin, Jetpack Compose, Material 3, Room, SQLCipher, Hilt, WorkManager, DataStore, OkHttp and Google Identity Services.</string>
+    <string name="about_developer_title">Developed by</string>
+    <string name="about_developer_contact">Contact: %1$s</string>
+    <string name="about_developer_name" translatable="false">Vinayak Metagoli</string>
+    <string name="about_developer_phone" translatable="false">+91 7848971006</string>
 </resources>

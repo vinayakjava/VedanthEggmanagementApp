@@ -11,11 +11,11 @@ plugins {
 
 // Semantic version. versionCode = major*10000 + minor*100 + patch (research R18).
 // 1.0.0 was the first production release: its database schema (version 1) is frozen from there on.
-// 1.0.1: on-the-spot payment, receipts, dashboard periods, backup extras.
+// 1.0.1: on-the-spot payment, receipts, dashboard periods, backup extras. 1.0.2: Drive connection errors shown. 1.0.3: developer on About.
 val versionMajor = 1
 val versionMinor = 0
 // The upgrade check (scripts/release_check.py) builds a newer patch with -PebmUpgradePatch=<n>; normal builds never set it.
-val versionPatch = (project.findProperty("ebmUpgradePatch") as String?)?.toInt() ?: 1
+val versionPatch = (project.findProperty("ebmUpgradePatch") as String?)?.toInt() ?: 3
 
 // Release signing comes from ~/.gradle/gradle.properties or environment variables,
 // never from the repository (Constitution III).

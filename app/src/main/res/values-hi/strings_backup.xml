@@ -80,7 +80,7 @@
     <string name="bf_wrong_passphrase">पासफ़्रेज़ ग़लत है।</string>
     <string name="bf_corrupt">यह बैकअप ख़राब है और रीस्टोर नहीं हो सकता।</string>
     <string name="bf_newer_version">यह बैकअप ऐप के नए संस्करण से बना है। पहले ऐप अपडेट करें।</string>
-    <string name="bf_not_a_backup">यह फ़ाइल Egg Business Manager का बैकअप नहीं है।</string>
+    <string name="bf_not_a_backup">यह फ़ाइल EggVyapar का बैकअप नहीं है।</string>
     <string name="bf_interrupted">रीस्टोर बीच में रुक गया, इसलिए कुछ नहीं बदला।</string>
     <string name="bf_unknown">कुछ ग़लत हो गया। फिर कोशिश करें।</string>
     <string name="auto_title">स्वचालित बैकअप</string>
@@ -130,4 +130,9 @@
         <item quantity="one">%1$d महीने से अपने-आप बैकअप नहीं हुआ। ऐप खोलें और बैकअप और रीस्टोर देखें।</item>
         <item quantity="other">%1$d महीनों से अपने-आप बैकअप नहीं हुआ। ऐप खोलें और बैकअप और रीस्टोर देखें।</item>
     </plurals>
+    <!-- Google Drive connection results -->
+    <string name="drive_connected_ok">Google Drive जुड़ गया।</string>
+    <string name="bf_google_setup">Google ने ऐप की इस कॉपी को स्वीकार नहीं किया (त्रुटि 10)। Drive इस्तेमाल करने से पहले Google Cloud प्रोजेक्ट में इस ऐप का साइनिंग की फ़िंगरप्रिंट (SHA-1) दर्ज होना चाहिए। फ़ोन पर बैकअप अब भी काम करता है।</string>
+    <string name="backup_needs_passphrase">पहले बैकअप पासफ़्रेज़ बनाएँ।</string>
+    <string name="backup_needs_drive">पहले ऊपर Google Drive जोड़ें, या "यह फ़ोन" चुनें।</string>
 </resources>

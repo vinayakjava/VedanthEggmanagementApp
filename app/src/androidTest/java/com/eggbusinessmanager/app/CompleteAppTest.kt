@@ -134,6 +134,8 @@ class CompleteAppTest {
         click(s(R.string.more_about))
         compose.waitUntil(10_000) { compose.onAllNodesWithTag(APP_VERSION_TAG).fetchSemanticsNodes().isNotEmpty() }
         shows(s(R.string.about_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE))
+        shows("Vinayak Metagoli")
+        shows(s(R.string.about_developer_contact, "+91 7848971006"))
         back()
 
         // Sign out and back in: everything is still there.

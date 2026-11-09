@@ -68,7 +68,7 @@
     <string name="lock_sign_out">इसके बजाय साइन आउट करें</string>
 
     <!-- Biometric -->
-    <string name="biometric_prompt_title">एग बिज़नेस मैनेजर अनलॉक करें</string>
+    <string name="biometric_prompt_title">EggVyapar अनलॉक करें</string>
     <string name="biometric_prompt_enable_title">बायोमेट्रिक अनलॉक चालू करें</string>
     <string name="biometric_prompt_subtitle">अपने फ़िंगरप्रिंट या चेहरे से पुष्टि करें</string>
     <string name="biometric_use_password">पासवर्ड का उपयोग करें</string>

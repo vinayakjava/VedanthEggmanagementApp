@@ -87,7 +87,7 @@ fun BackupScreen(onBack: () -> Unit, restoreOnly: Boolean = false, viewModel: Ba
         viewModel.restoreFromDevice(it?.toString())
     }
     val consent = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
-        viewModel.onConsentResult(it.data)
+        viewModel.onConsentResult(it.resultCode, it.data)
     }
 
     LaunchedEffect(viewModel) {
@@ -150,7 +150,7 @@ private fun DeleteDriveBackupDialog(record: BackupRecord, onConfirm: () -> Unit,
 }
 
 private fun suggestedName(): String =
-    "EggBusiness_backup_${DateTimeFormatter.ofPattern("yyyyMMdd-HHmm").format(java.time.LocalDateTime.now())}.${BackupHeader.EXTENSION}"
+    "EggVyapar_backup_${DateTimeFormatter.ofPattern("yyyyMMdd-HHmm").format(java.time.LocalDateTime.now())}.${BackupHeader.EXTENSION}"
 
 /** Relaunches the app so the confirmed restore is swapped in before the database opens. */
 private fun restartApp(activity: Activity) {
@@ -265,6 +265,15 @@ private fun BackupNowCard(
             busy = state.busy,
             enabled = ready,
         )
+        // Say why the button is off instead of leaving the owner guessing.
+        val blocker = when {
+            !state.hasPassphrase -> R.string.backup_needs_passphrase
+            state.destination == BackupDestination.GOOGLE_DRIVE && !driveConnected -> R.string.backup_needs_drive
+            else -> null
+        }
+        blocker?.let {
+            Text(stringResource(it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
     }
 }
 

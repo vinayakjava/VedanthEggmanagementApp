@@ -1,17 +1,17 @@
-# Egg Business Manager — Release 1.0.1
+# EggVyapar — Release 1.0.3
 
 ## Version information
 
 | Item | Value |
 |---|---|
-| App name | Egg Business Manager |
+| App name | EggVyapar (named Egg Business Manager before 1.0.3; the application ID is unchanged) |
 | Application ID | `com.eggbusinessmanager.app` (permanent — never change it) |
-| Version name | 1.0.1 |
-| Version code | 10001 (`major*10000 + minor*100 + patch`) |
+| Version name | 1.0.3 |
+| Version code | 10003 (`major*10000 + minor*100 + patch`) |
 | Minimum Android | Android 12 (API 31) |
 | Target / compile SDK | Android 17 (API 37, latest stable) |
 | Database schema | version 1 — `data/schemas/com.eggbusinessmanager.data.db.EggBusinessDatabase/1.json` (frozen) |
-| Signing | APK Signature Scheme v3 (covers every supported Android version, 12+), RSA 4096, certificate `CN=Egg Business Manager, C=IN`, valid until 2054 |
+| Signing | APK Signature Scheme v3 (covers every supported Android version, 12+), RSA 4096, certificate `CN=Egg Business Manager, C=IN` (set when the key was made; it never changes), valid until 2054 |
 | Certificate SHA-1 | `88:DD:52:D2:FA:54:43:17:52:F4:13:23:26:01:BA:A4:84:50:11:9B` |
 | Certificate SHA-256 | `9A:08:3D:05:9A:B6:77:13:C4:F4:C5:91:32:F9:C2:23:62:B4:E8:21:04:F6:CD:64:DE:62:29:D0:AE:84:1E:9B` |
 
@@ -31,11 +31,11 @@ Output: `app\build\outputs\apk\release\app-release.apk`. The release build is sh
 by R8, strips debug/info logging, and is signed with the release key from `~/.gradle/gradle.properties`.
 If those properties are missing the build produces an **unsigned** APK — never distribute that.
 
-Copy it to `dist\EggBusinessManager-<version>.apk` (the `dist` folder is not committed) and record its
+Copy it to `dist\EggVyapar-<version>.apk` (the `dist` folder is not committed) and record its
 SHA-256 so anyone can check the file they received:
 
 ```powershell
-Get-FileHash dist\EggBusinessManager-1.0.0.apk -Algorithm SHA256
+Get-FileHash dist\EggVyapar-<version>.apk -Algorithm SHA256
 ```
 
 ## Release validation checklist
@@ -46,7 +46,7 @@ Run before every release; record the results in the release notes below.
 2. All device tests on the oldest and newest supported Android: `.\gradlew :data:connectedDebugAndroidTest :app:connectedDebugAndroidTest`
    with an API 31–36 and an API 37 emulator connected (they run on both).
 3. `scripts\check-no-destructive-migration.ps1` — no destructive database fallback.
-4. Signature: `apksigner verify --verbose --print-certs dist\EggBusinessManager-<version>.apk`
+4. Signature: `apksigner verify --verbose --print-certs dist\EggVyapar-<version>.apk`
    (v3 verified, certificate SHA-256 as above).
 5. Permissions (`aapt2 dump permissions`): declared by the app — `INTERNET` (Google Drive backup only)
    and `POST_NOTIFICATIONS` (backup failure alerts); added by libraries — `WAKE_LOCK`,
@@ -62,7 +62,7 @@ Run before every release; record the results in the release notes below.
 See `docs/USER_GUIDE.md` § 1. In short: copy the APK to the phone, open it from Files, allow
 "Install unknown apps" for that app, tap Install.
 
-Developer/USB install: `adb install dist\EggBusinessManager-1.0.0.apk`
+Developer/USB install: `adb install dist\EggVyapar-<version>.apk`
 
 Phones that had a **development build** must uninstall it first (back up from the app first if it holds
 real data): development builds are signed with the debug key, and Android only updates an app with an
@@ -88,12 +88,12 @@ Build the current version and a newer patch from the same sources, both release-
 
 ```powershell
 .\gradlew :app:assembleRelease;                         copy app\build\outputs\apk\release\app-release.apk dist\check-old.apk
-.\gradlew :app:assembleRelease -PebmUpgradePatch=2;     copy app\build\outputs\apk\release\app-release.apk dist\check-new.apk
+.\gradlew :app:assembleRelease -PebmUpgradePatch=4;     copy app\build\outputs\apk\release\app-release.apk dist\check-new.apk
 adb -s <device> uninstall com.eggbusinessmanager.app
 adb -s <device> install dist\check-old.apk
 python scripts\release_check.py seed --serial <device>
 adb -s <device> install -r dist\check-new.apk            # update in place, data kept
-python scripts\release_check.py verify --serial <device> --version 1.0.2 --build 10002
+python scripts\release_check.py verify --serial <device> --version 1.0.4 --build 10004
 ```
 
 `seed` creates the account, a customer with an opening balance, a sale with money received on the
@@ -134,6 +134,22 @@ Google identifies the app by package name **and** signing certificate. In the Go
 release **SHA-1** above (keep the debug one for development builds). The consent screen needs the
 `drive.appdata` scope; while it is in "Testing", add each owner's Google account as a test user, or
 publish the consent screen. Until then, backups to the phone work and Drive shows "can't connect".
+
+## Release notes — 1.0.3 (2026-11-09)
+
+- The app is now called **EggVyapar** (launcher, About, fingerprint prompt, documents, backup file
+  names). The application ID stays `com.eggbusinessmanager.app`, so it updates the installed app.
+- About: "Developed by Vinayak Metagoli", contact +91 7848971006 (tap to open the dialer).
+
+## Release notes — 1.0.2 (2026-11-09)
+
+- Google Drive: the result of connecting is now always shown. When Google refuses the app (error 10,
+  DEVELOPER_ERROR) the message explains that the Google Cloud project must list the app with the
+  release SHA-1; network problems and other refusals are named too. Cancelling stays silent.
+- Backup & restore: under "Back up now" the screen says why it is unavailable (no passphrase yet, or
+  Google Drive chosen but not connected).
+- Fixes the report "choosing an account does nothing": the cause was the missing Google Cloud
+  registration (see "Google Drive backup for the release build"); the app now says so.
 
 ## Release notes — 1.0.1 (2026-11-08)
 

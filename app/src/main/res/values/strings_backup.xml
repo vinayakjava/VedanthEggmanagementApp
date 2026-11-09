@@ -88,7 +88,7 @@
     <string name="bf_wrong_passphrase">Incorrect passphrase.</string>
     <string name="bf_corrupt">This backup is damaged and cannot be restored.</string>
     <string name="bf_newer_version">This backup was made by a newer version of the app. Please update the app first.</string>
-    <string name="bf_not_a_backup">This file is not an Egg Business Manager backup.</string>
+    <string name="bf_not_a_backup">This file is not an EggVyapar backup.</string>
     <string name="bf_interrupted">The restore was interrupted, so nothing was changed.</string>
     <string name="bf_unknown">Something went wrong. Please try again.</string>
     <!-- Automatic backup (Phase 10) -->
@@ -139,4 +139,9 @@
         <item quantity="one">No automatic backup has worked for %1$d month. Open the app and check Backup &amp; restore.</item>
         <item quantity="other">No automatic backup has worked for %1$d months. Open the app and check Backup &amp; restore.</item>
     </plurals>
+    <!-- Google Drive connection results -->
+    <string name="drive_connected_ok">Google Drive connected.</string>
+    <string name="bf_google_setup">Google did not accept this copy of the app (error 10). The Google Cloud project must list this app with its signing key fingerprint (SHA-1) before Drive can be used. Backups to this phone still work.</string>
+    <string name="backup_needs_passphrase">Set a backup passphrase first.</string>
+    <string name="backup_needs_drive">Connect Google Drive above first, or choose This phone.</string>
 </resources>

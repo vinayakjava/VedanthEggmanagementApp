@@ -1,8 +1,8 @@
-# Egg Business Manager — User Guide
+# EggVyapar — User Guide
 
 Version 1.0.0 · Android 12 or newer · English and हिन्दी
 
-Egg Business Manager is a digital account book (khata) for an egg shop. It records eggs you sell and
+EggVyapar is a digital account book (khata) for an egg shop. It records eggs you sell and
 buy, money you receive and pay, and keeps every customer's balance up to date. Everything is stored
 **only on your phone**, encrypted. Nothing is sent to any server; the only time the app uses the
 internet is when **you** choose to keep an encrypted backup in your own Google Drive.
@@ -11,7 +11,7 @@ internet is when **you** choose to keep an encrypted backup in your own Google D
 
 ## 1. Installing
 
-1. Copy `EggBusinessManager-1.0.0.apk` to the phone (USB cable, Google Drive, Quick Share, WhatsApp
+1. Copy `EggVyapar-<version>.apk` (for example `EggVyapar-1.0.3.apk`) to the phone (USB cable, Google Drive, Quick Share, WhatsApp
    "document", etc.).
 2. Open the file from the phone's **Files** app. If Android asks, allow **Install unknown apps** for
    the app you opened it from (Settings → Apps → Special app access → Install unknown apps).

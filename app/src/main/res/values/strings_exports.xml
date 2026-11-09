@@ -31,7 +31,7 @@
     <string name="rv_export_heading">Save as</string>
 
     <!-- Document text -->
-    <string name="doc_generated">Generated %1$s · Egg Business Manager</string>
+    <string name="doc_generated">Generated %1$s · EggVyapar</string>
     <string name="doc_period">Period: %1$s – %2$s</string>
     <string name="doc_period_from">Period: from %1$s</string>
     <string name="doc_period_to">Period: up to %1$s</string>

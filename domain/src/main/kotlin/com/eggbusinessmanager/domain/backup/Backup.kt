@@ -35,6 +35,12 @@ enum class BackupFailure {
 
     /** Another backup or restore is running right now. */
     BUSY,
+
+    /**
+     * Google refused the app itself (DEVELOPER_ERROR): this copy's package name and signing certificate
+     * are not registered as an Android OAuth client in the Google Cloud project (docs/RELEASE.md).
+     */
+    GOOGLE_SETUP,
     UNKNOWN,
 }
 
